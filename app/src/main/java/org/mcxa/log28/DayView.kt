@@ -17,6 +17,8 @@ import android.widget.ExpandableListView.OnChildClickListener
  * Handles the day view
  */
 class DayView : Fragment() {
+    // this is a lambda that does nothing until the list is initialized, at which point it changes the day on the list
+    var changeDay: (c: Calendar) -> Unit = {}
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -43,7 +45,7 @@ class DayView : Fragment() {
 
         horizontalCalendar.calendarListener = object : HorizontalCalendarListener() {
             override fun onDateSelected(date: Calendar, position: Int) {
-
+                changeDay.invoke(date)
                 // this little bit of code extends the range of the dates
                 val cDate = date.clone() as Calendar
                 cDate.add(Calendar.DAY_OF_YEAR, -5)
@@ -66,11 +68,11 @@ class DayView : Fragment() {
         val currentdate = Calendar.getInstance()
         currentdate.timeInMillis = savedInstanceState?.getLong("date") ?: Calendar.getInstance().timeInMillis
 
-        //get the data for the current day
-        val dayData = AppDatabase.getDataByDate(currentdate) ?: DayData()
-
         // set up the expandable list
-        val listAdapter = DayExpandableListAdapter(this.activity, dayData)
+        val listAdapter = DayExpandableListAdapter(this.activity, currentdate)
+        changeDay = {
+            c -> listAdapter.changeDay(c)
+        }
         expandableListView.setAdapter(listAdapter)
         expandableListView.setOnChildClickListener(OnChildClickListener { parent, v, groupPosition, childPosition, id ->
             listAdapter.toggleStatus(groupPosition, childPosition)
@@ -89,7 +91,6 @@ class DayView : Fragment() {
          *
          * @return A new instance of fragment DayView.
          */
-        // TODO: Rename and change types and number of parameters
         fun newInstance(date: Calendar): DayView {
             val fragment = DayView()
             val args = Bundle()
