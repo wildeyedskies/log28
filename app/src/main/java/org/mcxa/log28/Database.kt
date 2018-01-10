@@ -7,15 +7,19 @@ import com.raizlabs.android.dbflow.annotation.PrimaryKey
 import com.raizlabs.android.dbflow.annotation.Table
 import com.raizlabs.android.dbflow.kotlinextensions.*
 import org.mcxa.log28.DayData_Table.date
+import org.mcxa.log28.DayData_Table.physicalBleeding
 import java.util.*
 
-fun Calendar.formatDate(): String {
-    return this.get(Calendar.YEAR).toString() + this.get(Calendar.MONTH).toString() + this.get(Calendar.DAY_OF_MONTH).toString()
+// format a date as yyyymmdd
+fun Calendar.formatDate(): Long {
+    return (this.get(Calendar.YEAR).toLong() * 10000) +
+            (this.get(Calendar.MONTH).toLong() * 100) +
+            this.get(Calendar.DAY_OF_MONTH).toLong()
 }
 
 // all the logic for the log28 database
 @Table(database = AppDatabase::class)
-class DayData(@PrimaryKey var date: String = Calendar.getInstance().formatDate(),
+class DayData(@PrimaryKey var date: Long = Calendar.getInstance().formatDate(),
                @Column(getterName = "getPhysicalBleeding") var physicalBleeding: Boolean = false,
                @Column(getterName = "getPhysicalSpotting") var physicalSpotting: Boolean = false,
                @Column(getterName = "getPhysicalCramping") var physicalCramping: Boolean = false,
@@ -79,5 +83,16 @@ object AppDatabase {
 
     fun getDataByDate(queryDate: Calendar): DayData? {
         return (select from DayData::class where (date eq queryDate.formatDate())).result
+    }
+
+    fun getPeriodDatesForMonth(year: Int, month: Int): List<Long> {
+        val minDate = (year.toLong() shl 4) + (month.toLong() shl 2)
+        val maxDate = minDate + 32
+
+        val days = (select from DayData::class where (date greaterThan minDate)
+                and (date lessThan maxDate)
+                and (physicalBleeding eq true)).list
+
+        return days.map { d -> d.date }
     }
 }

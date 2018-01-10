@@ -33,14 +33,14 @@ class DayView : Fragment() {
         val startDate = Calendar.getInstance()
         startDate.add(Calendar.MONTH, -1)
         val endDate = Calendar.getInstance()
-        endDate.add(Calendar.WEEK_OF_YEAR, 1)
+        endDate.add(Calendar.MONTH, 1)
 
         val currentdate = Calendar.getInstance()
         currentdate.timeInMillis = savedInstanceState?.getLong("date") ?: Calendar.getInstance().timeInMillis
 
         val horizontalCalendar = HorizontalCalendar.Builder(rootView, R.id.topCalendar)
-                .range(startDate, endDate)
                 .defaultSelectedDate(currentdate)
+                .range(startDate, endDate)
                 .datesNumberOnScreen(5).build()
 
         horizontalCalendar.calendarListener = object : HorizontalCalendarListener() {

@@ -17,7 +17,9 @@ class TabPagerAdapter(fm: FragmentManager, private val context: Context) : Fragm
         return when (position) {
             0 -> CycleOverview.newInstance()
             1 -> DayView.newInstance(Calendar.getInstance())
-            else -> PageFragment.newInstance(position + 1)
+            2 -> CalendarView.newInstance()
+            3 -> SettingsView.newInstance()
+            else -> CycleOverview.newInstance()
         }
     }
 }
