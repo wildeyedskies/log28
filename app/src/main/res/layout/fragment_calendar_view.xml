@@ -6,7 +6,7 @@
     tools:context="org.mcxa.log28.CalendarView"
     android:orientation="vertical">
 
-    <pl.rafman.scrollcalendar.ScrollCalendar
+    <org.mcxa.log28.UpdatableScrollCalendar
         android:id="@+id/scrollCalendar"
         android:layout_width="match_parent"
         android:layout_height="0dp"

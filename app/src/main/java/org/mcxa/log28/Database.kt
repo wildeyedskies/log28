@@ -30,41 +30,37 @@ class DayData(@PrimaryKey var date: Long = Calendar.getInstance().formatDate(),
                @Column(getterName = "getMentalSad") var mentalSad: Boolean = false,
                @Column(getterName = "getMentalTired") var mentalTired: Boolean = false) {
 
-    // this function formats the data for the ExpandableListView
-    fun buildSymptomMap() : Map<String,List<Symptom>> {
-        Log.d("DAYDATA", "building symptom map")
-        return mapOf(
-                "Physical" to arrayListOf<Symptom>(
-                        Symptom("Bleeding", physicalBleeding),
-                        Symptom("Spotting", physicalSpotting),
-                        Symptom("Cramping", physicalCramping),
-                        Symptom("Headache", physicalHeadache)
+    fun getItemState(catIndex: Int, itemIndex: Int): Boolean {
+        return arrayListOf(
+                arrayListOf(
+                        physicalBleeding,
+                        physicalSpotting,
+                        physicalCramping,
+                        physicalHeadache
                 ),
-                "Mental" to arrayListOf<Symptom>(
-                        Symptom("Mood Swings", mentalMoodSwings),
-                        Symptom("Anxious", mentalAnxious)
+                arrayListOf(
+                        mentalMoodSwings,
+                        mentalAnxious
                 )
-        )
+        )[catIndex][itemIndex]
     }
 
     // updates a column based on the index into the map
-    fun updateSymptom(catIndex: Int, itemIndex: Int) {
-        Log.d("DAYDATA", "Update symptoms called")
-        val map = mapOf(
-            "Physical" to arrayListOf(
-                    { physicalBleeding = !physicalBleeding },
-                    { physicalSpotting = !physicalSpotting },
-                    { physicalCramping = !physicalCramping },
-                    { physicalHeadache = !physicalHeadache }
-            ),
-            "Mental" to arrayListOf(
-                    { mentalMoodSwings = !mentalMoodSwings },
-                    { mentalAnxious = !mentalAnxious }
-            )
-        )
+    fun update(catIndex: Int, itemIndex: Int) {
+        Log.d("DAYDATA", "Update symptom called")
 
-        val category = map.keys.toList()[catIndex]
-        map[category]?.get(itemIndex)?.invoke()
+        when(catIndex) {
+            0 -> when(itemIndex) {
+                0 -> physicalBleeding = !physicalBleeding
+                1 -> physicalSpotting = !physicalSpotting
+                2 -> physicalCramping = !physicalCramping
+                3 -> physicalHeadache = !physicalHeadache
+            }
+            1 -> when(itemIndex) {
+                0 -> mentalMoodSwings = !mentalMoodSwings
+                1 -> mentalAnxious = !mentalAnxious
+            }
+        }
 
         if (this.exists()) {
             Log.d("DAYDATA", "Updating day object for " + date.toString())
@@ -74,6 +70,25 @@ class DayData(@PrimaryKey var date: Long = Calendar.getInstance().formatDate(),
             Log.d("DAYDATA", "Creating new day object for " + date.toString())
             this.save()
         }
+    }
+
+    // static ordering of the members used to render the expandable list
+    companion object {
+        val categories = arrayListOf("Physical Symptoms", "Mental Symptoms",
+                "Sexual Activity", "Physical Activity")
+
+        val items = arrayListOf(
+                arrayListOf(
+                        "Bleeding",
+                        "Spotting",
+                        "Cramping",
+                        "Headaches"
+                ),
+                arrayListOf(
+                        "Mood swings",
+                        "Anxious"
+                )
+        )
     }
 }
 
@@ -86,7 +101,7 @@ object AppDatabase {
     }
 
     fun getPeriodDatesForMonth(year: Int, month: Int): List<Long> {
-        val minDate = (year.toLong() shl 4) + (month.toLong() shl 2)
+        val minDate = (year.toLong() * 10000) + (month.toLong() * 100)
         val maxDate = minDate + 32
 
         val days = (select from DayData::class where (date greaterThan minDate)
