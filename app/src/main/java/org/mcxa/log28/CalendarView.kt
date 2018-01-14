@@ -51,11 +51,29 @@ class CalendarView : Fragment() {
 
         scrollCalendar.setMonthScrollListener(object : MonthScrollListener {
             override fun shouldAddNextMonth(lastDisplayedYear: Int, lastDisplayedMonth: Int): Boolean {
-                //TODO prevent going too far into the future
+                val nextMonth = getMonth(lastDisplayedYear, lastDisplayedMonth)
+                nextMonth.add(Calendar.MONTH, 1)
+                //TODO: clean this up
+                periodDates += AppDatabase.getPeriodDatesForMonth(nextMonth.get(Calendar.YEAR),
+                        nextMonth.get(Calendar.MONTH))
+
+                // don't let the user scroll more than 4 months into the future
+                val fourMonths = Calendar.getInstance()
+                fourMonths.add(Calendar.MONTH, 4)
+                if (fourMonths.get(Calendar.YEAR) == lastDisplayedYear &&
+                        fourMonths.get(Calendar.MONTH) == lastDisplayedMonth)
+                    return false
+                // I'm assuming a redraw happens here
                 return true
             }
 
             override fun shouldAddPreviousMonth(firstDisplayedYear: Int, firstDisplayedMonth: Int): Boolean {
+                val nextMonth = getMonth(firstDisplayedYear, firstDisplayedMonth)
+                nextMonth.add(Calendar.MONTH, -1)
+                //TODO: clean this up
+                periodDates += AppDatabase.getPeriodDatesForMonth(nextMonth.get(Calendar.YEAR),
+                        nextMonth.get(Calendar.MONTH))
+                // I'm assuming a redraw happens here
                 return true
             }
         })
@@ -80,6 +98,15 @@ class CalendarView : Fragment() {
         }
 
         DirectModelNotifier.get().registerForModelChanges(DayData::class.java, modelChangeListener)
+    }
+
+    fun getMonth(lastDisplayedYear: Int, lastDisplayedMonth: Int): Calendar {
+        //add period dates for next month
+        val month = Calendar.getInstance()
+        month.set(Calendar.YEAR, lastDisplayedYear)
+        month.set(Calendar.MONTH, lastDisplayedMonth)
+        month.set(Calendar.DAY_OF_MONTH, 0)
+        return month
     }
 
     override fun onDestroyView() {
