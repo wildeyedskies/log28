@@ -26,4 +26,8 @@ class MainActivity : AppCompatActivity() {
             sliding_tabs.getTabAt(i)?.setIcon(tabIcons[i])
         }
     }
+
+    fun setTabPosition(index: Int) {
+        viewPager.currentItem = index
+    }
 }

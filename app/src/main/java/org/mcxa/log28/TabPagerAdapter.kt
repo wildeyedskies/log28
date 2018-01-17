@@ -22,4 +22,5 @@ class TabPagerAdapter(fm: FragmentManager, private val context: Context) : Fragm
             else -> CycleOverview.newInstance()
         }
     }
+
 }

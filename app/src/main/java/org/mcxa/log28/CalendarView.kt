@@ -1,7 +1,6 @@
 package org.mcxa.log28
 
 
-import android.opengl.Visibility
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.util.Log
@@ -47,6 +46,10 @@ class CalendarView : Fragment() {
                 Log.d("CALVIEW", "Period found at " + year.toString() + " " + month.toString())
                 CalendarDay.SELECTED
             } else CalendarDay.DEFAULT
+        })
+
+        scrollCalendar.setOnDateClickListener({
+            year, month, day ->  (this.activity as? MainActivity)?.setTabPosition(1)
         })
 
         scrollCalendar.setMonthScrollListener(object : MonthScrollListener {
