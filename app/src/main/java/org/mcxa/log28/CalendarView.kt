@@ -48,8 +48,15 @@ class CalendarView : Fragment() {
             } else CalendarDay.DEFAULT
         })
 
+        // we call the underlying activity and tell it to navigate to the day view and set the day
         scrollCalendar.setOnDateClickListener({
-            year, month, day ->  (this.activity as? MainActivity)?.setTabPosition(1)
+            year, month, day ->  val cal = Calendar.getInstance()
+            cal.set(Calendar.YEAR, year)
+            cal.set(Calendar.MONTH, month)
+            cal.set(Calendar.DAY_OF_MONTH, day)
+            // only allow you to go to the day view for dates not in the future
+            if (cal.before(Calendar.getInstance()))
+                (this.activity as? MainActivity)?.navToDayView(cal)
         })
 
         scrollCalendar.setMonthScrollListener(object : MonthScrollListener {
@@ -90,9 +97,9 @@ class CalendarView : Fragment() {
                 if (action == BaseModel.Action.INSERT || action == BaseModel.Action.UPDATE) {
 
                     Log.d("CALVIEW", "Model changed, redrawing calendar")
-
-                    if (model.physicalBleeding) periodDates += model.date
-                    else if (model.date in periodDates) periodDates -= model.date
+                    //TODO: make these updates function properly
+                    if (model.physicalBleeding && model.date !in periodDates) periodDates += model.date
+                    else if (!model.physicalBleeding && model.date in periodDates) periodDates -= model.date
                     Log.d("CALVIEW", periodDates.toString())
 
                     scrollCalendar.adapter.notifyDataSetChanged()

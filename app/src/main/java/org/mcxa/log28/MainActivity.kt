@@ -2,9 +2,8 @@ package org.mcxa.log28
 
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
-import android.support.design.widget.TabLayout
 import kotlinx.android.synthetic.main.activity_main.*
-import android.view.View
+import java.util.*
 
 
 class MainActivity : AppCompatActivity() {
@@ -27,7 +26,15 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    fun setTabPosition(index: Int) {
-        viewPager.currentItem = index
+    /**
+     * Set the current tab to the day view
+     * and set the day based on the day based on the calendar parameter
+     * the TabPagerAdapter keeps a copy of the setDayViewDay function pointer which is
+     * created when the day view is created
+     */
+    fun navToDayView(day: Calendar) {
+        // go to the index of the day view
+        viewPager.currentItem = 1
+        (viewPager.adapter as? TabPagerAdapter)?.setDayViewDay?.invoke(day)
     }
 }
