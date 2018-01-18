@@ -1,6 +1,8 @@
 <resources>
     <string name="app_name">log28</string>
 
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="cycle_data">Enter Your Cycle Data</string>
+    <string name="cycle_length">Cycle Length</string>
+    <string name="period_length">Period Length</string>
+    <string  name="cycle_data_desc">log28 uses this to predict your periods. You can always change it later.</string>
 </resources>

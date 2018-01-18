@@ -1,0 +1,85 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="org.mcxa.log28.org.mcxa.log28.intro.CycleIntroFragment"
+    android:background="#546E7A"
+    style="@style/LightEditText">
+
+    <TextView
+        android:id="@+id/enter_cycle_data"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/cycle_data"
+        android:textColor="@color/white"
+        android:textSize="28sp"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="48dp"
+        android:textStyle="bold"/>
+
+    <LinearLayout
+        android:id="@+id/cycle_layout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_below="@id/enter_cycle_data"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="140dp">
+
+        <TextView
+            android:id="@+id/cycle_length_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/cycle_length"
+            android:textColor="@color/white"/>
+
+        <EditText
+            android:id="@+id/cycle_length_input"
+            android:inputType="number"
+            android:layout_height="wrap_content"
+            android:textColor="@color/white"
+            android:layout_width="48sp"
+            android:layout_marginLeft="16dp"
+            android:textColorHighlight="@color/white" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_below="@id/cycle_layout"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="24dp">
+
+        <TextView
+            android:id="@+id/period_length_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/period_length"
+            android:textColor="@color/white"/>
+
+        <EditText
+            android:id="@+id/period_length_input"
+            android:inputType="number"
+            android:layout_height="wrap_content"
+            android:textColor="@color/white"
+            android:layout_width="48sp"
+            android:layout_marginLeft="16dp"
+            android:textColorHighlight="@color/white"/>
+
+    </LinearLayout>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/cycle_data_desc"
+        android:textAlignment="center"
+        android:layout_marginLeft="16dp"
+        android:layout_marginRight="16dp"
+        android:textColor="@color/white"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="120dp"
+        android:textSize="16sp"/>
+
+</RelativeLayout>
