@@ -2,7 +2,6 @@ package org.mcxa.log28.org.mcxa.log28.intro
 
 import android.graphics.Color
 import android.os.Bundle
-import android.os.PersistableBundle
 import android.support.v4.app.Fragment
 import com.github.paolorotolo.appintro.AppIntro2
 import com.github.paolorotolo.appintro.AppIntro2Fragment
@@ -19,6 +18,7 @@ class AppIntroActivity: AppIntro2() {
         addSlide(AppIntro2Fragment.newInstance("Welcome to log28",
                 "log28 will help you keep track of your period", R.drawable.ic_notebook, Color.parseColor("#1976D2")))
         addSlide(CycleIntroFragment.newInstance())
+        addSlide(LastPeriodFragment.newInstance())
     }
 
     override fun onDonePressed(currentFragment: Fragment?) {

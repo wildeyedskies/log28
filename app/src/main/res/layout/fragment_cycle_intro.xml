@@ -40,7 +40,10 @@
             android:textColor="@color/white"
             android:layout_width="48sp"
             android:layout_marginLeft="16dp"
-            android:textColorHighlight="@color/white" />
+            android:textColorHighlight="@color/white"
+            android:textColorHint="#BDBDBD
+"
+            android:hint="28"/>
 
     </LinearLayout>
 
@@ -66,7 +69,9 @@
             android:textColor="@color/white"
             android:layout_width="48sp"
             android:layout_marginLeft="16dp"
-            android:textColorHighlight="@color/white"/>
+            android:textColorHighlight="@color/white"
+            android:textColorHint="#BDBDBD"
+            android:hint="5"/>
 
     </LinearLayout>
 

@@ -40,6 +40,7 @@ class CalendarView : Fragment() {
         periodDates = AppDatabase.getPeriodDatesForMonth(Calendar.getInstance().get(Calendar.YEAR),
                 Calendar.getInstance().get(Calendar.MONTH))
 
+        // enable infinite scroll
         scrollCalendar.setDateWatcher({
             year, month, day ->
             if ((year.toLong() * 10000) + (month.toLong() * 100) + day.toLong() in periodDates) {
