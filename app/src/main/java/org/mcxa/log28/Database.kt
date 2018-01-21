@@ -1,11 +1,15 @@
 package org.mcxa.log28
 
+import android.content.Context
+import android.os.AsyncTask
+import android.preference.PreferenceManager
 import android.util.Log
 import com.raizlabs.android.dbflow.annotation.Column
 import com.raizlabs.android.dbflow.annotation.Database
 import com.raizlabs.android.dbflow.annotation.PrimaryKey
 import com.raizlabs.android.dbflow.annotation.Table
 import com.raizlabs.android.dbflow.kotlinextensions.*
+import com.raizlabs.android.dbflow.sql.language.SQLite
 import org.mcxa.log28.DayData_Table.date
 import org.mcxa.log28.DayData_Table.physicalBleeding
 import java.util.*
@@ -98,6 +102,25 @@ object AppDatabase {
 
     fun getDataByDate(queryDate: Calendar): DayData? {
         return (select from DayData::class where (date eq queryDate.formatDate())).result
+    }
+
+    fun setFirstPeriod(firstDay: Calendar, context: Context?) {
+        AsyncTask.execute {
+            // the kotlin extension syntax for deleting wasn't working
+            SQLite.delete().from(DayData::class.java).execute()
+
+            // get the period length
+            val periodLength = PreferenceManager.getDefaultSharedPreferences(context)
+                    .getString("period_length", "5").toIntOrNull() ?: 5
+
+            // for each day in the period create a DayData object with physical  bleeding
+            // set to true, and save it in the database
+            for (i in 0 until periodLength) {
+                val day = DayData(firstDay.formatDate(), physicalBleeding = true)
+                day.save()
+                firstDay.add(Calendar.DAY_OF_MONTH, 1)
+            }
+        }
     }
 
     fun getPeriodDatesForMonth(year: Int, month: Int): List<Long> {

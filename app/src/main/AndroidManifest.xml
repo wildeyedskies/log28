@@ -11,8 +11,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity android:name=".org.mcxa.log28.intro.AppIntroActivity"
-            android:screenOrientation="portrait"
-            android:theme="@style/LightEditText">
+            android:screenOrientation="portrait">
         </activity>
         <activity android:name=".MainActivity"
             android:screenOrientation="portrait">

@@ -3,15 +3,14 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context="org.mcxa.log28.org.mcxa.log28.intro.CycleIntroFragment"
-    android:background="#546E7A"
-    style="@style/LightEditText">
+    android:background="@color/white">
 
     <TextView
         android:id="@+id/enter_cycle_data"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/cycle_data"
-        android:textColor="@color/white"
+        android:textColor="@color/primaryText"
         android:textSize="28sp"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="48dp"
@@ -31,18 +30,16 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/cycle_length"
-            android:textColor="@color/white"/>
+            android:textColor="@color/primaryText"/>
 
         <EditText
             android:id="@+id/cycle_length_input"
             android:inputType="number"
             android:layout_height="wrap_content"
-            android:textColor="@color/white"
             android:layout_width="48sp"
             android:layout_marginLeft="16dp"
-            android:textColorHighlight="@color/white"
-            android:textColorHint="#BDBDBD
-"
+            android:textColorHighlight="@color/primaryText"
+            android:textColorHint="#BDBDBD"
             android:hint="28"/>
 
     </LinearLayout>
@@ -60,16 +57,15 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/period_length"
-            android:textColor="@color/white"/>
+            android:textColor="@color/primaryText"/>
 
         <EditText
             android:id="@+id/period_length_input"
             android:inputType="number"
             android:layout_height="wrap_content"
-            android:textColor="@color/white"
             android:layout_width="48sp"
             android:layout_marginLeft="16dp"
-            android:textColorHighlight="@color/white"
+            android:textColorHighlight="@color/primaryText"
             android:textColorHint="#BDBDBD"
             android:hint="5"/>
 
@@ -82,7 +78,7 @@
         android:textAlignment="center"
         android:layout_marginLeft="16dp"
         android:layout_marginRight="16dp"
-        android:textColor="@color/white"
+        android:textColor="@color/primaryText"
         android:layout_alignParentBottom="true"
         android:layout_marginBottom="120dp"
         android:textSize="16sp"/>

@@ -19,6 +19,8 @@ class AppIntroActivity: AppIntro2() {
                 "log28 will help you keep track of your period", R.drawable.ic_notebook, Color.parseColor("#1976D2")))
         addSlide(CycleIntroFragment.newInstance())
         addSlide(LastPeriodFragment.newInstance())
+
+        setBarColor(Color.parseColor("#0D47A1"));
     }
 
     override fun onDonePressed(currentFragment: Fragment?) {

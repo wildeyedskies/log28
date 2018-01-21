@@ -10,9 +10,6 @@ import kotlinx.android.synthetic.main.activity_main.*
 import org.mcxa.log28.org.mcxa.log28.intro.AppIntroActivity
 import java.util.*
 
-
-
-
 class MainActivity : AppCompatActivity() {
     private val tabIcons = arrayOf(R.drawable.ic_cycle, R.drawable.ic_plus, R.drawable.ic_calendar, R.drawable.ic_settings)
 
@@ -32,9 +29,13 @@ class MainActivity : AppCompatActivity() {
                     startActivity(intent)
                 }
                 // update the preference preventing first start on subsequent runs
-                /*val editor = PreferenceManager.getDefaultSharedPreferences(this).edit()
+                val editor = PreferenceManager.getDefaultSharedPreferences(this).edit()
                 editor.putBoolean("first_start", false)
-                editor.apply()*/
+                // by default all our tracking options should be on
+                editor.putBoolean("mental_tracking", true)
+                editor.putBoolean("physical_tracking", true)
+                editor.putBoolean("sexual_tracking", true)
+                editor.apply()
             }
         }
 

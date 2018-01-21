@@ -1,19 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:scrollcalendar="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#212121">
+    android:background="@color/white">
 
     <TextView
         android:id="@+id/enter_last_period"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/last_period"
-        android:textColor="@color/white"
+        android:textColor="@color/primaryText"
         android:textSize="28sp"
-        android:layout_centerHorizontal="true"
         android:layout_marginTop="48dp"
         android:textStyle="bold"
         android:textAlignment="center"
@@ -21,13 +20,27 @@
         android:layout_marginRight="24dp"/>
 
 
-    <DatePicker
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/enter_last_period"
-        android:layout_marginTop="24dp"
-        android:layout_centerHorizontal="true"
-        android:headerBackground="#212121">
-    </DatePicker>
+    <org.mcxa.log28.UpdatableScrollCalendar
+        android:id="@+id/last_period_calendar"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:layout_marginTop="16dp"
+        scrollcalendar:backgroundColor="@android:color/transparent"
+        scrollcalendar:currentDayBackground="@drawable/scrollcalendar_circle_outline"
+        scrollcalendar:currentDayTextColor="@android:color/darker_gray"
+        scrollcalendar:customFont="fonts/montserrat-light.otf"
+        scrollcalendar:disabledBackgroundColor="@android:color/transparent"
+        scrollcalendar:disabledTextColor="@android:color/darker_gray"
+        scrollcalendar:fontColor="@android:color/black"
+        scrollcalendar:fontSize="18dp"
+        scrollcalendar:selectedBackground="@drawable/scrollcalendar_circle_full"
+        scrollcalendar:selectedBackgroundBeginning="@drawable/scrollcalendar_range_start"
+        scrollcalendar:selectedBackgroundEnd="@drawable/scrollcalendar_range_end"
+        scrollcalendar:selectedBackgroundMiddle="@drawable/scrollcalendar_range_middle"
+        scrollcalendar:selectedTextColor="@android:color/white"
+        scrollcalendar:unavailableBackground="@drawable/scrollcalendar_strikethrough"
+        scrollcalendar:unavailableTextColor="@android:color/darker_gray" />
 
-</RelativeLayout>
+
+</LinearLayout>

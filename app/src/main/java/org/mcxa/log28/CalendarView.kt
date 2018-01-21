@@ -1,6 +1,7 @@
 package org.mcxa.log28
 
 
+import android.os.AsyncTask
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.util.Log
@@ -37,15 +38,28 @@ class CalendarView : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        periodDates = AppDatabase.getPeriodDatesForMonth(Calendar.getInstance().get(Calendar.YEAR),
-                Calendar.getInstance().get(Calendar.MONTH))
+        // grab all dates for periods within the selected month
+        // we run this in the background
+        AsyncTask.execute {
+            periodDates = AppDatabase.getPeriodDatesForMonth(Calendar.getInstance().get(Calendar.YEAR),
+                    Calendar.getInstance().get(Calendar.MONTH))
+            //TODO verify this background execute works
+            this.activity!!.runOnUiThread {
+                scrollCalendar.adapter.notifyDataSetChanged()
+            }
+        }
 
-        // enable infinite scroll
+
+        // show periods on the calendar as it renders
+        val today = Calendar.getInstance()
         scrollCalendar.setDateWatcher({
             year, month, day ->
             if ((year.toLong() * 10000) + (month.toLong() * 100) + day.toLong() in periodDates) {
                 Log.d("CALVIEW", "Period found at " + year.toString() + " " + month.toString())
                 CalendarDay.SELECTED
+            } else if (year == today.get(Calendar.YEAR) &&
+                    month == today.get(Calendar.MONTH) && day == today.get(Calendar.DAY_OF_MONTH)) {
+                CalendarDay.TODAY
             } else CalendarDay.DEFAULT
         })
 
