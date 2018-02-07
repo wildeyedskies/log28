@@ -123,14 +123,10 @@ object AppDatabase {
         }
     }
 
-    fun getPeriodDatesForMonth(year: Int, month: Int): List<Long> {
-        val minDate = (year.toLong() * 10000) + (month.toLong() * 100)
-        val maxDate = minDate + 32
-
-        val days = (select from DayData::class where (date greaterThan minDate)
-                and (date lessThan maxDate)
-                and (physicalBleeding eq true)).list
-
-        return days.map { d -> d.date }
+    //days must be formatted as yyyymmdd
+    fun getPeriodDates(onComplete: (List<Long>) -> Unit) {
+        (select from DayData::class
+                where (physicalBleeding eq true)).async list
+                {transaction, list -> onComplete.invoke(list.map { d -> d.date })}
     }
 }

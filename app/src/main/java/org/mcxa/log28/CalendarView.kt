@@ -1,6 +1,5 @@
 package org.mcxa.log28
 
-
 import android.os.AsyncTask
 import android.os.Bundle
 import android.support.v4.app.Fragment
@@ -15,40 +14,33 @@ import pl.rafman.scrollcalendar.contract.MonthScrollListener
 import pl.rafman.scrollcalendar.data.CalendarDay
 import java.util.*
 
-
 /**
  * A simple [Fragment] subclass.
  * Use the [CalendarView.newInstance] factory method to
  * create an instance of this fragment.
  */
 class CalendarView : Fragment() {
-    lateinit var modelChangeListener: DirectModelNotifier.ModelChangedListener<DayData>
-    lateinit var periodDates: List<Long>
+    private lateinit var modelChangeListener: DirectModelNotifier.ModelChangedListener<DayData>
+    var periodDates = emptyList<Long>()
+    // the months for which we have loaded the period data for. This should always be a contiguous range
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
-        // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_calendar_view, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        // grab all dates for periods within the selected month
-        // we run this in the background
-        AsyncTask.execute {
-            periodDates = AppDatabase.getPeriodDatesForMonth(Calendar.getInstance().get(Calendar.YEAR),
-                    Calendar.getInstance().get(Calendar.MONTH))
-            //TODO verify this background execute works
-            this.activity!!.runOnUiThread {
-                scrollCalendar.adapter.notifyDataSetChanged()
-            }
-        }
-
+        // grab all dates for periods in the background.
+        //TODO figure out if this is a performance issue
+        AppDatabase.getPeriodDates({
+            list -> periodDates += list
+            scrollCalendar.adapter.notifyDataSetChanged()
+        })
 
         // show periods on the calendar as it renders
         val today = Calendar.getInstance()
@@ -76,29 +68,16 @@ class CalendarView : Fragment() {
 
         scrollCalendar.setMonthScrollListener(object : MonthScrollListener {
             override fun shouldAddNextMonth(lastDisplayedYear: Int, lastDisplayedMonth: Int): Boolean {
-                val nextMonth = getMonth(lastDisplayedYear, lastDisplayedMonth)
-                nextMonth.add(Calendar.MONTH, 1)
-                //TODO: clean this up
-                periodDates += AppDatabase.getPeriodDatesForMonth(nextMonth.get(Calendar.YEAR),
-                        nextMonth.get(Calendar.MONTH))
-
                 // don't let the user scroll more than 4 months into the future
                 val fourMonths = Calendar.getInstance()
                 fourMonths.add(Calendar.MONTH, 4)
                 if (fourMonths.get(Calendar.YEAR) == lastDisplayedYear &&
                         fourMonths.get(Calendar.MONTH) == lastDisplayedMonth)
                     return false
-                // I'm assuming a redraw happens here
                 return true
             }
 
             override fun shouldAddPreviousMonth(firstDisplayedYear: Int, firstDisplayedMonth: Int): Boolean {
-                val nextMonth = getMonth(firstDisplayedYear, firstDisplayedMonth)
-                nextMonth.add(Calendar.MONTH, -1)
-                //TODO: clean this up
-                periodDates += AppDatabase.getPeriodDatesForMonth(nextMonth.get(Calendar.YEAR),
-                        nextMonth.get(Calendar.MONTH))
-                // I'm assuming a redraw happens here
                 return true
             }
         })
@@ -112,7 +91,6 @@ class CalendarView : Fragment() {
                 if (action == BaseModel.Action.INSERT || action == BaseModel.Action.UPDATE) {
 
                     Log.d("CALVIEW", "Model changed, redrawing calendar")
-                    //TODO: make these updates function properly
                     if (model.physicalBleeding && model.date !in periodDates) periodDates += model.date
                     else if (!model.physicalBleeding && model.date in periodDates) periodDates -= model.date
                     Log.d("CALVIEW", periodDates.toString())
@@ -147,7 +125,6 @@ class CalendarView : Fragment() {
          *
          * @return A new instance of fragment CalendarView.
          */
-        // TODO: Rename and change types and number of parameters
         fun newInstance(): CalendarView {
             val fragment = CalendarView()
             val args = Bundle()
