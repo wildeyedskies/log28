@@ -62,6 +62,7 @@ class CalendarView : Fragment() {
             cal.set(Calendar.MONTH, month)
             cal.set(Calendar.DAY_OF_MONTH, day)
             // only allow you to go to the day view for dates not in the future
+            Log.d("CALVIEW", "day clicked ${cal.formatDate()}")
             if (cal.before(Calendar.getInstance()))
                 (this.activity as? MainActivity)?.navToDayView(cal)
         })

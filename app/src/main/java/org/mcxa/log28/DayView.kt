@@ -47,11 +47,29 @@ class DayView : Fragment() {
                 .datesNumberOnScreen(5).build()
 
         navigateToDay = {
-            c -> horizontalCalendar.selectDate(c, true)
+            c -> // set the range to be one month before
+            //TODO clean this mess up
+            if (c.before(startDate)) {
+                startDate.set(Calendar.YEAR, c.get(Calendar.YEAR))
+                startDate.set(Calendar.MONTH, c.get(Calendar.MONTH))
+                startDate.set(Calendar.DAY_OF_MONTH, c.get(Calendar.DAY_OF_MONTH))
+                startDate.add(Calendar.MONTH, -1)
+                horizontalCalendar.setRange(startDate, endDate)
+                horizontalCalendar.refresh()
+            } else if (c.after(endDate)) {
+                endDate.set(Calendar.YEAR, c.get(Calendar.YEAR))
+                endDate.set(Calendar.MONTH, c.get(Calendar.MONTH))
+                endDate.set(Calendar.DAY_OF_MONTH, c.get(Calendar.DAY_OF_MONTH))
+                endDate.add(Calendar.MONTH, 1)
+                horizontalCalendar.setRange(startDate, endDate)
+                horizontalCalendar.refresh()
+            }
+            horizontalCalendar.selectDate(c, true)
         }
 
         horizontalCalendar.calendarListener = object : HorizontalCalendarListener() {
             override fun onDateSelected(date: Calendar, position: Int) {
+                Log.d("DAYVIEW", "horizontal calendar date set to ${date.formatDate()}")
                 changeDay.invoke(date)
                 // this little bit of code extends the range of the dates
                 val cDate = date.clone() as Calendar
@@ -61,7 +79,6 @@ class DayView : Fragment() {
                     startDate.add(Calendar.MONTH, -1)
 
                     horizontalCalendar.setRange(startDate, endDate)
-                    horizontalCalendar.selectDate(date, true)
                     horizontalCalendar.refresh()
                 }
             }
@@ -77,7 +94,7 @@ class DayView : Fragment() {
         // set up the expandable list
         val listAdapter = DayExpandableListAdapter(this.activity, currentdate)
         changeDay = {
-            c -> Log.d("DAYVIEW", "Changeday called")
+            c -> Log.d("DAYVIEW", "Changeday called on day ${c.formatDate()}")
             listAdapter.changeDay(c)
         }
         expandableListView.setAdapter(listAdapter)
