@@ -35,6 +35,7 @@ class DayData(@PrimaryKey var date: Long = Calendar.getInstance().formatDate(),
                @Column(getterName = "getMentalTired") var mentalTired: Boolean = false) {
 
     fun getItemState(catIndex: Int, itemIndex: Int): Boolean {
+        //TODO update to when statement
         return arrayListOf(
                 arrayListOf(
                         physicalBleeding,

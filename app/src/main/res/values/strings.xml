@@ -6,4 +6,6 @@
     <string name="period_length">Period Length</string>
     <string  name="cycle_data_desc">log28 uses this to predict your periods. You can always change it later.</string>
     <string name="last_period">Enter The First Day of Your Last Period</string>
+    <string name="days_until_period">days until next period</string>
+    <string name="days_left_in_period">days left in period</string>
 </resources>
