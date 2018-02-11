@@ -105,15 +105,6 @@ class CalendarView : Fragment() {
         DirectModelNotifier.get().registerForModelChanges(DayData::class.java, modelChangeListener)
     }
 
-    fun getMonth(lastDisplayedYear: Int, lastDisplayedMonth: Int): Calendar {
-        //add period dates for next month
-        val month = Calendar.getInstance()
-        month.set(Calendar.YEAR, lastDisplayedYear)
-        month.set(Calendar.MONTH, lastDisplayedMonth)
-        month.set(Calendar.DAY_OF_MONTH, 0)
-        return month
-    }
-
     override fun onDestroyView() {
         super.onDestroyView()
         DirectModelNotifier.get().unregisterForModelChanges(DayData::class.java, modelChangeListener)

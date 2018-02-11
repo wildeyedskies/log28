@@ -12,6 +12,7 @@ import com.raizlabs.android.dbflow.kotlinextensions.*
 import com.raizlabs.android.dbflow.sql.language.SQLite
 import org.mcxa.log28.DayData_Table.date
 import org.mcxa.log28.DayData_Table.physicalBleeding
+import java.text.SimpleDateFormat
 import java.util.*
 
 // format a date as yyyymmdd
@@ -19,6 +20,15 @@ fun Calendar.formatDate(): Long {
     return (this.get(Calendar.YEAR).toLong() * 10000) +
             (this.get(Calendar.MONTH).toLong() * 100) +
             this.get(Calendar.DAY_OF_MONTH).toLong()
+}
+
+// parse a yyyymmdd long
+fun Long.toCalendar(): Calendar {
+    val cal = Calendar.getInstance()
+    cal.set(Calendar.YEAR, (this / 10000).toInt())
+    cal.set(Calendar.MONTH, (this / 100).toInt() % 100)
+    cal.set(Calendar.DAY_OF_MONTH, (this % 100).toInt())
+    return cal
 }
 
 // all the logic for the log28 database
@@ -129,5 +139,17 @@ object AppDatabase {
         (select from DayData::class
                 where (physicalBleeding eq true)).async list
                 {transaction, list -> onComplete.invoke(list.map { d -> d.date })}
+    }
+
+    fun getStartOfCurrentCycle(onComplete: (Long?) -> Unit) {
+        //(select max(date) from daydata where date in (select date as d1 from daydata where bleeding = 1 and
+        // (select bleeding from daydata where date = d1 - 1) = 0))
+
+        //TODO replace DBFlow with something that supports advanced queries so that this mess can be replaced with the above query
+        (select from DayData::class where (physicalBleeding eq true)).async list
+                { _, list -> val l2 = list.map { d -> d.date }
+                    val cycleStart = l2.filter { item -> item -1 !in l2 }.max()
+                    onComplete.invoke(cycleStart)
+                }
     }
 }

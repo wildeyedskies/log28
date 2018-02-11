@@ -37,7 +37,7 @@ class DayView : Fragment() {
         val startDate = Calendar.getInstance()
         startDate.add(Calendar.MONTH, -1)
         val endDate = Calendar.getInstance()
-        endDate.add(Calendar.DAY_OF_MONTH, 1)
+        //endDate.add(Calendar.DAY_OF_MONTH, 1)
 
         val currentdate = Calendar.getInstance()
 
@@ -55,14 +55,6 @@ class DayView : Fragment() {
                 startDate.set(Calendar.DAY_OF_MONTH, c.get(Calendar.DAY_OF_MONTH))
                 startDate.add(Calendar.MONTH, -1)
                 Log.d("DAYVIEW", "navtoday seting startdate to ${startDate.formatDate()}")
-                horizontalCalendar.setRange(startDate, endDate)
-                horizontalCalendar.refresh()
-            } else if (c.after(endDate)) {
-                endDate.set(Calendar.YEAR, c.get(Calendar.YEAR))
-                endDate.set(Calendar.MONTH, c.get(Calendar.MONTH))
-                endDate.set(Calendar.DAY_OF_MONTH, c.get(Calendar.DAY_OF_MONTH))
-                endDate.add(Calendar.MONTH, 1)
-                Log.d("DAYVIEW", "navtoday seting enddate to ${endDate.formatDate()}")
                 horizontalCalendar.setRange(startDate, endDate)
                 horizontalCalendar.refresh()
             }
