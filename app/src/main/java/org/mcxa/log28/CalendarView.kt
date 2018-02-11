@@ -2,6 +2,7 @@ package org.mcxa.log28
 
 import android.os.AsyncTask
 import android.os.Bundle
+import android.preference.PreferenceManager
 import android.support.v4.app.Fragment
 import android.util.Log
 import android.view.LayoutInflater
@@ -38,7 +39,7 @@ class CalendarView : Fragment() {
         // grab all dates for periods in the background.
         //TODO figure out if this is a performance issue
         AppDatabase.getPeriodDates({
-            list -> periodDates += list
+            list -> periodDates += predictFuturePeriods(list.toMutableList())
             scrollCalendar.adapter.notifyDataSetChanged()
         })
 
@@ -92,6 +93,27 @@ class CalendarView : Fragment() {
                 scrollCalendar.adapter.notifyDataSetChanged()
         }
         DayData.registerForPeriodUpdates(modelChangeListener)
+    }
+
+    // TODO there might be an off by 1 error somewhere in here
+    fun predictFuturePeriods(periodDates: MutableList<Long>): MutableList<Long> {
+        val cycleStart = periodDates.filter { item -> item -1 !in periodDates }.max()!!.toCalendar()
+
+        val prefs = PreferenceManager.getDefaultSharedPreferences(context)
+        val periodLength = prefs.getString("period_length", "5").toInt()
+        val cycleLength = prefs.getString("cycle_length", "28").toInt()
+
+        for (i in 1..3) {
+            cycleStart.add(Calendar.DAY_OF_MONTH, cycleLength)
+            val cycleDays = cycleStart.clone() as Calendar
+            periodDates.add(cycleDays.formatDate())
+            for (j in 2..periodLength) {
+                cycleDays.add(Calendar.DAY_OF_MONTH, 1)
+                periodDates.add(cycleDays.formatDate())
+            }
+        }
+
+        return periodDates
     }
 
     override fun onDestroyView() {

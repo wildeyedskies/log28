@@ -61,6 +61,7 @@ class CycleOverview : Fragment() {
         calculateNextPeriod()
     }
 
+    //TODO there might be an off by one error here
     private fun calculateNextPeriod() {
         Log.d("OVERVIEW", "calculating next period")
         AppDatabase.getStartOfCurrentCycle {
