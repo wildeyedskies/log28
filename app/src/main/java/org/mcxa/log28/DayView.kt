@@ -18,7 +18,7 @@ import android.widget.ExpandableListView.OnChildClickListener
  */
 class DayView : Fragment() {
     // this function updates the data displayed in the list adapter.
-    // Note that this does not update what day is show in the horizontal calendar at the top
+    // Note that this does not updateModel what day is show in the horizontal calendar at the top
     private lateinit var changeDay: (c: Calendar) -> Unit
 
     // changes both the data displayed and the date at the top.

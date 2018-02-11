@@ -20,7 +20,7 @@ import java.util.*
  * create an instance of this fragment.
  */
 class CalendarView : Fragment() {
-    private lateinit var modelChangeListener: DirectModelNotifier.ModelChangedListener<DayData>
+    private lateinit var modelChangeListener: (DayData) -> Unit
     var periodDates = emptyList<Long>()
     // the months for which we have loaded the period data for. This should always be a contiguous range
 
@@ -84,30 +84,19 @@ class CalendarView : Fragment() {
             }
         })
 
-        modelChangeListener = object: DirectModelNotifier.ModelChangedListener<DayData> {
-            override fun onTableChanged(tableChanged: Class<*>?, action: BaseModel.Action) {
-                //We don't care
-            }
-
-            override fun onModelChanged(model: DayData, action: BaseModel.Action) {
-                if (action == BaseModel.Action.INSERT || action == BaseModel.Action.UPDATE) {
-
-                    Log.d("CALVIEW", "Model changed, redrawing calendar")
-                    if (model.physicalBleeding && model.date !in periodDates) periodDates += model.date
-                    else if (!model.physicalBleeding && model.date in periodDates) periodDates -= model.date
-                    Log.d("CALVIEW", periodDates.toString())
-
-                    scrollCalendar.adapter.notifyDataSetChanged()
-                }
-            }
+        modelChangeListener =  {
+            daydata ->
+                Log.d("CALVIEW", "Model changed, redrawing calendar")
+                if (daydata.physicalBleeding && daydata.date !in periodDates) periodDates += daydata.date
+                else if (!daydata.physicalBleeding && daydata.date in periodDates) periodDates -= daydata.date
+                scrollCalendar.adapter.notifyDataSetChanged()
         }
-
-        DirectModelNotifier.get().registerForModelChanges(DayData::class.java, modelChangeListener)
+        DayData.registerForPeriodUpdates(modelChangeListener)
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
-        DirectModelNotifier.get().unregisterForModelChanges(DayData::class.java, modelChangeListener)
+        DayData.unregisterForPeriodUpdates(modelChangeListener)
     }
 
     companion object {

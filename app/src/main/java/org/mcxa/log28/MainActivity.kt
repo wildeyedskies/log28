@@ -16,6 +16,7 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        //TODO replace with observable
         // start the intro if it's the first run of the application
         AsyncTask.execute {
             // try to get the first start variable, default to true if it is unset
@@ -28,7 +29,7 @@ class MainActivity : AppCompatActivity() {
                     Log.d("MAIN", "starting app intro")
                     startActivity(intent)
                 }
-                // update the preference preventing first start on subsequent runs
+                // updateModel the preference preventing first start on subsequent runs
                 val editor = PreferenceManager.getDefaultSharedPreferences(this).edit()
                 editor.putBoolean("first_start", false)
                 // by default all our tracking options should be on

@@ -30,7 +30,7 @@ class DayExpandableListAdapter(private val activity: FragmentActivity?,
     }
 
     fun toggleStatus(catIndex: Int, itemIndex: Int) {
-        dayData.update(catIndex, itemIndex)
+        dayData.updateModel(catIndex, itemIndex)
         notifyDataSetChanged()
     }
 

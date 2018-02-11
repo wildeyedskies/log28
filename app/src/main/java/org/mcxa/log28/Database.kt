@@ -45,7 +45,7 @@ class DayData(@PrimaryKey var date: Long = Calendar.getInstance().formatDate(),
                @Column(getterName = "getMentalTired") var mentalTired: Boolean = false) {
 
     fun getItemState(catIndex: Int, itemIndex: Int): Boolean {
-        //TODO update to when statement
+        //TODO updateModel to when statement
         return arrayListOf(
                 arrayListOf(
                         physicalBleeding,
@@ -61,7 +61,7 @@ class DayData(@PrimaryKey var date: Long = Calendar.getInstance().formatDate(),
     }
 
     // updates a column based on the index into the map
-    fun update(catIndex: Int, itemIndex: Int) {
+    fun updateModel(catIndex: Int, itemIndex: Int) {
         Log.d("DAYDATA", "Update symptom called")
 
         when(catIndex) {
@@ -85,10 +85,26 @@ class DayData(@PrimaryKey var date: Long = Calendar.getInstance().formatDate(),
             Log.d("DAYDATA", "Creating new day object for " + date.toString())
             this.save()
         }
+        // update model subscribers
+        if (catIndex == 0 && itemIndex == 0)
+            periodChangeSubscribers.forEach { f ->  Log.d("DATABASE", "invoking subscriber")
+                f.invoke(this) }
     }
 
     // static ordering of the members used to render the expandable list
     companion object {
+        // this allows other views to have a method called each time a period is updated
+        private val periodChangeSubscribers = mutableListOf<(DayData) -> Unit>()
+
+        fun registerForPeriodUpdates(f: (DayData) -> Unit) {
+            periodChangeSubscribers.add(f)
+        }
+
+        fun unregisterForPeriodUpdates(f: (DayData) -> Unit) {
+            periodChangeSubscribers.remove(f)
+        }
+
+
         val categories = arrayListOf("Physical Symptoms", "Mental Symptoms",
                 "Sexual Activity", "Physical Activity")
 
