@@ -9,4 +9,5 @@
     <string name="days_until_period">days until next period</string>
     <string name="days_left_in_period">days left in period</string>
     <string name="days_late">days late</string>
+    <string name="logged_today">Logged Today</string>
 </resources>

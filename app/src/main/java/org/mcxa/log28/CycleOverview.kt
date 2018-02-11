@@ -11,12 +11,13 @@ import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Paint
 import android.preference.PreferenceManager
+import android.support.v7.widget.LinearLayoutManager
+import android.support.v7.widget.RecyclerView
 import android.util.AttributeSet
 import android.util.Log
 import devs.mulham.horizontalcalendar.utils.Utils
 import kotlinx.android.synthetic.main.fragment_cycle_overview.*
 import java.util.*
-import kotlin.math.min
 
 
 /**
@@ -33,6 +34,9 @@ class CycleOverview : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        val layoutManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
+        today_log_list.layoutManager = layoutManager
 
         AppDatabase.getStartOfCurrentCycle {
             date ->
