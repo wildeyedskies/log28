@@ -6,6 +6,8 @@ apply plugin: 'kotlin-android-extensions'
 
 apply plugin: 'kotlin-kapt'
 
+apply plugin: 'realm-android'
+
 android {
     compileSdkVersion 27
     defaultConfig {
@@ -25,7 +27,6 @@ android {
     }
 }
 
-def dbflow_version = "4.2.4"
 def support_version = "27.0.2"
 
 dependencies {
@@ -41,15 +42,8 @@ dependencies {
     // preferences fix
     implementation 'com.takisoft.fix:preference-v7:27.0.2.0'
 
-    //DBFLOW
-    implementation 'com.android.support:support-v4:27.0.2'
-    annotationProcessor "com.github.Raizlabs.DBFlow:dbflow-processor:${dbflow_version}"
-    // use kapt for kotlin apt if you're a Kotlin user
-    kapt "com.github.Raizlabs.DBFlow:dbflow-processor:${dbflow_version}"
-    compile "com.github.Raizlabs.DBFlow:dbflow-core:${dbflow_version}"
-    compile "com.github.Raizlabs.DBFlow:dbflow:${dbflow_version}"
-    // kotlin extensions
-    compile "com.github.Raizlabs.DBFlow:dbflow-kotlinextensions:${dbflow_version}@aar"
+    //rxkotlin
+    compile 'io.reactivex.rxjava2:rxkotlin:2.2.0'
 
     //calendar
     implementation 'pl.rafman.widgets:scroll-calendar:1.5.1', {

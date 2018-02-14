@@ -4,10 +4,37 @@
     <string name="cycle_data">Enter Your Cycle Data</string>
     <string name="cycle_length">Cycle Length</string>
     <string name="period_length">Period Length</string>
-    <string  name="cycle_data_desc">log28 uses this to predict your periods. You can always change it later.</string>
+    <string name="cycle_data_desc">log28 uses this to predict your periods. You can always change it later.</string>
     <string name="last_period">Enter The First Day of Your Last Period</string>
     <string name="days_until_period">days until next period</string>
     <string name="days_left_in_period">days left in period</string>
     <string name="days_late">days late</string>
     <string name="logged_today">Logged Today</string>
+
+    <string-array name="categories">
+        <item>Physical Symptoms</item>
+        <item>Mental State</item>
+        <item>Physical Activity</item>
+        <item>Sexual Activity</item>
+    </string-array>
+
+    <string-array name="physical_symptoms">
+        <item>Bleeding</item>
+        <item>Spotting</item>
+        <item>Cramping</item>
+        <item>Headache</item>
+    </string-array>
+    <string-array name="mental_symptoms">
+        <item>Mood swings</item>
+        <item>Anxious</item>
+        <item>Happy</item>
+        <item>Sad</item>
+        <item>Tired</item>
+    </string-array>
+    <string-array name="physical_activity">
+        <item>Cardio</item>
+    </string-array>
+    <string-array name="sexual_activity">
+        <item>Protected Sex</item>
+    </string-array>
 </resources>

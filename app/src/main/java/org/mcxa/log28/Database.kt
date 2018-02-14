@@ -1,19 +1,15 @@
 package org.mcxa.log28
 
 import android.content.Context
-import android.os.AsyncTask
-import android.preference.PreferenceManager
-import android.util.Log
-import com.raizlabs.android.dbflow.annotation.Column
-import com.raizlabs.android.dbflow.annotation.Database
-import com.raizlabs.android.dbflow.annotation.PrimaryKey
-import com.raizlabs.android.dbflow.annotation.Table
-import com.raizlabs.android.dbflow.kotlinextensions.*
-import com.raizlabs.android.dbflow.sql.language.SQLite
-import org.mcxa.log28.DayData_Table.date
-import org.mcxa.log28.DayData_Table.physicalBleeding
-import java.text.SimpleDateFormat
-import java.util.*
+import android.support.v7.preference.PreferenceManager
+import io.reactivex.Observable
+import io.reactivex.rxkotlin.toObservable
+import io.realm.Realm
+import io.realm.RealmList
+import io.realm.RealmObject
+import io.realm.Sort
+import io.realm.annotations.PrimaryKey
+import java.util.Calendar
 
 // format a date as yyyymmdd
 fun Calendar.formatDate(): Long {
@@ -31,141 +27,80 @@ fun Long.toCalendar(): Calendar {
     return cal
 }
 
-// all the logic for the log28 database
-@Table(database = AppDatabase::class)
-class DayData(@PrimaryKey var date: Long = Calendar.getInstance().formatDate(),
-               @Column(getterName = "getPhysicalBleeding") var physicalBleeding: Boolean = false,
-               @Column(getterName = "getPhysicalSpotting") var physicalSpotting: Boolean = false,
-               @Column(getterName = "getPhysicalCramping") var physicalCramping: Boolean = false,
-               @Column(getterName = "getPhysicalHeadache") var physicalHeadache: Boolean = false,
-               @Column(getterName = "getMentalMoodSwings") var mentalMoodSwings: Boolean = false,
-               @Column(getterName = "getMentalAnxious") var mentalAnxious: Boolean = false,
-               @Column(getterName = "getMentalHappy") var mentalHappy: Boolean = false,
-               @Column(getterName = "getMentalSad") var mentalSad: Boolean = false,
-               @Column(getterName = "getMentalTired") var mentalTired: Boolean = false) {
+// represents a category physical, mental, etc
+open class Category(@PrimaryKey val name: String, var active: Boolean): RealmObject()
 
-    fun getItemState(catIndex: Int, itemIndex: Int): Boolean {
-        //TODO updateModel to when statement
-        return arrayListOf(
-                arrayListOf(
-                        physicalBleeding,
-                        physicalSpotting,
-                        physicalCramping,
-                        physicalHeadache
-                ),
-                arrayListOf(
-                        mentalMoodSwings,
-                        mentalAnxious
-                )
-        )[catIndex][itemIndex]
-    }
+// represents an individual symptom bleeding, headaches, etc
+open class Symptom(@PrimaryKey val name: String, val category: Category, var active: Boolean): RealmObject()
 
-    // updates a column based on the index into the map
-    fun updateModel(catIndex: Int, itemIndex: Int) {
-        Log.d("DAYDATA", "Update symptom called")
+// represents data from a given day
+open class DayData(
+        @PrimaryKey val date: Long,
+        val symptoms: RealmList<Symptom>
+): RealmObject()
 
-        when(catIndex) {
-            0 -> when(itemIndex) {
-                0 -> physicalBleeding = !physicalBleeding
-                1 -> physicalSpotting = !physicalSpotting
-                2 -> physicalCramping = !physicalCramping
-                3 -> physicalHeadache = !physicalHeadache
+fun initializeRealm(context: Context) {
+    val realm = Realm.getDefaultInstance()
+    val categoryStrings = context.resources.getStringArray(R.array.categories)
+    val symptomStrings = listOf(
+            context.resources.getStringArray(R.array.physical_symptoms),
+            context.resources.getStringArray(R.array.mental_symptoms),
+            context.resources.getStringArray(R.array.physical_activity),
+            context.resources.getStringArray(R.array.sexual_activity)
+    )
+    realm.executeTransactionAsync {
+        localRelam -> var i = 0
+        categoryStrings.forEach {
+            val category = Category(it, true)
+            localRelam.copyToRealm(category)
+
+            symptomStrings[i].forEach {
+                val symptom = Symptom(it, category, true)
+                localRelam.copyToRealm(symptom)
             }
-            1 -> when(itemIndex) {
-                0 -> mentalMoodSwings = !mentalMoodSwings
-                1 -> mentalAnxious = !mentalAnxious
-            }
+            i++
         }
-
-        if (this.exists()) {
-            Log.d("DAYDATA", "Updating day object for " + date.toString())
-            this.update()
-        }
-        else {
-            Log.d("DAYDATA", "Creating new day object for " + date.toString())
-            this.save()
-        }
-        // update model subscribers
-        if (catIndex == 0 && itemIndex == 0)
-            periodChangeSubscribers.forEach { f ->  Log.d("DATABASE", "invoking subscriber")
-                f.invoke(this) }
-    }
-
-    // static ordering of the members used to render the expandable list
-    companion object {
-        // this allows other views to have a method called each time a period is updated
-        private val periodChangeSubscribers = mutableListOf<(DayData) -> Unit>()
-
-        fun registerForPeriodUpdates(f: (DayData) -> Unit) {
-            periodChangeSubscribers.add(f)
-        }
-
-        fun unregisterForPeriodUpdates(f: (DayData) -> Unit) {
-            periodChangeSubscribers.remove(f)
-        }
-
-
-        val categories = arrayListOf("Physical Symptoms", "Mental Symptoms",
-                "Sexual Activity", "Physical Activity")
-
-        val items = arrayListOf(
-                arrayListOf(
-                        "Bleeding",
-                        "Spotting",
-                        "Cramping",
-                        "Headaches"
-                ),
-                arrayListOf(
-                        "Mood swings",
-                        "Anxious"
-                )
-        )
     }
 }
 
-@Database(version = AppDatabase.VERSION)
-object AppDatabase {
-    const val VERSION = 1
+fun setFirstPeriod(firstDay: Calendar, context: Context?) {
+    val realm = Realm.getDefaultInstance()
+    val oldData = realm.where(DayData::class.java).findAll()
+    // get the bleeding symptom
+    val bleeding = realm.where(Symptom::class.java).equalTo("name", "Bleeding").findFirst()!! //crash if we do not find this
 
-    fun getDataByDate(queryDate: Calendar): DayData? {
-        return (select from DayData::class where (date eq queryDate.formatDate())).result
-    }
+    // get the period length
+    val periodLength = PreferenceManager.getDefaultSharedPreferences(context)
+            .getString("period_length", "5").toIntOrNull() ?: 5
 
-    fun setFirstPeriod(firstDay: Calendar, context: Context?) {
-        AsyncTask.execute {
-            // the kotlin extension syntax for deleting wasn't working
-            SQLite.delete().from(DayData::class.java).execute()
 
-            // get the period length
-            val periodLength = PreferenceManager.getDefaultSharedPreferences(context)
-                    .getString("period_length", "5").toIntOrNull() ?: 5
-
-            // for each day in the period create a DayData object with physical  bleeding
-            // set to true, and save it in the database
-            for (i in 0 until periodLength) {
-                val day = DayData(firstDay.formatDate(), physicalBleeding = true)
-                day.save()
-                firstDay.add(Calendar.DAY_OF_MONTH, 1)
-            }
+    realm.executeTransactionAsync { localRealm ->
+        //clear data from previous attempts
+        oldData.deleteAllFromRealm()
+        // for each day in the period create a DayData object with physical  bleeding
+        // set to true, and save it in the database
+        for (i in 0 until periodLength) {
+            val day = DayData(firstDay.formatDate(), RealmList(bleeding))
+            localRealm.copyToRealm(day)
+            firstDay.add(Calendar.DAY_OF_MONTH, 1)
         }
     }
+}
 
-    //days must be formatted as yyyymmdd
-    fun getPeriodDates(onComplete: (List<Long>) -> Unit) {
-        (select from DayData::class
-                where (physicalBleeding eq true)).async list
-                {transaction, list -> onComplete.invoke(list.map { d -> d.date })}
-    }
+fun getPeriodDates(): Observable<DayData> {
+    val realm = Realm.getDefaultInstance()
+    return realm.where(DayData::class.java).equalTo("symptoms.name", "Bleeding").findAllAsync().toObservable()
+}
 
-    fun getStartOfCurrentCycle(onComplete: (Long?) -> Unit) {
-        //(select max(date) from daydata where date in (select date as d1 from daydata where bleeding = 1 and
-        // (select bleeding from daydata where date = d1 - 1) = 0))
+fun getDataByDate(queryDate: Calendar): DayData? {
+    return Realm.getDefaultInstance().where(DayData::class.java).equalTo("date", queryDate.formatDate()).findFirst()
+}
 
-        //TODO replace DBFlow with something that supports advanced queries so that this mess can be replaced with the above query
-        (select from DayData::class where (physicalBleeding eq true)).async list
-                { _, list -> val l2 = list.map { d -> d.date }
-                    val cycleStart = l2.filter { item -> item -1 !in l2 }.max()
-                    onComplete.invoke(cycleStart)
-                }
-    }
+fun getStartOfCurrentCycle(): Long? {
+    val realm = Realm.getDefaultInstance()
+    val periodDays = realm.where(DayData::class.java)
+            .equalTo("symptoms.name", "Bleeding").sort("date", Sort.DESCENDING).findAll()
+    //TODO make this handle the case of a period longer than 30 days straight
+    val dates = periodDays.subList(0, 30).map { d -> d.date }
+    return dates.filter { it - 1 !in dates }.max()
 }

@@ -2,13 +2,12 @@ package org.mcxa.log28.org.mcxa.log28.intro
 
 import android.os.Bundle
 import android.support.v4.app.Fragment
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import kotlinx.android.synthetic.main.fragment_last_period.*
-import org.mcxa.log28.AppDatabase
 import org.mcxa.log28.R
+import org.mcxa.log28.setFirstPeriod
 import pl.rafman.scrollcalendar.contract.MonthScrollListener
 import pl.rafman.scrollcalendar.data.CalendarDay
 import java.util.*
@@ -59,7 +58,8 @@ class LastPeriodFragment: Fragment() {
 
             if (firstDay.before(Calendar.getInstance())) {
                 dateSelected = firstDay
-                AppDatabase.setFirstPeriod(firstDay, this.context)
+                (this.activity as AppIntroActivity).setupComplete = true
+                setFirstPeriod(firstDay, this.context)
             }
         })
     }

@@ -16,28 +16,14 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        //TODO replace with observable
-        // start the intro if it's the first run of the application
-        AsyncTask.execute {
-            // try to get the first start variable, default to true if it is unset
-            val firstStart = PreferenceManager.getDefaultSharedPreferences(this).getBoolean("first_start", true)
+        val firstStart = PreferenceManager.getDefaultSharedPreferences(this).getBoolean("first_start", true)
 
-            if (firstStart) {
-                val intent = Intent(this, AppIntroActivity::class.java)
-
-                runOnUiThread {
-                    Log.d("MAIN", "starting app intro")
-                    startActivity(intent)
-                }
-                // updateModel the preference preventing first start on subsequent runs
-                val editor = PreferenceManager.getDefaultSharedPreferences(this).edit()
-                editor.putBoolean("first_start", false)
-                // by default all our tracking options should be on
-                editor.putBoolean("mental_tracking", true)
-                editor.putBoolean("physical_tracking", true)
-                editor.putBoolean("sexual_tracking", true)
-                editor.apply()
-            }
+        if (firstStart) {
+            val intent = Intent(this, AppIntroActivity::class.java)
+            Log.d("MAIN", "starting app intro")
+            // set up realm
+            initializeRealm(this)
+            startActivity(intent)
         }
 
         setContentView(R.layout.activity_main)

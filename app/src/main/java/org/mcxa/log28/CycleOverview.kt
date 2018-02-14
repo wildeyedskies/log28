@@ -30,7 +30,7 @@ class CycleOverview : Fragment() {
     // whenever the cycle or period lengths change, recalculate everything
     private val prefListener = {
         _: SharedPreferences, key: String ->
-            if (key == "cycle_length" || key == "period_length") calculateNextPeriod()
+            if (key == "cycle_length" || key == "period_length"|| key == "first_start") calculateNextPeriod()
     }
 
     private val modelChangeListener = {
@@ -64,12 +64,17 @@ class CycleOverview : Fragment() {
     //TODO there might be an off by one error here
     private fun calculateNextPeriod() {
         Log.d("OVERVIEW", "calculating next period")
+        val prefs = PreferenceManager.getDefaultSharedPreferences(context)
+        val firstStart = prefs.getBoolean("first_start", true)
+        val cycleLength = prefs.getString("cycle_length", "28").toInt()
+        val periodLength = prefs.getString("period_length", "5").toInt()
+
+        // do not run this method if setup has not been completed
+        if (firstStart) return
+
         AppDatabase.getStartOfCurrentCycle {
             date ->
-            val prefs = PreferenceManager.getDefaultSharedPreferences(context)
-            val cycleLength = prefs.getString("cycle_length", "28").toInt()
-            val periodLength = prefs.getString("period_length", "5").toInt()
-            val cycleStart = date!!.toCalendar()
+            val cycleStart = date?.toCalendar()
 
             // updateModel the text views with the correct days until
             val cycleDay = Utils.daysBetween(cycleStart, Calendar.getInstance())
