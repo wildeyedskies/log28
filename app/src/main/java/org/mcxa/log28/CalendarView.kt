@@ -1,6 +1,5 @@
 package org.mcxa.log28
 
-import android.os.AsyncTask
 import android.os.Bundle
 import android.preference.PreferenceManager
 import android.support.v4.app.Fragment
@@ -8,8 +7,6 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import com.raizlabs.android.dbflow.runtime.DirectModelNotifier
-import com.raizlabs.android.dbflow.structure.BaseModel
 import kotlinx.android.synthetic.main.fragment_calendar_view.*
 import pl.rafman.scrollcalendar.contract.MonthScrollListener
 import pl.rafman.scrollcalendar.data.CalendarDay
@@ -22,7 +19,7 @@ import java.util.*
  */
 class CalendarView : Fragment() {
     private lateinit var modelChangeListener: (DayData) -> Unit
-    var periodDates = emptyList<Long>()
+    val periodDates = mutableListOf<Long>()
     // the months for which we have loaded the period data for. This should always be a contiguous range
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -37,11 +34,11 @@ class CalendarView : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         // grab all dates for periods in the background.
-        //TODO figure out if this is a performance issue
-        AppDatabase.getPeriodDates({
-            list -> periodDates += predictFuturePeriods(list.toMutableList())
+        getPeriodDates().doOnComplete {
             scrollCalendar.adapter.notifyDataSetChanged()
-        })
+        }.subscribe {
+            periodDates.add(it.date)
+        }
 
         // show periods on the calendar as it renders
         val today = Calendar.getInstance()
@@ -88,11 +85,10 @@ class CalendarView : Fragment() {
         modelChangeListener =  {
             daydata ->
                 Log.d("CALVIEW", "Model changed, redrawing calendar")
-                if (daydata.physicalBleeding && daydata.date !in periodDates) periodDates += daydata.date
-                else if (!daydata.physicalBleeding && daydata.date in periodDates) periodDates -= daydata.date
+                if (daydata.hasSymptom("Bleeding") && daydata.date !in periodDates) periodDates += daydata.date
+                else if (!daydata.hasSymptom("Bleeding") && daydata.date in periodDates) periodDates -= daydata.date
                 scrollCalendar.adapter.notifyDataSetChanged()
         }
-        DayData.registerForPeriodUpdates(modelChangeListener)
     }
 
     // TODO there might be an off by 1 error somewhere in here
@@ -118,7 +114,6 @@ class CalendarView : Fragment() {
 
     override fun onDestroyView() {
         super.onDestroyView()
-        DayData.unregisterForPeriodUpdates(modelChangeListener)
     }
 
     companion object {

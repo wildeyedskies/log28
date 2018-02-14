@@ -37,7 +37,12 @@ open class Symptom(@PrimaryKey val name: String, val category: Category, var act
 open class DayData(
         @PrimaryKey val date: Long,
         val symptoms: RealmList<Symptom>
-): RealmObject()
+): RealmObject() {
+    fun hasSymptom(symptom: String): Boolean {
+        symptoms.forEach { if (it.name == symptom) return true }
+        return false
+    }
+}
 
 fun initializeRealm(context: Context) {
     val realm = Realm.getDefaultInstance()
@@ -89,11 +94,13 @@ fun setFirstPeriod(firstDay: Calendar, context: Context?) {
 
 fun getPeriodDates(): Observable<DayData> {
     val realm = Realm.getDefaultInstance()
-    return realm.where(DayData::class.java).equalTo("symptoms.name", "Bleeding").findAllAsync().toObservable()
+    return realm.where(DayData::class.java)
+            .equalTo("symptoms.name", "Bleeding").findAllAsync().toObservable()
 }
 
 fun getDataByDate(queryDate: Calendar): DayData? {
-    return Realm.getDefaultInstance().where(DayData::class.java).equalTo("date", queryDate.formatDate()).findFirst()
+    return Realm.getDefaultInstance().where(DayData::class.java)
+            .equalTo("date", queryDate.formatDate()).findFirstAsync()
 }
 
 fun getStartOfCurrentCycle(): Long? {
