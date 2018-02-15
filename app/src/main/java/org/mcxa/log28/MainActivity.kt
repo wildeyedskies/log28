@@ -11,8 +11,6 @@ import org.mcxa.log28.org.mcxa.log28.intro.AppIntroActivity
 import java.util.*
 
 class MainActivity : AppCompatActivity() {
-    private val tabIcons = arrayOf(R.drawable.ic_cycle, R.drawable.ic_plus, R.drawable.ic_calendar, R.drawable.ic_settings)
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -44,14 +42,15 @@ class MainActivity : AppCompatActivity() {
         setSupportActionBar(toolbar)
 
         // Get the ViewPager and set it's PagerAdapter so that it can display items
-        viewPager.adapter = TabPagerAdapter(supportFragmentManager,
+        val pagerAdapter = TabPagerAdapter(supportFragmentManager,
                 this@MainActivity)
+        viewPager.adapter = pagerAdapter
 
         // Give the TabLayout the ViewPager
         sliding_tabs.setupWithViewPager(viewPager)
 
-        for (i in tabIcons.indices) {
-            sliding_tabs.getTabAt(i)?.setIcon(tabIcons[i])
+        for (i in pagerAdapter.tabText.indices) {
+            sliding_tabs.getTabAt(i)?.customView = pagerAdapter.getTabView(i)
         }
     }
 
