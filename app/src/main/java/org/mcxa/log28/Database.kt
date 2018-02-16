@@ -2,12 +2,7 @@ package org.mcxa.log28
 
 import android.content.Context
 import android.support.v7.preference.PreferenceManager
-import io.reactivex.Observable
-import io.reactivex.rxkotlin.toObservable
-import io.realm.Realm
-import io.realm.RealmList
-import io.realm.RealmObject
-import io.realm.Sort
+import io.realm.*
 import io.realm.annotations.PrimaryKey
 import java.util.Calendar
 
@@ -92,15 +87,15 @@ fun setFirstPeriod(firstDay: Calendar, context: Context?) {
     }
 }
 
-fun getPeriodDates(): Observable<DayData> {
+fun getPeriodDates(): RealmResults<DayData> {
     val realm = Realm.getDefaultInstance()
     return realm.where(DayData::class.java)
-            .equalTo("symptoms.name", "Bleeding").findAllAsync().toObservable()
+            .equalTo("symptoms.name", "Bleeding").findAllAsync()
 }
 
 fun getDataByDate(queryDate: Calendar): DayData? {
     return Realm.getDefaultInstance().where(DayData::class.java)
-            .equalTo("date", queryDate.formatDate()).findFirstAsync()
+            .equalTo("date", queryDate.formatDate()).findFirst()
 }
 
 fun getStartOfCurrentCycle(): Long? {

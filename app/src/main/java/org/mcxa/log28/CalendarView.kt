@@ -18,8 +18,7 @@ import java.util.*
  * create an instance of this fragment.
  */
 class CalendarView : Fragment() {
-    private lateinit var modelChangeListener: (DayData) -> Unit
-    val periodDates = mutableListOf<Long>()
+    val periodDates = getPeriodDates()
     // the months for which we have loaded the period data for. This should always be a contiguous range
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -33,18 +32,19 @@ class CalendarView : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        // grab all dates for periods in the background.
-        getPeriodDates().doOnComplete {
-            scrollCalendar.adapter.notifyDataSetChanged()
-        }.subscribe {
-            periodDates.add(it.date)
+
+        periodDates.addChangeListener {
+            results, changeSet ->
+            if (changeSet != null) {
+                scrollCalendar.adapter.notifyDataSetChanged()
+            }
         }
 
         // show periods on the calendar as it renders
         val today = Calendar.getInstance()
         scrollCalendar.setDateWatcher({
             year, month, day ->
-            if ((year.toLong() * 10000) + (month.toLong() * 100) + day.toLong() in periodDates) {
+            if ((year.toLong() * 10000) + (month.toLong() * 100) + day.toLong() in periodDates.map { d -> d.date }) { //TODO: figure out if the JVM caches this
                 Log.d("CALVIEW", "Period found at " + year.toString() + " " + month.toString())
                 CalendarDay.SELECTED
             } else if (year == today.get(Calendar.YEAR) &&
@@ -81,14 +81,6 @@ class CalendarView : Fragment() {
                 return true
             }
         })
-
-        modelChangeListener =  {
-            daydata ->
-                Log.d("CALVIEW", "Model changed, redrawing calendar")
-                if (daydata.hasSymptom("Bleeding") && daydata.date !in periodDates) periodDates += daydata.date
-                else if (!daydata.hasSymptom("Bleeding") && daydata.date in periodDates) periodDates -= daydata.date
-                scrollCalendar.adapter.notifyDataSetChanged()
-        }
     }
 
     // TODO there might be an off by 1 error somewhere in here
@@ -114,6 +106,7 @@ class CalendarView : Fragment() {
 
     override fun onDestroyView() {
         super.onDestroyView()
+        periodDates.removeAllChangeListeners()
     }
 
     companion object {

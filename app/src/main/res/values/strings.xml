@@ -37,4 +37,11 @@
     <string-array name="sexual_activity">
         <item>Protected Sex</item>
     </string-array>
+
+    <string-array name="tab_names">
+        <item name="overview">Overview</item>
+        <item name="add_info">Add Info</item>
+        <item name="calendar">Calendar</item>
+        <item name="settings">Settings</item>
+    </string-array>
 </resources>

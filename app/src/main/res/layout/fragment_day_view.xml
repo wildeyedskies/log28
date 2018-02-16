@@ -14,13 +14,10 @@
         app:textColorNormal="#bababa"
         app:textColorSelected="@color/primaryText"/>
 
-    <ExpandableListView
-        android:id="@+id/expandableListView"
-        android:layout_width="match_parent"
-        android:layout_height="fill_parent"
-        android:indicatorLeft="?android:attr/expandableListPreferredItemIndicatorLeft"
-        android:divider="@android:color/darker_gray"
-        android:dividerHeight="0.5dp" >
-    </ExpandableListView>
+    <android.support.v7.widget.RecyclerView android:id="@+id/day_view_recycler"
+        android:layout_width="match_parent" android:layout_height="match_parent"
+        android:clipChildren="false">
+
+    </android.support.v7.widget.RecyclerView>
 
 </LinearLayout>

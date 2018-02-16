@@ -33,6 +33,7 @@ class CycleOverview : Fragment() {
             if (key == "cycle_length" || key == "period_length"|| key == "first_start") calculateNextPeriod()
     }
 
+    //TODO fix model updates for new database
     private val modelChangeListener = {
         _: DayData -> calculateNextPeriod()
     }
@@ -41,7 +42,6 @@ class CycleOverview : Fragment() {
                               savedInstanceState: Bundle?): View? {
 
         PreferenceManager.getDefaultSharedPreferences(context).registerOnSharedPreferenceChangeListener(prefListener)
-        DayData.registerForPeriodUpdates(modelChangeListener)
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_cycle_overview, container, false)
     }
@@ -49,7 +49,6 @@ class CycleOverview : Fragment() {
     override fun onDestroyView() {
         super.onDestroyView()
         PreferenceManager.getDefaultSharedPreferences(context).unregisterOnSharedPreferenceChangeListener(prefListener)
-        DayData.unregisterForPeriodUpdates(modelChangeListener)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -61,7 +60,6 @@ class CycleOverview : Fragment() {
         calculateNextPeriod()
     }
 
-    //TODO there might be an off by one error here
     private fun calculateNextPeriod() {
         Log.d("OVERVIEW", "calculating next period")
         val prefs = PreferenceManager.getDefaultSharedPreferences(context)
@@ -72,29 +70,26 @@ class CycleOverview : Fragment() {
         // do not run this method if setup has not been completed
         if (firstStart) return
 
-        AppDatabase.getStartOfCurrentCycle {
-            date ->
-            val cycleStart = date?.toCalendar()
+        val cycleStart = getStartOfCurrentCycle()?.toCalendar()
 
-            // updateModel the text views with the correct days until
-            val cycleDay = Utils.daysBetween(cycleStart, Calendar.getInstance())
-            Log.d("OVERVIEW", "cycle length $cycleLength, periodLength $periodLength cycle day is $cycleDay")
-            // on period
-            if (cycleDay < periodLength) {
-                days_until_text.text = getString(R.string.days_left_in_period)
-                days_until_number.text = (periodLength - cycleDay).toString()
-            } else if (cycleDay < cycleLength) {
-                days_until_text.text = getString(R.string.days_until_period)
-                days_until_number.text = (cycleLength - cycleDay).toString()
-            } else {
-                days_until_text.text = getString(R.string.days_late)
-                days_until_number.text = (cycleDay - cycleLength).toString()
-            }
-
-            // updateModel the progress bar
-            cycle_view.setCycleData(cycleLength, periodLength, cycleDay)
-            this.view?.postInvalidate()
+        // updateModel the text views with the correct days until
+        val cycleDay = Utils.daysBetween(cycleStart, Calendar.getInstance())
+        Log.d("OVERVIEW", "cycle length $cycleLength, periodLength $periodLength cycle day is $cycleDay")
+        // on period
+        if (cycleDay < periodLength) {
+            days_until_text.text = getString(R.string.days_left_in_period)
+            days_until_number.text = (periodLength - cycleDay).toString()
+        } else if (cycleDay < cycleLength) {
+            days_until_text.text = getString(R.string.days_until_period)
+            days_until_number.text = (cycleLength - cycleDay).toString()
+        } else {
+            days_until_text.text = getString(R.string.days_late)
+            days_until_number.text = (cycleDay - cycleLength).toString()
         }
+
+        // updateModel the progress bar
+        cycle_view.setCycleData(cycleLength, periodLength, cycleDay)
+        this.view?.postInvalidate()
     }
 
     companion object {
@@ -118,13 +113,13 @@ class CycleOverview : Fragment() {
 // this class draws the custom graphic for showing the cycle
 // it is not designed to be used outside of this fragment
 class CycleView(context: Context, attrs: AttributeSet) : View(context, attrs) {
-    val paintRed = Paint(Paint.ANTI_ALIAS_FLAG)
-    val paintGrey = Paint(Paint.ANTI_ALIAS_FLAG)
-    val paintIndicator = Paint(Paint.ANTI_ALIAS_FLAG)
+    private val paintRed = Paint(Paint.ANTI_ALIAS_FLAG)
+    private val paintGrey = Paint(Paint.ANTI_ALIAS_FLAG)
+    private val paintIndicator = Paint(Paint.ANTI_ALIAS_FLAG)
 
-    var periodLength = 5
-    var cycleLength = 28
-    var cycleDay: Int? = null
+    private var periodLength = 5
+    private var cycleLength = 28
+    private var cycleDay: Int? = null
 
     init {
         paintRed.color = Color.parseColor("#D32F2F")

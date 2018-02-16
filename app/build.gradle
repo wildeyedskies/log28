@@ -42,8 +42,9 @@ dependencies {
     // preferences fix
     implementation 'com.takisoft.fix:preference-v7:27.0.2.0'
 
-    //rxkotlin
-    compile 'io.reactivex.rxjava2:rxkotlin:2.2.0'
+    // groupie recyclerview library
+    implementation 'com.xwray:groupie:2.0.3'
+    implementation 'com.xwray:groupie-kotlin-android-extensions:2.0.3'
 
     //calendar
     implementation 'pl.rafman.widgets:scroll-calendar:1.5.1', {
