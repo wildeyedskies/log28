@@ -106,3 +106,11 @@ fun getStartOfCurrentCycle(): Long? {
     val dates = periodDays.subList(0, 30).map { d -> d.date }
     return dates.filter { it - 1 !in dates }.max()
 }
+
+fun getCategories(): RealmResults<Category> {
+    return Realm.getDefaultInstance().where(Category::class.java).findAll()
+}
+
+fun getSymptoms(): RealmResults<Symptom> {
+    return Realm.getDefaultInstance().where(Symptom::class.java).findAll()
+}

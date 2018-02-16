@@ -12,7 +12,8 @@ import java.util.*
 import devs.mulham.horizontalcalendar.utils.HorizontalCalendarListener
 import kotlinx.android.synthetic.main.fragment_day_view.*
 import android.widget.ExpandableListView.OnChildClickListener
-import com.xwray.groupie.ExpandableGroup
+import com.xwray.groupie.GroupAdapter
+import com.xwray.groupie.ViewHolder
 
 /**
  * Handles the day view
@@ -25,7 +26,8 @@ class DayView : Fragment() {
     // changes both the data displayed and the date at the top.
     lateinit var navigateToDay: (c: Calendar) -> Unit
 
-    private val physicalSection = ExpandableGroup()
+    private val categories = getCategories()
+    private val symptoms = getSymptoms()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -35,6 +37,13 @@ class DayView : Fragment() {
                               savedInstanceState: Bundle?): View? {
         // Inflate the layout for this fragment
         val rootView = inflater.inflate(R.layout.fragment_day_view, container, false)
+
+        val groupAdapter = GroupAdapter<ViewHolder>()
+        day_view_recycler.adapter = groupAdapter
+
+        symptoms.forEach {
+
+        }
 
         // setup the top calendar
         val startDate = Calendar.getInstance()
