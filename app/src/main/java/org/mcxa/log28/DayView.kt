@@ -7,13 +7,14 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import com.xwray.groupie.ExpandableGroup
 import devs.mulham.horizontalcalendar.HorizontalCalendar
 import java.util.*
 import devs.mulham.horizontalcalendar.utils.HorizontalCalendarListener
 import kotlinx.android.synthetic.main.fragment_day_view.*
-import android.widget.ExpandableListView.OnChildClickListener
 import com.xwray.groupie.GroupAdapter
-import com.xwray.groupie.ViewHolder
+import com.xwray.groupie.kotlinandroidextensions.*
+import org.mcxa.log28.org.mcxa.log28.expandable.ExpandableHeaderItem
 
 /**
  * Handles the day view
@@ -37,13 +38,6 @@ class DayView : Fragment() {
                               savedInstanceState: Bundle?): View? {
         // Inflate the layout for this fragment
         val rootView = inflater.inflate(R.layout.fragment_day_view, container, false)
-
-        val groupAdapter = GroupAdapter<ViewHolder>()
-        day_view_recycler.adapter = groupAdapter
-
-        symptoms.forEach {
-
-        }
 
         // setup the top calendar
         val startDate = Calendar.getInstance()
@@ -92,22 +86,25 @@ class DayView : Fragment() {
         return rootView
     }
 
+    // setup the recycler view
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val currentdate = Calendar.getInstance()
+        val groupAdapter = GroupAdapter<ViewHolder>()
+        day_view_recycler.adapter = groupAdapter
 
-        // set up the expandable list
-        val listAdapter = DayExpandableListAdapter(this.activity, currentdate)
+        categories.forEach {
+            ExpandableGroup(ExpandableHeaderItem(it.name)).apply {
+
+                groupAdapter.add(this)
+            }
+        }
+
         changeDay = {
             c -> Log.d("DAYVIEW", "Changeday called on day ${c.formatDate()}")
-            listAdapter.changeDay(c)
+            //TODO set day within recycler view
         }
-        expandableListView.setAdapter(listAdapter)
-        expandableListView.setOnChildClickListener(OnChildClickListener { parent, v, groupPosition, childPosition, id ->
-            listAdapter.toggleStatus(groupPosition, childPosition)
-            true
-        })
+
     }
 
     override fun onAttach(context: Context?) {

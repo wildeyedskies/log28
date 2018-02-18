@@ -2,6 +2,7 @@ package org.mcxa.log28
 
 import android.content.Context
 import android.support.v7.preference.PreferenceManager
+import android.util.Log
 import io.realm.*
 import io.realm.annotations.PrimaryKey
 import java.util.Calendar
@@ -23,16 +24,15 @@ fun Long.toCalendar(): Calendar {
 }
 
 // represents a category physical, mental, etc
-open class Category(@PrimaryKey val name: String, var active: Boolean): RealmObject()
+open class Category(@PrimaryKey var name: String = "", var active: Boolean = true): RealmObject()
 
 // represents an individual symptom bleeding, headaches, etc
-open class Symptom(@PrimaryKey val name: String, val category: Category, var active: Boolean): RealmObject()
+open class Symptom(@PrimaryKey var name: String = "", var category: Category? = null, var active: Boolean = true): RealmObject()
 
 // represents data from a given day
-open class DayData(
-        @PrimaryKey val date: Long,
-        val symptoms: RealmList<Symptom>
-): RealmObject() {
+open class DayData(@PrimaryKey var date: Long = Calendar.getInstance().formatDate(),
+                   var symptoms: RealmList<Symptom> = RealmList<Symptom>()): RealmObject() {
+
     fun hasSymptom(symptom: String): Boolean {
         symptoms.forEach { if (it.name == symptom) return true }
         return false
@@ -49,12 +49,19 @@ fun initializeRealm(context: Context) {
             context.resources.getStringArray(R.array.sexual_activity)
     )
     realm.executeTransactionAsync {
-        localRelam -> var i = 0
+        localRelam ->
+        // clear any extraneous data
+        localRelam.where(Category::class.java).findAll().deleteAllFromRealm()
+        localRelam.where(Symptom::class.java).findAll().deleteAllFromRealm()
+
+        var i = 0
         categoryStrings.forEach {
-            val category = Category(it, true)
-            localRelam.copyToRealm(category)
+            Log.d("DATABASE", "inserting category $it")
+            var category = Category(it, true)
+            category = localRelam.copyToRealm(category)
 
             symptomStrings[i].forEach {
+                Log.d("DATABASE", "inserting symptom $it")
                 val symptom = Symptom(it, category, true)
                 localRelam.copyToRealm(symptom)
             }
@@ -65,9 +72,6 @@ fun initializeRealm(context: Context) {
 
 fun setFirstPeriod(firstDay: Calendar, context: Context?) {
     val realm = Realm.getDefaultInstance()
-    val oldData = realm.where(DayData::class.java).findAll()
-    // get the bleeding symptom
-    val bleeding = realm.where(Symptom::class.java).equalTo("name", "Bleeding").findFirst()!! //crash if we do not find this
 
     // get the period length
     val periodLength = PreferenceManager.getDefaultSharedPreferences(context)
@@ -76,7 +80,12 @@ fun setFirstPeriod(firstDay: Calendar, context: Context?) {
 
     realm.executeTransactionAsync { localRealm ->
         //clear data from previous attempts
-        oldData.deleteAllFromRealm()
+        localRealm.where(DayData::class.java).findAll().deleteAllFromRealm()
+
+        // get the bleeding symptom
+        //crash if we do not find this
+        val bleeding = localRealm.where(Symptom::class.java).equalTo("name", "Bleeding").findFirst()!!
+
         // for each day in the period create a DayData object with physical  bleeding
         // set to true, and save it in the database
         for (i in 0 until periodLength) {
@@ -102,8 +111,8 @@ fun getStartOfCurrentCycle(): Long? {
     val realm = Realm.getDefaultInstance()
     val periodDays = realm.where(DayData::class.java)
             .equalTo("symptoms.name", "Bleeding").sort("date", Sort.DESCENDING).findAll()
-    //TODO make this handle the case of a period longer than 30 days straight
-    val dates = periodDays.subList(0, 30).map { d -> d.date }
+    //TODO fix this performance issue
+    val dates = periodDays.map { d -> d.date }
     return dates.filter { it - 1 !in dates }.max()
 }
 

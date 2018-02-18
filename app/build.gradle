@@ -27,6 +27,10 @@ android {
     }
 }
 
+androidExtensions {
+    experimental = true
+}
+
 def support_version = "27.0.2"
 
 dependencies {
