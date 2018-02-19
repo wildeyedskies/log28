@@ -16,7 +16,6 @@ import kotlinx.android.synthetic.main.fragment_day_view.*
 import com.xwray.groupie.GroupAdapter
 import com.xwray.groupie.Section
 import com.xwray.groupie.kotlinandroidextensions.*
-import io.realm.Realm
 import org.mcxa.log28.org.mcxa.log28.expandable.ChildItem
 import org.mcxa.log28.org.mcxa.log28.expandable.ExpandableHeaderItem
 
@@ -30,9 +29,9 @@ class DayView : Fragment() {
     private val categories = getCategories()
     private val symptoms = getSymptoms()
 
-    // root section of the recyclerview. Stored here so we can update it
-    private var rootSection = Section()
-    private var expandGroup = mutableListOf<ExpandableGroup>()
+    // we store our categories and symptom groups here so we can update them
+    private val categoryGroup = mutableListOf<ExpandableGroup>()
+    private val symptomList = mutableListOf<MutableList<ChildItem>>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -95,36 +94,51 @@ class DayView : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         val groupAdapter = GroupAdapter<ViewHolder>()
-        groupAdapter.add(rootSection)
 
         day_view_recycler.apply {
             layoutManager = LinearLayoutManager(context)
             adapter = groupAdapter
         }
 
-        loadDayData(Calendar.getInstance())
+        val daydata = getDataByDate(Calendar.getInstance())
+
+        // add each category as a header
+        // add each symptom under a category, set the state based on what's in the DayData object
+        categories.forEach { category ->
+            ExpandableGroup(ExpandableHeaderItem(category.name)).apply {
+                val symptomsInCategory = mutableListOf<ChildItem>()
+                symptoms.filter { s -> s.category?.name == category.name }.forEach { symptom ->
+                    val childItem = ChildItem(symptom,symptom in daydata.symptoms,
+                            // here we pass an update function
+                            { daydata.toggleSymptom(symptom) })
+
+                    symptomsInCategory.add(childItem)
+                }
+                symptomList.add(symptomsInCategory)
+                this.addAll(symptomsInCategory)
+                categoryGroup.add(this)
+            }
+        }
+
+        groupAdapter.addAll(categoryGroup)
+
     }
 
     fun loadDayData(day: Calendar) {
         Log.d("DAYVIEW", "Loading data for ${day.formatDate()}")
 
         val daydata = getDataByDate(day)
-        
-        // add each category as a header
-        // add each symptom under a category, set the state based on what's in the DayData object
-        categories.forEach { category ->
-            ExpandableGroup(ExpandableHeaderItem(category.name)).apply {
-                symptoms.filter { s -> s.category?.name == category.name }.forEach { symptom ->
-                    val childItem = ChildItem(symptom.name,symptom in daydata.symptoms,
-                            // here we pass an update function
-                            { daydata.toggleSymptom(symptom) })
 
-                    add(childItem)
-                }
-                expandGroup.add(this)
+        symptomList.forEach {
+            it.forEach {
+                it.onClick = { daydata.toggleSymptom(it.symptom) }
+                it.state = it.symptom in daydata.symptoms
             }
         }
-        rootSection.update(expandGroup)
+        //TODO can we avoid redrawing everything
+        categoryGroup.forEach {
+            it.notifyChanged()
+        }
     }
 
     override fun onAttach(context: Context?) {
