@@ -18,10 +18,6 @@ class ChildItem(val symptom: Symptom, var state: Boolean, var onClick: () -> Uni
         }
     }
 
-    fun setChecked() {
-
-    }
-
     override fun getLayout(): Int {
         return R.layout.day_view_list_item
     }
