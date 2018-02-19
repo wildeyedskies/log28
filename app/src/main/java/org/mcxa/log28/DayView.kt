@@ -24,16 +24,15 @@ import org.mcxa.log28.org.mcxa.log28.expandable.ExpandableHeaderItem
  * Handles the day view
  */
 class DayView : Fragment() {
-    // this function updates the data displayed in the list adapter.
-    // Note that this does not updateModel what day is show in the horizontal calendar at the top
-    private lateinit var changeDay: (c: Calendar) -> Unit
-
     // changes both the data displayed and the date at the top.
     lateinit var navigateToDay: (c: Calendar) -> Unit
 
     private val categories = getCategories()
     private val symptoms = getSymptoms()
-    private var currentDay = getDataByDate(Calendar.getInstance())
+
+    // root section of the recyclerview. Stored here so we can update it
+    private var rootSection = Section()
+    private var expandGroup = mutableListOf<ExpandableGroup>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -75,7 +74,7 @@ class DayView : Fragment() {
         horizontalCalendar.calendarListener = object : HorizontalCalendarListener() {
             override fun onDateSelected(date: Calendar, position: Int) {
                 Log.d("DAYVIEW", "horizontal calendar date set to ${date.formatDate()}")
-                changeDay.invoke(date)
+                loadDayData(date)
                 // this little bit of code extends the range of the dates
                 val cDate = date.clone() as Calendar
                 cDate.add(Calendar.DAY_OF_YEAR, -5)
@@ -96,33 +95,36 @@ class DayView : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         val groupAdapter = GroupAdapter<ViewHolder>()
+        groupAdapter.add(rootSection)
 
         day_view_recycler.apply {
             layoutManager = LinearLayoutManager(context)
             adapter = groupAdapter
         }
 
+        loadDayData(Calendar.getInstance())
+    }
+
+    fun loadDayData(day: Calendar) {
+        Log.d("DAYVIEW", "Loading data for ${day.formatDate()}")
+
+        val daydata = getDataByDate(day)
+        
         // add each category as a header
         // add each symptom under a category, set the state based on what's in the DayData object
         categories.forEach { category ->
             ExpandableGroup(ExpandableHeaderItem(category.name)).apply {
                 symptoms.filter { s -> s.category?.name == category.name }.forEach { symptom ->
-                    val childItem = ChildItem(symptom.name,symptom in currentDay.symptoms,
+                    val childItem = ChildItem(symptom.name,symptom in daydata.symptoms,
                             // here we pass an update function
-                            { currentDay.toggleSymptom(symptom) })
+                            { daydata.toggleSymptom(symptom) })
 
                     add(childItem)
                 }
-                groupAdapter.add(this)
+                expandGroup.add(this)
             }
         }
-
-        changeDay = {
-            c -> Log.d("DAYVIEW", "Changeday called on day ${c.formatDate()}")
-            currentDay = getDataByDate(c)
-
-        }
-
+        rootSection.update(expandGroup)
     }
 
     override fun onAttach(context: Context?) {
