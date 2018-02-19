@@ -27,7 +27,16 @@ fun Long.toCalendar(): Calendar {
 open class Category(@PrimaryKey var name: String = "", var active: Boolean = true): RealmObject()
 
 // represents an individual symptom bleeding, headaches, etc
-open class Symptom(@PrimaryKey var name: String = "", var category: Category? = null, var active: Boolean = true): RealmObject()
+open class Symptom(@PrimaryKey var name: String = "", var category: Category? = null, var active: Boolean = true): RealmObject() {
+    override fun equals(other: Any?): Boolean {
+        if (other !is Symptom) return false
+        else return (this.name == other.name && this.category == other.category)
+    }
+
+    override fun hashCode(): Int {
+        return super.hashCode()
+    }
+}
 
 // represents data from a given day
 open class DayData(@PrimaryKey var date: Long = Calendar.getInstance().formatDate(),
@@ -36,6 +45,16 @@ open class DayData(@PrimaryKey var date: Long = Calendar.getInstance().formatDat
     fun hasSymptom(symptom: String): Boolean {
         symptoms.forEach { if (it.name == symptom) return true }
         return false
+    }
+
+    // if the symptom is in symptoms, remove it, else add it
+    fun toggleSymptom(symptom: Symptom) {
+        realm.executeTransaction {
+            if (symptom in symptoms)
+                symptoms.remove(symptom)
+            else
+                symptoms.add(symptom)
+        }
     }
 }
 
@@ -102,9 +121,16 @@ fun getPeriodDates(): RealmResults<DayData> {
             .equalTo("symptoms.name", "Bleeding").findAllAsync()
 }
 
-fun getDataByDate(queryDate: Calendar): DayData? {
-    return Realm.getDefaultInstance().where(DayData::class.java)
-            .equalTo("date", queryDate.formatDate()).findFirst()
+fun getDataByDate(queryDate: Calendar): DayData {
+    val realm = Realm.getDefaultInstance()
+
+    realm.beginTransaction()
+    val daydata = realm.where(DayData::class.java)
+            .equalTo("date", queryDate.formatDate()).findFirst() ?:
+            realm.createObject(DayData::class.java, queryDate.formatDate())
+    realm.commitTransaction()
+
+    return daydata
 }
 
 fun getStartOfCurrentCycle(): Long? {

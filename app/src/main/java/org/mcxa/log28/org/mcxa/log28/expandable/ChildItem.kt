@@ -7,12 +7,14 @@ import kotlinx.android.synthetic.main.day_view_list_item.*
 import org.mcxa.log28.R
 
 
-class ChildItem(private val symptomText: String): Item() {
+class ChildItem(private val symptomText: String, private val initalState: Boolean, private val onClick: () -> Unit): Item() {
     override fun bind(viewHolder: ViewHolder, position: Int) {
         viewHolder.day_item.text = symptomText
+        viewHolder.item_checkbox.isChecked = initalState
 
         viewHolder.list_item.setOnClickListener {
             viewHolder.item_checkbox.toggle()
+            onClick.invoke()
         }
     }
 

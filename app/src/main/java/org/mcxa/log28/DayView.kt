@@ -14,7 +14,9 @@ import java.util.*
 import devs.mulham.horizontalcalendar.utils.HorizontalCalendarListener
 import kotlinx.android.synthetic.main.fragment_day_view.*
 import com.xwray.groupie.GroupAdapter
+import com.xwray.groupie.Section
 import com.xwray.groupie.kotlinandroidextensions.*
+import io.realm.Realm
 import org.mcxa.log28.org.mcxa.log28.expandable.ChildItem
 import org.mcxa.log28.org.mcxa.log28.expandable.ExpandableHeaderItem
 
@@ -31,6 +33,7 @@ class DayView : Fragment() {
 
     private val categories = getCategories()
     private val symptoms = getSymptoms()
+    private var currentDay = getDataByDate(Calendar.getInstance())
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -99,10 +102,16 @@ class DayView : Fragment() {
             adapter = groupAdapter
         }
 
+        // add each category as a header
+        // add each symptom under a category, set the state based on what's in the DayData object
         categories.forEach { category ->
             ExpandableGroup(ExpandableHeaderItem(category.name)).apply {
                 symptoms.filter { s -> s.category?.name == category.name }.forEach { symptom ->
-                    add(ChildItem(symptom.name))
+                    val childItem = ChildItem(symptom.name,symptom in currentDay.symptoms,
+                            // here we pass an update function
+                            { currentDay.toggleSymptom(symptom) })
+
+                    add(childItem)
                 }
                 groupAdapter.add(this)
             }
@@ -110,7 +119,8 @@ class DayView : Fragment() {
 
         changeDay = {
             c -> Log.d("DAYVIEW", "Changeday called on day ${c.formatDate()}")
-            //TODO set day within recycler view
+            currentDay = getDataByDate(c)
+
         }
 
     }
