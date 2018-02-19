@@ -3,6 +3,7 @@ package org.mcxa.log28
 import android.content.Context
 import android.os.Bundle
 import android.support.v4.app.Fragment
+import android.support.v7.widget.LinearLayoutManager
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -14,6 +15,7 @@ import devs.mulham.horizontalcalendar.utils.HorizontalCalendarListener
 import kotlinx.android.synthetic.main.fragment_day_view.*
 import com.xwray.groupie.GroupAdapter
 import com.xwray.groupie.kotlinandroidextensions.*
+import org.mcxa.log28.org.mcxa.log28.expandable.ChildItem
 import org.mcxa.log28.org.mcxa.log28.expandable.ExpandableHeaderItem
 
 /**
@@ -91,11 +93,17 @@ class DayView : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         val groupAdapter = GroupAdapter<ViewHolder>()
-        day_view_recycler.adapter = groupAdapter
 
-        categories.forEach {
-            ExpandableGroup(ExpandableHeaderItem(it.name)).apply {
+        day_view_recycler.apply {
+            layoutManager = LinearLayoutManager(context)
+            adapter = groupAdapter
+        }
 
+        categories.forEach { category ->
+            ExpandableGroup(ExpandableHeaderItem(category.name)).apply {
+                symptoms.filter { s -> s.category?.name == category.name }.forEach { symptom ->
+                    add(ChildItem(symptom.name))
+                }
                 groupAdapter.add(this)
             }
         }

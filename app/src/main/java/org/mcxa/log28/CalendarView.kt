@@ -18,12 +18,7 @@ import java.util.*
  * create an instance of this fragment.
  */
 class CalendarView : Fragment() {
-    val periodDates = getPeriodDates()
-    // the months for which we have loaded the period data for. This should always be a contiguous range
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-    }
+    private val periodDates = getPeriodDates()
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
@@ -44,8 +39,8 @@ class CalendarView : Fragment() {
         val today = Calendar.getInstance()
         scrollCalendar.setDateWatcher({
             year, month, day ->
-            if ((year.toLong() * 10000) + (month.toLong() * 100) + day.toLong() in periodDates.map { d -> d.date }) { //TODO: figure out if the JVM caches this
-                Log.d("CALVIEW", "Period found at " + year.toString() + " " + month.toString())
+            if ((year.toLong() * 10000) + (month.toLong() * 100) + day.toLong() in
+                    predictFuturePeriods(periodDates.map { d -> d.date }.toMutableList())) { //TODO: figure out if the JVM caches this
                 CalendarDay.SELECTED
             } else if (year == today.get(Calendar.YEAR) &&
                     month == today.get(Calendar.MONTH) && day == today.get(Calendar.DAY_OF_MONTH)) {

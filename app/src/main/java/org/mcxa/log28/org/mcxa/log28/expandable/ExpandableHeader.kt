@@ -19,21 +19,23 @@ class ExpandableHeaderItem(private val categoryText: String) : ExpandableItem, I
     override fun bind(viewHolder: ViewHolder, position: Int) {
         viewHolder.categoryText.text = categoryText
 
+        // make the whole darn thingy clickable
+        viewHolder.group_view.setOnClickListener {
+            expandableGroup.onToggleExpanded()
+            bindIcon(viewHolder)
+        }
+
         // Initial icon state -- not animated.
         viewHolder.icon.apply {
             visibility = View.VISIBLE
             setImageResource(if (expandableGroup.isExpanded) R.drawable.chevron_up else R.drawable.chevron_down)
-            setOnClickListener {
-                expandableGroup.onToggleExpanded()
-                bindIcon(viewHolder)
-            }
         }
     }
 
     private fun bindIcon(viewHolder: ViewHolder) {
         viewHolder.icon.apply {
             visibility = View.VISIBLE
-            //setImageResource(if (expandableGroup.isExpanded) R.drawable.collapse_animated else R.drawable.expand_animated)
+            setImageResource(if (expandableGroup.isExpanded) R.drawable.chevron_up else R.drawable.chevron_down)
             //(drawable as Animatable).start()
         }
     }
