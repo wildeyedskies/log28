@@ -40,7 +40,8 @@ open class Symptom(@PrimaryKey var name: String = "", var category: Category? = 
 
 // represents data from a given day
 open class DayData(@PrimaryKey var date: Long = Calendar.getInstance().formatDate(),
-                   var symptoms: RealmList<Symptom> = RealmList<Symptom>()): RealmObject() {
+                   var symptoms: RealmList<Symptom> = RealmList(),
+                   var notes: String = ""): RealmObject() {
 
     fun hasSymptom(symptom: String): Boolean {
         symptoms.forEach { if (it.name == symptom) return true }
@@ -54,6 +55,12 @@ open class DayData(@PrimaryKey var date: Long = Calendar.getInstance().formatDat
                 symptoms.remove(symptom)
             else
                 symptoms.add(symptom)
+        }
+    }
+
+    fun updateNotes(notes: String) {
+        Realm.getDefaultInstance().executeTransaction {
+            this.notes = notes
         }
     }
 }

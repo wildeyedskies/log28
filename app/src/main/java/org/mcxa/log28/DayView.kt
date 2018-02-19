@@ -18,6 +18,7 @@ import com.xwray.groupie.Section
 import com.xwray.groupie.kotlinandroidextensions.*
 import org.mcxa.log28.org.mcxa.log28.expandable.ChildItem
 import org.mcxa.log28.org.mcxa.log28.expandable.ExpandableHeaderItem
+import org.mcxa.log28.org.mcxa.log28.expandable.NotesItem
 
 /**
  * Handles the day view
@@ -32,10 +33,9 @@ class DayView : Fragment() {
     // we store our categories and symptom groups here so we can update them
     private val categoryGroup = mutableListOf<ExpandableGroup>()
     private val symptomList = mutableListOf<MutableList<ChildItem>>()
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-    }
+    // reference to the notes and sleep amount
+    private val notesAndSleep = Section()
+    private lateinit var notesItem: NotesItem
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
@@ -120,8 +120,11 @@ class DayView : Fragment() {
             }
         }
 
-        groupAdapter.addAll(categoryGroup)
+        notesItem = NotesItem(daydata)
+        notesAndSleep.add(notesItem)
 
+        groupAdapter.addAll(categoryGroup)
+        groupAdapter.add(notesAndSleep)
     }
 
     fun loadDayData(day: Calendar) {
@@ -139,6 +142,9 @@ class DayView : Fragment() {
         categoryGroup.forEach {
             it.notifyChanged()
         }
+
+        notesItem.daydata = daydata
+        notesAndSleep.notifyChanged()
     }
 
     override fun onAttach(context: Context?) {
