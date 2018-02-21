@@ -121,7 +121,7 @@ class CycleOverview : Fragment() {
 
         // updateModel the progress bar
         cycle_view.setCycleData(cycleLength, periodLength, cycleDay)
-        this.view?.postInvalidate()
+        this.view?.invalidate()
     }
 
     companion object {

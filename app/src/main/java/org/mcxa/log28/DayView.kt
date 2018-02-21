@@ -30,6 +30,8 @@ class DayView : Fragment() {
     private val categories = getCategories()
     private val symptoms = getSymptoms()
 
+    private val groupAdapter = GroupAdapter<ViewHolder>()
+
     // we store our categories and symptom groups here so we can update them
     private val categoryGroup = mutableListOf<ExpandableGroup>()
     private val symptomList = mutableListOf<MutableList<ChildItem>>()
@@ -42,6 +44,27 @@ class DayView : Fragment() {
         // Inflate the layout for this fragment
         val rootView = inflater.inflate(R.layout.fragment_day_view, container, false)
 
+        setupHorizontalCalendar(rootView)
+
+        return rootView
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setupRecyclerView()
+    }
+
+    // setup the recycler view
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        day_view_recycler.apply {
+            layoutManager = LinearLayoutManager(context)
+            adapter = groupAdapter
+        }
+    }
+
+    private fun setupHorizontalCalendar(rootView: View) {
         // setup the top calendar
         val startDate = Calendar.getInstance()
         startDate.add(Calendar.MONTH, -1)
@@ -86,20 +109,9 @@ class DayView : Fragment() {
                 }
             }
         }
-        return rootView
     }
 
-    // setup the recycler view
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-
-        val groupAdapter = GroupAdapter<ViewHolder>()
-
-        day_view_recycler.apply {
-            layoutManager = LinearLayoutManager(context)
-            adapter = groupAdapter
-        }
-
+    private fun setupRecyclerView() {
         val daydata = getDataByDate(Calendar.getInstance())
 
         // add each category as a header
@@ -145,10 +157,6 @@ class DayView : Fragment() {
 
         notesItem.daydata = daydata
         notesAndSleep.notifyChanged()
-    }
-
-    override fun onAttach(context: Context?) {
-        super.onAttach(context)
     }
 
     companion object {

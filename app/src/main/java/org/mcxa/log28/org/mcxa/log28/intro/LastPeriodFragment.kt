@@ -2,11 +2,13 @@ package org.mcxa.log28.org.mcxa.log28.intro
 
 import android.os.Bundle
 import android.support.v4.app.Fragment
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import kotlinx.android.synthetic.main.fragment_last_period.*
 import org.mcxa.log28.R
+import org.mcxa.log28.formatDate
 import org.mcxa.log28.setFirstPeriod
 import pl.rafman.scrollcalendar.contract.MonthScrollListener
 import pl.rafman.scrollcalendar.data.CalendarDay
@@ -44,6 +46,7 @@ class LastPeriodFragment: Fragment() {
                 CalendarDay.TODAY
             } else if (year == dateSelected?.get(Calendar.YEAR) &&
                     month == dateSelected?.get(Calendar.MONTH) && day == dateSelected?.get(Calendar.DAY_OF_MONTH)) {
+                Log.d("LASTPERIOD", "highlighting $year, $month, $day. dateSelected is ${dateSelected?.formatDate()}")
                 CalendarDay.SELECTED
             } else CalendarDay.DEFAULT
         })
@@ -55,11 +58,12 @@ class LastPeriodFragment: Fragment() {
             firstDay.set(Calendar.YEAR, year)
             firstDay.set(Calendar.MONTH, month)
             firstDay.set(Calendar.DAY_OF_MONTH, day)
+            Log.d("LASTPERIOD", "click on day ${firstDay.formatDate()}")
 
             if (firstDay.before(Calendar.getInstance())) {
                 dateSelected = firstDay
                 (this.activity as AppIntroActivity).setupComplete = true
-                setFirstPeriod(firstDay, this.context)
+                setFirstPeriod(firstDay.clone() as Calendar, this.context)
             }
         })
     }
