@@ -1,4 +1,4 @@
-package org.mcxa.log28.org.mcxa.log28.sections
+package org.mcxa.log28.org.mcxa.log28.groupie
 
 import android.text.Editable
 import android.text.TextWatcher

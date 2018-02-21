@@ -16,9 +16,9 @@ import kotlinx.android.synthetic.main.fragment_day_view.*
 import com.xwray.groupie.GroupAdapter
 import com.xwray.groupie.Section
 import com.xwray.groupie.kotlinandroidextensions.*
-import org.mcxa.log28.org.mcxa.log28.sections.ChildItem
-import org.mcxa.log28.org.mcxa.log28.sections.ExpandableHeaderItem
-import org.mcxa.log28.org.mcxa.log28.sections.NotesItem
+import org.mcxa.log28.org.mcxa.log28.groupie.ChildItem
+import org.mcxa.log28.org.mcxa.log28.groupie.ExpandableHeaderItem
+import org.mcxa.log28.org.mcxa.log28.groupie.NotesItem
 
 /**
  * Handles the day view

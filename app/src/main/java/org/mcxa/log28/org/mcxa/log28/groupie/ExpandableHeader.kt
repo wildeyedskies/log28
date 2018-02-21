@@ -1,4 +1,4 @@
-package org.mcxa.log28.org.mcxa.log28.sections
+package org.mcxa.log28.org.mcxa.log28.groupie
 
 import android.view.View
 import com.xwray.groupie.ExpandableGroup

@@ -12,6 +12,7 @@
     <string name="logged_today">Logged Today</string>
     <string name="nothing_logged">Nothing Logged Today</string>
     <string name="notes">Notes</string>
+    <string name="notes_prefix">Notes: %1$s</string>
 
     <string-array name="categories">
         <item>Physical Symptoms</item>

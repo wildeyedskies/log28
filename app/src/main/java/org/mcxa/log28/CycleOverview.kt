@@ -15,9 +15,12 @@ import android.preference.PreferenceManager
 import android.support.v7.widget.LinearLayoutManager
 import android.util.AttributeSet
 import android.util.Log
+import com.xwray.groupie.GroupAdapter
+import com.xwray.groupie.kotlinandroidextensions.ViewHolder
 import devs.mulham.horizontalcalendar.utils.Utils
 import io.realm.RealmResults
 import kotlinx.android.synthetic.main.fragment_cycle_overview.*
+import org.mcxa.log28.org.mcxa.log28.groupie.OverviewItem
 import java.util.*
 
 
@@ -28,6 +31,7 @@ import java.util.*
  */
 class CycleOverview : Fragment() {
     private val periodDates = getPeriodDaysDecending()
+    private val dayData = getDataByDate(Calendar.getInstance())
 
     // whenever the cycle or period lengths change, recalculate everything
     private val prefListener = {
@@ -53,21 +57,37 @@ class CycleOverview : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val layoutManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
-        today_log_list.layoutManager = layoutManager
-
         calculateNextPeriod(findCycleStart(periodDates))
 
         periodDates.addChangeListener {
             results, changeset -> calculateNextPeriod(findCycleStart(results))
         }
+
+        //setup recycler view
+        if (dayData.symptoms.isEmpty() || dayData.notes.isBlank())
+            logged_today.setText(R.string.nothing_logged)
+        else {
+            val groupAdapter = GroupAdapter<ViewHolder>()
+
+            today_log_list.apply {
+                layoutManager = LinearLayoutManager(context)
+                adapter = groupAdapter
+
+            }
+            dayData.symptoms.forEach {
+                groupAdapter.add(OverviewItem(it.name))
+            }
+            if (dayData.notes.isNotBlank())
+                groupAdapter.add(OverviewItem(context?.resources!!.getString(R.string.notes_prefix, dayData.notes)))
+        }
+
     }
 
     private fun findCycleStart(periodDates: RealmResults<DayData>): Long {
         var cycleStart: Long = 0
         periodDates.forEachIndexed { index, dayData ->
             //if this is the first day entered, or the previous period date is not the day before the current one, return
-            if (dayData == periodDates.last() || dayData.date - 1 != periodDates[index+1]?.date) {
+            if (index == periodDates.lastIndex || dayData.date - 1 != periodDates[index+1]?.date) {
                 cycleStart = dayData.date
                 return@forEachIndexed
             }
