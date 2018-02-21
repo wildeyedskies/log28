@@ -36,7 +36,7 @@ class CycleOverview : Fragment() {
     // whenever the cycle or period lengths change, recalculate everything
     private val prefListener = {
         _: SharedPreferences, key: String ->
-        if (key == "cycle_length" || key == "period_length"|| key == "first_start")
+        if (key == "cycle_length" || key == "period_length")
             calculateNextPeriod(findCycleStart(periodDates))
     }
 
