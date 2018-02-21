@@ -16,9 +16,9 @@ import kotlinx.android.synthetic.main.fragment_day_view.*
 import com.xwray.groupie.GroupAdapter
 import com.xwray.groupie.Section
 import com.xwray.groupie.kotlinandroidextensions.*
-import org.mcxa.log28.org.mcxa.log28.expandable.ChildItem
-import org.mcxa.log28.org.mcxa.log28.expandable.ExpandableHeaderItem
-import org.mcxa.log28.org.mcxa.log28.expandable.NotesItem
+import org.mcxa.log28.org.mcxa.log28.sections.ChildItem
+import org.mcxa.log28.org.mcxa.log28.sections.ExpandableHeaderItem
+import org.mcxa.log28.org.mcxa.log28.sections.NotesItem
 
 /**
  * Handles the day view
@@ -110,7 +110,7 @@ class DayView : Fragment() {
                 symptoms.filter { s -> s.category?.name == category.name }.forEach { symptom ->
                     val childItem = ChildItem(symptom,symptom in daydata.symptoms,
                             // here we pass an update function
-                            { daydata.toggleSymptom(symptom) })
+                            { daydata.toggleSymptom(context, symptom) })
 
                     symptomsInCategory.add(childItem)
                 }
@@ -134,7 +134,7 @@ class DayView : Fragment() {
 
         symptomList.forEach {
             it.forEach {
-                it.onClick = { daydata.toggleSymptom(it.symptom) }
+                it.onClick = { daydata.toggleSymptom(context, it.symptom) }
                 it.state = it.symptom in daydata.symptoms
             }
         }

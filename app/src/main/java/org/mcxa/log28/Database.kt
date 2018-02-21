@@ -49,7 +49,7 @@ open class DayData(@PrimaryKey var date: Long = Calendar.getInstance().formatDat
     }
 
     // if the symptom is in symptoms, remove it, else add it
-    fun toggleSymptom(symptom: Symptom) {
+    fun toggleSymptom(context: Context?, symptom: Symptom) {
         realm.executeTransaction {
             if (symptom in symptoms)
                 symptoms.remove(symptom)
@@ -140,13 +140,10 @@ fun getDataByDate(queryDate: Calendar): DayData {
     return daydata
 }
 
-fun getStartOfCurrentCycle(): Long? {
+fun getPeriodDaysDecending(): RealmResults<DayData> {
     val realm = Realm.getDefaultInstance()
-    val periodDays = realm.where(DayData::class.java)
+    return Realm.getDefaultInstance().where(DayData::class.java)
             .equalTo("symptoms.name", "Bleeding").sort("date", Sort.DESCENDING).findAll()
-    //TODO fix this performance issue
-    val dates = periodDays.map { d -> d.date }
-    return dates.filter { it - 1 !in dates }.max()
 }
 
 fun getCategories(): RealmResults<Category> {

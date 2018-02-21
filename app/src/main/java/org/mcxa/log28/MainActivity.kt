@@ -14,6 +14,7 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        //TODO background this
         val firstStart = PreferenceManager.getDefaultSharedPreferences(this).getBoolean("first_start", true)
 
         if (firstStart) {

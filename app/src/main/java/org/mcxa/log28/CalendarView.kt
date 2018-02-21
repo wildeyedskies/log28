@@ -7,7 +7,6 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import io.realm.Realm
 import kotlinx.android.synthetic.main.fragment_calendar_view.*
 import pl.rafman.scrollcalendar.contract.MonthScrollListener
 import pl.rafman.scrollcalendar.data.CalendarDay
@@ -19,19 +18,24 @@ import java.util.*
  * create an instance of this fragment.
  */
 class CalendarView : Fragment() {
-    private val periodDates = getPeriodDates()
+    private val periodDateObjects = getPeriodDates()
+    private var periodDates = mutableListOf<Long>()
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
+        // we should have context at this point
+        periodDates = predictFuturePeriods(periodDateObjects.map { d -> d.date }.toMutableList())
+
         return inflater.inflate(R.layout.fragment_calendar_view, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        periodDates.addChangeListener {
+        periodDateObjects.addChangeListener {
             results, changeSet ->
             if (changeSet != null) {
+                periodDates = predictFuturePeriods(periodDateObjects.map { d -> d.date }.toMutableList())
                 scrollCalendar.adapter.notifyDataSetChanged()
             }
         }
@@ -40,8 +44,7 @@ class CalendarView : Fragment() {
         val today = Calendar.getInstance()
         scrollCalendar.setDateWatcher({
             year, month, day ->
-            if ((year.toLong() * 10000) + (month.toLong() * 100) + day.toLong() in
-                    predictFuturePeriods(periodDates.map { d -> d.date }.toMutableList())) { //TODO: figure out if the JVM caches this
+            if ((year.toLong() * 10000) + (month.toLong() * 100) + day.toLong() in periodDates) { //TODO: figure out if the JVM caches this
                 CalendarDay.SELECTED
             } else if (year == today.get(Calendar.YEAR) &&
                     month == today.get(Calendar.MONTH) && day == today.get(Calendar.DAY_OF_MONTH)) {
@@ -102,7 +105,7 @@ class CalendarView : Fragment() {
 
     override fun onDestroyView() {
         super.onDestroyView()
-        periodDates.removeAllChangeListeners()
+        periodDateObjects.removeAllChangeListeners()
     }
 
     companion object {

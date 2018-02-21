@@ -13,10 +13,10 @@ import android.graphics.Color
 import android.graphics.Paint
 import android.preference.PreferenceManager
 import android.support.v7.widget.LinearLayoutManager
-import android.support.v7.widget.RecyclerView
 import android.util.AttributeSet
 import android.util.Log
 import devs.mulham.horizontalcalendar.utils.Utils
+import io.realm.RealmResults
 import kotlinx.android.synthetic.main.fragment_cycle_overview.*
 import java.util.*
 
@@ -27,15 +27,13 @@ import java.util.*
  * create an instance of this fragment.
  */
 class CycleOverview : Fragment() {
+    private val periodDates = getPeriodDaysDecending()
+
     // whenever the cycle or period lengths change, recalculate everything
     private val prefListener = {
         _: SharedPreferences, key: String ->
-            if (key == "cycle_length" || key == "period_length"|| key == "first_start") calculateNextPeriod()
-    }
-
-    //TODO fix model updates for new database
-    private val modelChangeListener = {
-        _: DayData -> calculateNextPeriod()
+        if (key == "cycle_length" || key == "period_length"|| key == "first_start")
+            calculateNextPeriod(findCycleStart(periodDates))
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
@@ -49,6 +47,7 @@ class CycleOverview : Fragment() {
     override fun onDestroyView() {
         super.onDestroyView()
         PreferenceManager.getDefaultSharedPreferences(context).unregisterOnSharedPreferenceChangeListener(prefListener)
+        periodDates.removeAllChangeListeners()
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -57,20 +56,33 @@ class CycleOverview : Fragment() {
         val layoutManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
         today_log_list.layoutManager = layoutManager
 
-        calculateNextPeriod()
+        calculateNextPeriod(findCycleStart(periodDates))
+
+        periodDates.addChangeListener {
+            results, changeset -> calculateNextPeriod(findCycleStart(results))
+        }
     }
 
-    private fun calculateNextPeriod() {
+    private fun findCycleStart(periodDates: RealmResults<DayData>): Long {
+        var cycleStart: Long = 0
+        periodDates.forEachIndexed { index, dayData ->
+            //if this is the first day entered, or the previous period date is not the day before the current one, return
+            if (dayData == periodDates.last() || dayData.date - 1 != periodDates[index+1]?.date) {
+                cycleStart = dayData.date
+                return@forEachIndexed
+            }
+        }
+        return cycleStart
+    }
+
+    private fun calculateNextPeriod(cycleStartDate: Long) {
+        if (cycleStartDate == 0L) return
+        val cycleStart = cycleStartDate.toCalendar()
+
         Log.d("OVERVIEW", "calculating next period")
         val prefs = PreferenceManager.getDefaultSharedPreferences(context)
-        val firstStart = prefs.getBoolean("first_start", true)
         val cycleLength = prefs.getString("cycle_length", "28").toInt()
         val periodLength = prefs.getString("period_length", "5").toInt()
-
-        // do not run this method if setup has not been completed
-        if (firstStart) return
-
-        val cycleStart = getStartOfCurrentCycle()?.toCalendar()
 
         // updateModel the text views with the correct days until
         val cycleDay = Utils.daysBetween(cycleStart, Calendar.getInstance())

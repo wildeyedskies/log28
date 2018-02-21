@@ -1,6 +1,5 @@
-package org.mcxa.log28.org.mcxa.log28.expandable
+package org.mcxa.log28.org.mcxa.log28.sections
 
-import android.graphics.drawable.Animatable
 import android.view.View
 import com.xwray.groupie.ExpandableGroup
 import com.xwray.groupie.ExpandableItem
