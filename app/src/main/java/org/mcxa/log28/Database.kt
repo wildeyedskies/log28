@@ -38,6 +38,8 @@ open class Symptom(@PrimaryKey var name: String = "", var category: Category? = 
     }
 }
 
+open class CycleInfo(var cycleLength: Int, var periodLength: Int)
+
 // represents data from a given day
 open class DayData(@PrimaryKey var date: Long = Calendar.getInstance().formatDate(),
                    var symptoms: RealmList<Symptom> = RealmList(),
