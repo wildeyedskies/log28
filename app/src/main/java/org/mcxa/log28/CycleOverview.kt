@@ -60,11 +60,12 @@ class CycleOverview : Fragment() {
         calculateNextPeriod(findCycleStart(periodDates))
 
         periodDates.addChangeListener {
-            results, changeset -> calculateNextPeriod(findCycleStart(results))
+            results, changeset -> Log.d("OVERVIEW", "period dates changed")
+            calculateNextPeriod(findCycleStart(results))
         }
 
         //setup recycler view
-        if (dayData.symptoms.isEmpty() || dayData.notes.isBlank())
+        if (dayData.symptoms.isEmpty() && dayData.notes.isBlank())
             logged_today.setText(R.string.nothing_logged)
         else {
             val groupAdapter = GroupAdapter<ViewHolder>()
@@ -96,6 +97,8 @@ class CycleOverview : Fragment() {
     }
 
     private fun calculateNextPeriod(cycleStartDate: Long) {
+        Log.d("OVERVIEW", "calculate next period called")
+
         if (cycleStartDate == 0L) return
         val cycleStart = cycleStartDate.toCalendar()
 
