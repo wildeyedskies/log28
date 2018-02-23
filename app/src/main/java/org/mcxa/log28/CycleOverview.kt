@@ -7,11 +7,9 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.content.Context
-import android.content.SharedPreferences
 import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Paint
-import android.preference.PreferenceManager
 import android.support.v7.widget.LinearLayoutManager
 import android.util.AttributeSet
 import android.util.Log
@@ -32,25 +30,17 @@ import java.util.*
 class CycleOverview : Fragment() {
     private val periodDates = getPeriodDaysDecending()
     private val dayData = getDataByDate(Calendar.getInstance())
-
-    // whenever the cycle or period lengths change, recalculate everything
-    private val prefListener = {
-        _: SharedPreferences, key: String ->
-        if (key == "cycle_length" || key == "period_length")
-            calculateNextPeriod(findCycleStart(periodDates))
-    }
+    private val cycleInfo = getCycleInfo()
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
-
-        PreferenceManager.getDefaultSharedPreferences(context).registerOnSharedPreferenceChangeListener(prefListener)
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_cycle_overview, container, false)
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
-        PreferenceManager.getDefaultSharedPreferences(context).unregisterOnSharedPreferenceChangeListener(prefListener)
+        cycleInfo.removeAllChangeListeners()
         periodDates.removeAllChangeListeners()
     }
 
@@ -62,6 +52,11 @@ class CycleOverview : Fragment() {
         periodDates.addChangeListener {
             results, changeset -> Log.d("OVERVIEW", "period dates changed")
             calculateNextPeriod(findCycleStart(results))
+        }
+
+        cycleInfo.addChangeListener<CycleInfo> {
+            _, _ ->
+            calculateNextPeriod(findCycleStart(periodDates))
         }
 
         //setup recycler view
@@ -103,27 +98,25 @@ class CycleOverview : Fragment() {
         val cycleStart = cycleStartDate.toCalendar()
 
         Log.d("OVERVIEW", "calculating next period")
-        val prefs = PreferenceManager.getDefaultSharedPreferences(context)
-        val cycleLength = prefs.getString("cycle_length", "28").toInt()
-        val periodLength = prefs.getString("period_length", "5").toInt()
 
         // updateModel the text views with the correct days until
         val cycleDay = Utils.daysBetween(cycleStart, Calendar.getInstance())
-        Log.d("OVERVIEW", "cycle length $cycleLength, periodLength $periodLength cycle day is $cycleDay")
+        Log.d("OVERVIEW",
+                "cycle length ${cycleInfo.cycleLength}, periodLength ${cycleInfo.cycleLength} cycle day is $cycleDay")
         // on period
-        if (cycleDay < periodLength) {
+        if (cycleDay < cycleInfo.periodLength) {
             days_until_text.text = getString(R.string.days_left_in_period)
-            days_until_number.text = (periodLength - cycleDay).toString()
-        } else if (cycleDay < cycleLength) {
+            days_until_number.text = (cycleInfo.periodLength - cycleDay).toString()
+        } else if (cycleDay < cycleInfo.cycleLength) {
             days_until_text.text = getString(R.string.days_until_period)
-            days_until_number.text = (cycleLength - cycleDay).toString()
+            days_until_number.text = (cycleInfo.cycleLength - cycleDay).toString()
         } else {
             days_until_text.text = getString(R.string.days_late)
-            days_until_number.text = (cycleDay - cycleLength).toString()
+            days_until_number.text = (cycleDay - cycleInfo.cycleLength).toString()
         }
 
         // updateModel the progress bar
-        cycle_view.setCycleData(cycleLength, periodLength, cycleDay)
+        cycle_view.setCycleData(cycleInfo.cycleLength, cycleInfo.periodLength, cycleDay)
         this.view?.invalidate()
     }
 

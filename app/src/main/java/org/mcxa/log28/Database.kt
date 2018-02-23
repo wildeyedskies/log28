@@ -26,6 +26,14 @@ fun Long.toCalendar(): Calendar {
 // represents a category physical, mental, etc
 open class Category(@PrimaryKey var name: String = "", var active: Boolean = true): RealmObject()
 
+fun setCategoryState(name: String, active: Boolean) {
+    Realm.getDefaultInstance().executeTransactionAsync {
+        val mental = it.where(Category::class.java).equalTo("name",
+                name).findFirst()
+        mental?.active = active
+    }
+}
+
 // represents an individual symptom bleeding, headaches, etc
 open class Symptom(@PrimaryKey var name: String = "", var category: Category? = null, var active: Boolean = true): RealmObject() {
     override fun equals(other: Any?): Boolean {
@@ -38,7 +46,17 @@ open class Symptom(@PrimaryKey var name: String = "", var category: Category? = 
     }
 }
 
-open class CycleInfo(var cycleLength: Int, var periodLength: Int)
+open class CycleInfo(var cycleLength: Int = 28, var periodLength: Int = 5): RealmObject()
+
+fun getCycleInfo(): CycleInfo {
+    val realm = Realm.getDefaultInstance()
+
+    realm.beginTransaction()
+    val cycleInfo =  realm.where(CycleInfo::class.java).findFirst() ?:
+        realm.createObject(CycleInfo::class.java)
+    realm.commitTransaction()
+    return cycleInfo
+}
 
 // represents data from a given day
 open class DayData(@PrimaryKey var date: Long = Calendar.getInstance().formatDate(),
@@ -149,7 +167,7 @@ fun getPeriodDaysDecending(): RealmResults<DayData> {
 }
 
 fun getCategories(): RealmResults<Category> {
-    return Realm.getDefaultInstance().where(Category::class.java).findAll()
+    return Realm.getDefaultInstance().where(Category::class.java).equalTo("active", true).findAll()
 }
 
 fun getSymptoms(): RealmResults<Symptom> {

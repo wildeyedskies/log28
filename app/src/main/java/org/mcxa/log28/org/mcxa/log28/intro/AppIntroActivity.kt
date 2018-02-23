@@ -30,19 +30,6 @@ class AppIntroActivity: AppIntro2() {
     override fun onDonePressed(currentFragment: Fragment?) {
         super.onDonePressed(currentFragment)
 
-        if (setupComplete) {
-            AsyncTask.execute {
-                // updateModel the preference preventing first start on subsequent runs
-                val editor = PreferenceManager.getDefaultSharedPreferences(this).edit()
-                editor.putBoolean("first_start", false)
-                // by default all our tracking options should be on
-                editor.putBoolean("mental_tracking", true)
-                editor.putBoolean("physical_tracking", true)
-                editor.putBoolean("sexual_tracking", true)
-                editor.apply()
-
-            }
-            finish()
-        }
+        if (setupComplete) finish()
     }
 }

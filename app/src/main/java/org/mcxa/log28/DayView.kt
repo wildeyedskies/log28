@@ -43,15 +43,26 @@ class DayView : Fragment() {
                               savedInstanceState: Bundle?): View? {
         // Inflate the layout for this fragment
         val rootView = inflater.inflate(R.layout.fragment_day_view, container, false)
-
         setupHorizontalCalendar(rootView)
-
         return rootView
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        categories.addChangeListener {
+            _, changeSet ->
+            if (changeSet != null)
+                groupAdapter.notifyDataSetChanged()
+            Log.d("DAYVIEW", "categories updated $changeSet")
+        }
+
         setupRecyclerView()
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        categories.removeAllChangeListeners()
     }
 
     // setup the recycler view

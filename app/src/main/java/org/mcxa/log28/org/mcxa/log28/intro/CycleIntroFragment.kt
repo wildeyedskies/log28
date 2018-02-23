@@ -11,7 +11,9 @@ import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import io.realm.Realm
 import kotlinx.android.synthetic.main.fragment_cycle_intro.*
+import org.mcxa.log28.CycleInfo
 
 import org.mcxa.log28.R
 
@@ -45,11 +47,9 @@ class CycleIntroFragment : Fragment() {
             }
 
             override fun afterTextChanged(p0: Editable?) {
-                AsyncTask.execute {
-                    val edit = PreferenceManager.getDefaultSharedPreferences(this@CycleIntroFragment.context).edit()
-                    val cycle = if (p0.toString() == "") "28" else p0.toString()
-                    edit.putString("cycle_length", cycle)
-                    edit.apply()
+                Realm.getDefaultInstance().executeTransactionAsync {
+                    val cycleInfo = it.where(CycleInfo::class.java).findFirst() ?: it.createObject(CycleInfo::class.java)
+                    cycleInfo.cycleLength = p0.toString().toIntOrNull() ?: 28
                 }
             }
         })
@@ -64,12 +64,11 @@ class CycleIntroFragment : Fragment() {
             }
 
             override fun afterTextChanged(p0: Editable?) {
-                AsyncTask.execute {
-                    val edit = PreferenceManager.getDefaultSharedPreferences(this@CycleIntroFragment.context).edit()
-                    val period = if (p0.toString() == "") "5" else p0.toString()
-                    edit.putString("period_length", period)
-                    edit.apply()
+                Realm.getDefaultInstance().executeTransactionAsync {
+                    val cycleInfo = it.where(CycleInfo::class.java).findFirst() ?: it.createObject(CycleInfo::class.java)
+                    cycleInfo.periodLength = p0.toString().toIntOrNull() ?: 5
                 }
+
             }
         })
     }
@@ -88,4 +87,4 @@ class CycleIntroFragment : Fragment() {
         }
     }
 
-}// Required empty public constructor
+}

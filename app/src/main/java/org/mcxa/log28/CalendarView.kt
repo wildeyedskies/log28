@@ -1,8 +1,6 @@
 package org.mcxa.log28
 
-import android.content.SharedPreferences
 import android.os.Bundle
-import android.preference.PreferenceManager
 import android.support.v4.app.Fragment
 import android.util.Log
 import android.view.LayoutInflater
@@ -21,22 +19,12 @@ import java.util.*
 class CalendarView : Fragment() {
     private var periodDateObjects = getPeriodDates()
     private var periodDates = mutableListOf<Long>()
-
-    private val prefListener = {
-        _: SharedPreferences, key: String ->
-        if (key == "cycle_length" || key == "period_length") {
-            //TODO clean this up the preiodDates line is repeated several times. It should be it's own function
-            periodDates = predictFuturePeriods(periodDateObjects.map { d -> d.date }.toMutableList())
-            scrollCalendar.adapter.notifyDataSetChanged()
-        }
-    }
-
+    private val cycleInfo = getCycleInfo()
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
         // we should have context at this point
         periodDates = predictFuturePeriods(periodDateObjects.map { d -> d.date }.toMutableList())
-        PreferenceManager.getDefaultSharedPreferences(context).registerOnSharedPreferenceChangeListener(prefListener)
         return inflater.inflate(R.layout.fragment_calendar_view, container, false)
     }
 
@@ -45,6 +33,14 @@ class CalendarView : Fragment() {
 
         periodDateObjects.addChangeListener {
             results, changeSet ->
+            if (changeSet != null) {
+                periodDates = predictFuturePeriods(periodDateObjects.map { d -> d.date }.toMutableList())
+                scrollCalendar.adapter.notifyDataSetChanged()
+            }
+        }
+
+        cycleInfo.addChangeListener<CycleInfo> {
+            _, changeSet ->
             if (changeSet != null) {
                 periodDates = predictFuturePeriods(periodDateObjects.map { d -> d.date }.toMutableList())
                 scrollCalendar.adapter.notifyDataSetChanged()
@@ -94,18 +90,15 @@ class CalendarView : Fragment() {
     }
 
     // TODO there might be an off by 1 error somewhere in here
+    // TODO handle the case where a period is late
     private fun predictFuturePeriods(periodDates: MutableList<Long>): MutableList<Long> {
         val cycleStart = periodDates.filter { item -> item -1 !in periodDates }.max()!!.toCalendar()
 
-        val prefs = PreferenceManager.getDefaultSharedPreferences(context)
-        val periodLength = prefs.getString("period_length", "5").toInt()
-        val cycleLength = prefs.getString("cycle_length", "28").toInt()
-
         for (i in 1..3) {
-            cycleStart.add(Calendar.DAY_OF_MONTH, cycleLength)
+            cycleStart.add(Calendar.DAY_OF_MONTH, cycleInfo.cycleLength)
             val cycleDays = cycleStart.clone() as Calendar
             periodDates.add(cycleDays.formatDate())
-            for (j in 2..periodLength) {
+            for (j in 2..cycleInfo.periodLength) {
                 cycleDays.add(Calendar.DAY_OF_MONTH, 1)
                 periodDates.add(cycleDays.formatDate())
             }
@@ -116,8 +109,8 @@ class CalendarView : Fragment() {
 
     override fun onDestroyView() {
         super.onDestroyView()
-        PreferenceManager.getDefaultSharedPreferences(context).unregisterOnSharedPreferenceChangeListener(prefListener)
         periodDateObjects.removeAllChangeListeners()
+        cycleInfo.removeAllChangeListeners()
     }
 
     companion object {
