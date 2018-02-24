@@ -25,6 +25,7 @@
         <item>Bleeding</item>
         <item>Spotting</item>
         <item>Cramping</item>
+        <item>Tender breasts</item>
         <item>Headache</item>
     </string-array>
     <string-array name="mental_symptoms">
@@ -36,9 +37,13 @@
     </string-array>
     <string-array name="physical_activity">
         <item>Cardio</item>
+        <item>Flexibility</item>
+        <item>Strength</item>
+        <item>Endurance</item>
     </string-array>
     <string-array name="sexual_activity">
-        <item>Protected Sex</item>
+        <item>Protected</item>
+        <item>Unprotected</item>
     </string-array>
 
     <string-array name="tab_names">
