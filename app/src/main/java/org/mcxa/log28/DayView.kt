@@ -27,6 +27,8 @@ class DayView : Fragment() {
     // changes both the data displayed and the date at the top.
     lateinit var navigateToDay: (c: Calendar) -> Unit
 
+    private var currentDay = Calendar.getInstance()
+
     private val categories = getCategories()
     private val symptoms = getSymptoms()
 
@@ -36,7 +38,7 @@ class DayView : Fragment() {
     private val categoryGroup = mutableListOf<ExpandableGroup>()
     private val symptomList = mutableListOf<MutableList<ChildItem>>()
     // reference to the notes and sleep amount
-    private val notesAndSleep = Section()
+    private lateinit var notesAndSleep: Section
     private lateinit var notesItem: NotesItem
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
@@ -50,11 +52,13 @@ class DayView : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        // if a category is enabled or disabled, redraw everything
         categories.addChangeListener {
             _, changeSet ->
-            if (changeSet != null)
-                groupAdapter.notifyDataSetChanged()
-            Log.d("DAYVIEW", "categories updated $changeSet")
+            if (changeSet != null) {
+                Log.d("DAYVIEW", "categories updated $changeSet")
+                setupRecyclerView()
+            }
         }
 
         setupRecyclerView()
@@ -123,7 +127,11 @@ class DayView : Fragment() {
     }
 
     private fun setupRecyclerView() {
-        val daydata = getDataByDate(Calendar.getInstance())
+        categoryGroup.clear()
+        symptomList.clear()
+        notesAndSleep = Section()
+
+        val daydata = getDataByDate(currentDay)
 
         // add each category as a header
         // add each symptom under a category, set the state based on what's in the DayData object
@@ -151,9 +159,10 @@ class DayView : Fragment() {
     }
 
     fun loadDayData(day: Calendar) {
+        currentDay = day
         Log.d("DAYVIEW", "Loading data for ${day.formatDate()}")
 
-        val daydata = getDataByDate(day)
+        val daydata = getDataByDate(currentDay)
 
         symptomList.forEach {
             it.forEach {
