@@ -25,6 +25,11 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
+    // needed for ACRA
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
 }
 
 androidExtensions {
@@ -32,6 +37,7 @@ androidExtensions {
 }
 
 def support_version = "27.0.2"
+def acraVersion = '5.1.1'
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
@@ -59,6 +65,10 @@ dependencies {
 
     // app intro
     implementation 'com.github.apl-devs:appintro:v4.2.2'
+
+    // crash reporting
+    implementation "ch.acra:acra-mail:$acraVersion"
+    implementation "ch.acra:acra-notification:$acraVersion"
 
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'com.android.support.test:runner:1.0.1'

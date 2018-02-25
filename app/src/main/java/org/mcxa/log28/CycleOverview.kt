@@ -87,6 +87,7 @@ class CycleOverview : Fragment() {
         if (dayData.symptoms.isEmpty() && dayData.notes.isBlank())
             logged_today.setText(R.string.nothing_logged)
         else {
+            logged_today.setText(R.string.logged_today)
             dayData.symptoms.forEach {
                 groupAdapter.add(OverviewItem(it.name))
             }
