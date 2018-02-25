@@ -10,6 +10,7 @@ import android.content.Context
 import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Paint
+import android.support.v7.widget.DividerItemDecoration
 import android.support.v7.widget.LinearLayoutManager
 import android.util.AttributeSet
 import android.util.Log
@@ -31,6 +32,8 @@ class CycleOverview : Fragment() {
     private val periodDates = getPeriodDaysDecending()
     private val dayData = getDataByDate(Calendar.getInstance())
     private val cycleInfo = getCycleInfo()
+    private val groupAdapter = GroupAdapter<ViewHolder>()
+
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
@@ -42,6 +45,7 @@ class CycleOverview : Fragment() {
         super.onDestroyView()
         cycleInfo.removeAllChangeListeners()
         periodDates.removeAllChangeListeners()
+        dayData.removeAllChangeListeners()
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -59,24 +63,36 @@ class CycleOverview : Fragment() {
             calculateNextPeriod(findCycleStart(periodDates))
         }
 
+        dayData.addChangeListener<DayData> {
+            _, changeSet ->
+            if (changeSet != null) setupLoggedToday()
+        }
+
+        val layout = LinearLayoutManager(context)
+        val dividerItem = DividerItemDecoration(context, layout.orientation)
+
+        today_log_list.apply {
+            layoutManager = layout
+            adapter = groupAdapter
+            this.addItemDecoration(dividerItem)
+        }
+
+        setupLoggedToday()
+    }
+
+    private fun setupLoggedToday() {
+        groupAdapter.clear()
+
         //setup recycler view
         if (dayData.symptoms.isEmpty() && dayData.notes.isBlank())
             logged_today.setText(R.string.nothing_logged)
         else {
-            val groupAdapter = GroupAdapter<ViewHolder>()
-
-            today_log_list.apply {
-                layoutManager = LinearLayoutManager(context)
-                adapter = groupAdapter
-
-            }
             dayData.symptoms.forEach {
                 groupAdapter.add(OverviewItem(it.name))
             }
             if (dayData.notes.isNotBlank())
                 groupAdapter.add(OverviewItem(context?.resources!!.getString(R.string.notes_prefix, dayData.notes)))
         }
-
     }
 
     private fun findCycleStart(periodDates: RealmResults<DayData>): Long {

@@ -38,11 +38,11 @@ class RealmPreferenceDataStore(private val context: Context?): PreferenceDataSto
 
     //TODO clean this up once we're sure it works
     override fun getBoolean(key: String?, defValue: Boolean): Boolean {
-        val ret =  when(key) {
+        return when(key) {
             "mental_tracking" ->
                 Realm.getDefaultInstance().where(Category::class.java)
                         .equalTo("name", mentalSymptoms).findFirst()?.active ?: defValue
-            "physical_tracking " ->
+            "physical_tracking" ->
                 Realm.getDefaultInstance().where(Category::class.java)
                     .equalTo("name", physicalActivity).findFirst()?.active ?: defValue
             "sexual_tracking" ->
@@ -50,8 +50,6 @@ class RealmPreferenceDataStore(private val context: Context?): PreferenceDataSto
                         .equalTo("name", sexualActivity).findFirst()?.active ?: defValue
             else -> super.getBoolean(key, defValue)
         }
-        Log.d("SETTINGS", "get boolean called for $key returned $ret")
-        return ret
     }
 
     override fun putBoolean(key: String?, value: Boolean) {

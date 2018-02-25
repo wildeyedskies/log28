@@ -42,8 +42,8 @@
         <item>Endurance</item>
     </string-array>
     <string-array name="sexual_activity">
-        <item>Protected</item>
-        <item>Unprotected</item>
+        <item>Protected Sex</item>
+        <item>Unprotected Sex</item>
     </string-array>
 
     <string-array name="tab_names">
