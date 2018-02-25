@@ -38,7 +38,7 @@ class DayView : Fragment() {
     private val categoryGroup = mutableListOf<ExpandableGroup>()
     private val symptomList = mutableListOf<MutableList<ChildItem>>()
     // reference to the notes and sleep amount
-    private lateinit var notesAndSleep: Section
+    private var notesAndSleep = Section()
     private lateinit var notesItem: NotesItem
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
@@ -57,6 +57,12 @@ class DayView : Fragment() {
             _, changeSet ->
             if (changeSet != null) {
                 Log.d("DAYVIEW", "categories updated $changeSet")
+
+                groupAdapter.clear()
+                categoryGroup.clear()
+                symptomList.clear()
+                notesAndSleep = Section()
+
                 setupRecyclerView()
             }
         }
@@ -127,10 +133,6 @@ class DayView : Fragment() {
     }
 
     private fun setupRecyclerView() {
-        categoryGroup.clear()
-        symptomList.clear()
-        notesAndSleep = Section()
-
         val daydata = getDataByDate(currentDay)
 
         // add each category as a header

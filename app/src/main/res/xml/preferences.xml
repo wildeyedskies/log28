@@ -26,7 +26,8 @@
         <SwitchPreference
             android:key="mental_tracking"
             android:title="Mental"
-            android:summary="Track your mental state"/>
+            android:summary="Track your mental state"
+            />
 
         <SwitchPreference
             android:key="sexual_tracking"
