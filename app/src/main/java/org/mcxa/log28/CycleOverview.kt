@@ -96,15 +96,15 @@ class CycleOverview : Fragment() {
     }
 
     private fun findCycleStart(periodDates: RealmResults<DayData>): Long {
-        var cycleStart: Long = 0
         periodDates.forEachIndexed { index, dayData ->
             //if this is the first day entered, or the previous period date is not the day before the current one, return
             if (index == periodDates.lastIndex || dayData.date - 1 != periodDates[index+1]?.date) {
-                cycleStart = dayData.date
-                return@forEachIndexed
+                Log.d("OVERVIEW", "found cycle start at ${dayData.date}")
+                return dayData.date
             }
         }
-        return cycleStart
+        // return 0 on failure. This will happen if the DB is empty
+        return 0
     }
 
     private fun calculateNextPeriod(cycleStartDate: Long) {

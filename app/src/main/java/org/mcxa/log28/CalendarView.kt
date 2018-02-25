@@ -90,12 +90,19 @@ class CalendarView : Fragment() {
     }
 
     // TODO there might be an off by 1 error somewhere in here
-    // TODO handle the case where a period is late
     private fun predictFuturePeriods(periodDates: MutableList<Long>): MutableList<Long> {
-        val cycleStart = periodDates.filter { item -> item -1 !in periodDates }.max()!!.toCalendar()
+        var cycleStart = periodDates.filter { item -> item -1 !in periodDates }.max()!!.toCalendar()
+
+        //the earliest day we can predict the next period for is tomorrow
+        val tomorrow = Calendar.getInstance()
+        tomorrow.add(Calendar.DAY_OF_MONTH, 1)
 
         for (i in 1..3) {
             cycleStart.add(Calendar.DAY_OF_MONTH, cycleInfo.cycleLength)
+
+            if (cycleStart.before(tomorrow))
+                cycleStart = tomorrow
+
             val cycleDays = cycleStart.clone() as Calendar
             periodDates.add(cycleDays.formatDate())
             for (j in 2..cycleInfo.periodLength) {
