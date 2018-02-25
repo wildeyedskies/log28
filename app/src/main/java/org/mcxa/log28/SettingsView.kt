@@ -15,8 +15,8 @@ import io.realm.Realm
  */
 class SettingsView : PreferenceFragmentCompat() {
     override fun onCreatePreferencesFix(savedInstanceState: Bundle?, rootKey: String?) {
-        setPreferencesFromResource(R.xml.preferences, rootKey);
         preferenceManager.preferenceDataStore = RealmPreferenceDataStore(context)
+        setPreferencesFromResource(R.xml.preferences, rootKey);
     }
 
     companion object {
@@ -38,8 +38,7 @@ class RealmPreferenceDataStore(private val context: Context?): PreferenceDataSto
 
     //TODO clean this up once we're sure it works
     override fun getBoolean(key: String?, defValue: Boolean): Boolean {
-        Log.d("SETTINGS", "get boolean called for $key")
-        return when(key) {
+        val ret =  when(key) {
             "mental_tracking" ->
                 Realm.getDefaultInstance().where(Category::class.java)
                         .equalTo("name", mentalSymptoms).findFirst()?.active ?: defValue
@@ -51,6 +50,8 @@ class RealmPreferenceDataStore(private val context: Context?): PreferenceDataSto
                         .equalTo("name", sexualActivity).findFirst()?.active ?: defValue
             else -> super.getBoolean(key, defValue)
         }
+        Log.d("SETTINGS", "get boolean called for $key returned $ret")
+        return ret
     }
 
     override fun putBoolean(key: String?, value: Boolean) {
