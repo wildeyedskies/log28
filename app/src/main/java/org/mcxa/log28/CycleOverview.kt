@@ -81,8 +81,10 @@ class CycleOverview : Fragment() {
     }
 
     private fun setupLoggedToday() {
-        groupAdapter.clear()
+        if (!dayData.isValid)
+            return
 
+        groupAdapter.clear()
         //setup recycler view
         if (dayData.symptoms.isEmpty() && dayData.notes.isBlank())
             logged_today.setText(R.string.nothing_logged)

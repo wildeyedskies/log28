@@ -9,8 +9,8 @@ import org.acra.annotation.AcraCore
 
 
 
-@AcraCore(buildConfigClass = BuildConfig::class)
-@AcraMailSender(mailTo = "crashreport@log28.com")
+//@AcraCore(buildConfigClass = BuildConfig::class)
+//@AcraMailSender(mailTo = "crashreport@log28.com")
 class Log28 : Application() {
 
     override fun onCreate() {
@@ -18,9 +18,9 @@ class Log28 : Application() {
         Realm.init(this)
     }
 
-    override fun attachBaseContext(base: Context?) {
+    /*override fun attachBaseContext(base: Context?) {
         super.attachBaseContext(base)
 
         ACRA.init(this);
-    }
+    }*/
 }
