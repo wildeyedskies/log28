@@ -14,8 +14,8 @@ android {
         applicationId "org.mcxa.log28"
         minSdkVersion 15
         targetSdkVersion 27
-        versionCode 1
-        versionName "1.0"
+        versionCode 2
+        versionName "0.1"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         vectorDrawables.useSupportLibrary = true
     }
@@ -36,7 +36,7 @@ androidExtensions {
     experimental = true
 }
 
-def support_version = "27.0.2"
+def support_version = "27.1.0"
 def acraVersion = '5.1.1'
 
 dependencies {
@@ -50,7 +50,7 @@ dependencies {
     implementation "com.android.support:cardview-v7:$support_version"
     implementation "com.android.support:recyclerview-v7:$support_version"
     // preferences fix
-    implementation 'com.takisoft.fix:preference-v7:27.0.2.0'
+    implementation "com.takisoft.fix:preference-v7:27.1.0.0"
 
     // groupie recyclerview library
     implementation 'com.xwray:groupie:2.0.3'
@@ -67,7 +67,7 @@ dependencies {
     implementation 'com.github.apl-devs:appintro:v4.2.2'
 
     // crash reporting
-    implementation "ch.acra:acra-mail:$acraVersion"
+    implementation "ch.acra:acra-http:$acraVersion"
     implementation "ch.acra:acra-notification:$acraVersion"
 
     testImplementation 'junit:junit:4.12'
