@@ -1,14 +1,12 @@
-package org.mcxa.log28
+package com.log28
 
 import android.content.Intent
-import android.os.AsyncTask
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
-import android.preference.PreferenceManager
 import android.util.Log
 import io.realm.Realm
 import kotlinx.android.synthetic.main.activity_main.*
-import org.mcxa.log28.org.mcxa.log28.intro.AppIntroActivity
+import com.log28.intro.AppIntroActivity
 import java.util.*
 
 class MainActivity : AppCompatActivity() {

@@ -1,4 +1,4 @@
-package org.mcxa.log28
+package com.log28
 
 import android.support.test.InstrumentationRegistry
 import android.support.test.runner.AndroidJUnit4
@@ -19,6 +19,6 @@ class ExampleInstrumentedTest {
     fun useAppContext() {
         // Context of the app under test.
         val appContext = InstrumentationRegistry.getTargetContext()
-        assertEquals("org.mcxa.log28", appContext.packageName)
+        assertEquals("com.log28", appContext.packageName)
     }
 }

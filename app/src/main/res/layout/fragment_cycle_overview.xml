@@ -4,7 +4,7 @@
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:fitsSystemWindows="true"
-    tools:context="org.mcxa.log28.CycleOverview"
+    tools:context="com.log28.CycleOverview"
     android:orientation="vertical">
     
     <android.support.v7.widget.CardView
@@ -23,7 +23,7 @@
             android:orientation="vertical"
             android:clipChildren="true">
 
-            <org.mcxa.log28.CycleView
+            <com.log28.CycleView
                 android:id="@+id/cycle_view"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content" />

@@ -1,6 +1,5 @@
-package org.mcxa.log28
+package com.log28
 
-import android.content.Context
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.support.v7.widget.LinearLayoutManager
@@ -16,9 +15,9 @@ import kotlinx.android.synthetic.main.fragment_day_view.*
 import com.xwray.groupie.GroupAdapter
 import com.xwray.groupie.Section
 import com.xwray.groupie.kotlinandroidextensions.*
-import org.mcxa.log28.org.mcxa.log28.groupie.ChildItem
-import org.mcxa.log28.org.mcxa.log28.groupie.ExpandableHeaderItem
-import org.mcxa.log28.org.mcxa.log28.groupie.NotesItem
+import com.log28.groupie.ChildItem
+import com.log28.groupie.ExpandableHeaderItem
+import com.log28.groupie.NotesItem
 
 /**
  * Handles the day view
@@ -141,7 +140,7 @@ class DayView : Fragment() {
             ExpandableGroup(ExpandableHeaderItem(category.name)).apply {
                 val symptomsInCategory = mutableListOf<ChildItem>()
                 symptoms.filter { s -> s.category?.name == category.name }.forEach { symptom ->
-                    val childItem = ChildItem(symptom,symptom in daydata.symptoms,
+                    val childItem = ChildItem(symptom, symptom in daydata.symptoms,
                             // here we pass an update function
                             { daydata.toggleSymptom(context, symptom) })
 

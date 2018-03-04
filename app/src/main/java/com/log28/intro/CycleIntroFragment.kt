@@ -1,10 +1,7 @@
-package org.mcxa.log28.org.mcxa.log28.intro
+package com.log28.intro
 
 
-import android.content.SharedPreferences
-import android.os.AsyncTask
 import android.os.Bundle
-import android.preference.PreferenceManager
 import android.support.v4.app.Fragment
 import android.text.Editable
 import android.text.TextWatcher
@@ -13,9 +10,9 @@ import android.view.View
 import android.view.ViewGroup
 import io.realm.Realm
 import kotlinx.android.synthetic.main.fragment_cycle_intro.*
-import org.mcxa.log28.CycleInfo
+import com.log28.CycleInfo
 
-import org.mcxa.log28.R
+import com.log28.R
 
 
 /**

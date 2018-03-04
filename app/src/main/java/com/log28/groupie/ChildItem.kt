@@ -1,10 +1,10 @@
-package org.mcxa.log28.org.mcxa.log28.groupie
+package com.log28.groupie
 
 import com.xwray.groupie.kotlinandroidextensions.Item
 import com.xwray.groupie.kotlinandroidextensions.ViewHolder
 import kotlinx.android.synthetic.main.day_view_list_item.*
-import org.mcxa.log28.R
-import org.mcxa.log28.Symptom
+import com.log28.Symptom
+import com.log28.R
 
 
 class ChildItem(val symptom: Symptom, var state: Boolean, var onClick: () -> Unit): Item() {

@@ -1,4 +1,4 @@
-package org.mcxa.log28
+package com.log28
 
 import android.os.Bundle
 import android.support.v4.app.Fragment

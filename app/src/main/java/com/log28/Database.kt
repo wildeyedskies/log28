@@ -1,4 +1,4 @@
-package org.mcxa.log28
+package com.log28
 
 import android.content.Context
 import android.support.v7.preference.PreferenceManager
@@ -6,6 +6,7 @@ import android.util.Log
 import io.realm.*
 import io.realm.annotations.PrimaryKey
 import java.util.Calendar
+import com.log28.R
 
 // format a date as yyyymmdd
 fun Calendar.formatDate(): Long {

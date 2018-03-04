@@ -1,4 +1,4 @@
-package org.mcxa.log28
+package com.log28
 
 import android.content.Context
 import android.support.v4.app.Fragment
@@ -6,7 +6,6 @@ import android.support.v4.app.FragmentManager
 import android.support.v4.app.FragmentPagerAdapter
 import android.view.LayoutInflater
 import android.view.View
-import android.widget.TextView
 import kotlinx.android.synthetic.main.custom_tab.view.*
 import java.util.*
 

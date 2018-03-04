@@ -1,4 +1,4 @@
-package org.mcxa.log28.org.mcxa.log28.groupie
+package com.log28.groupie
 
 import android.view.View
 import com.xwray.groupie.ExpandableGroup
@@ -6,7 +6,7 @@ import com.xwray.groupie.ExpandableItem
 import com.xwray.groupie.kotlinandroidextensions.Item
 import com.xwray.groupie.kotlinandroidextensions.ViewHolder
 import kotlinx.android.synthetic.main.day_view_group_item.*
-import org.mcxa.log28.R
+import com.log28.R
 
 class ExpandableHeaderItem(private val categoryText: String) : ExpandableItem, Item() {
     override fun getLayout(): Int {

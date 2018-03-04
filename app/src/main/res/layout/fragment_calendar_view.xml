@@ -3,10 +3,10 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:scrollcalendar="http://schemas.android.com/apk/res-auto"
-    tools:context="org.mcxa.log28.CalendarView"
+    tools:context="com.log28.CalendarView"
     android:orientation="vertical">
 
-    <org.mcxa.log28.UpdatableScrollCalendar
+    <com.log28.UpdatableScrollCalendar
         android:id="@+id/scrollCalendar"
         android:layout_width="match_parent"
         android:layout_height="0dp"

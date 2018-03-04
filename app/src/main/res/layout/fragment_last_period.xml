@@ -20,7 +20,7 @@
         android:layout_marginRight="24dp"/>
 
 
-    <org.mcxa.log28.UpdatableScrollCalendar
+    <com.log28.UpdatableScrollCalendar
         android:id="@+id/last_period_calendar"
         android:layout_width="match_parent"
         android:layout_height="0dp"

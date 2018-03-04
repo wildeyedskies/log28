@@ -1,4 +1,4 @@
-package org.mcxa.log28.org.mcxa.log28.intro
+package com.log28.intro
 
 import android.os.Bundle
 import android.support.v4.app.Fragment
@@ -7,9 +7,9 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import kotlinx.android.synthetic.main.fragment_last_period.*
-import org.mcxa.log28.R
-import org.mcxa.log28.formatDate
-import org.mcxa.log28.setFirstPeriod
+import com.log28.R
+import com.log28.formatDate
+import com.log28.setFirstPeriod
 import pl.rafman.scrollcalendar.contract.MonthScrollListener
 import pl.rafman.scrollcalendar.data.CalendarDay
 import java.util.*

@@ -1,13 +1,11 @@
-package org.mcxa.log28.org.mcxa.log28.intro
+package com.log28.intro
 
 import android.graphics.Color
-import android.os.AsyncTask
 import android.os.Bundle
-import android.preference.PreferenceManager
 import android.support.v4.app.Fragment
 import com.github.paolorotolo.appintro.AppIntro2
 import com.github.paolorotolo.appintro.AppIntro2Fragment
-import org.mcxa.log28.R
+import com.log28.R
 
 class AppIntroActivity: AppIntro2() {
     var setupComplete = false

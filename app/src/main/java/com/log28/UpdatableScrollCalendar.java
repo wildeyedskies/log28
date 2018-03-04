@@ -1,4 +1,4 @@
-package org.mcxa.log28;
+package com.log28;
 
         import android.content.Context;
         import android.content.res.TypedArray;

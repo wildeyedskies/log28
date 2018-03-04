@@ -11,7 +11,7 @@ apply plugin: 'realm-android'
 android {
     compileSdkVersion 27
     defaultConfig {
-        applicationId "org.mcxa.log28"
+        applicationId "com.log28"
         minSdkVersion 15
         targetSdkVersion 27
         versionCode 2

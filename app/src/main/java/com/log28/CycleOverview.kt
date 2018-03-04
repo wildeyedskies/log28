@@ -1,4 +1,4 @@
-package org.mcxa.log28
+package com.log28
 
 
 import android.os.Bundle
@@ -19,7 +19,7 @@ import com.xwray.groupie.kotlinandroidextensions.ViewHolder
 import devs.mulham.horizontalcalendar.utils.Utils
 import io.realm.RealmResults
 import kotlinx.android.synthetic.main.fragment_cycle_overview.*
-import org.mcxa.log28.org.mcxa.log28.groupie.OverviewItem
+import com.log28.groupie.OverviewItem
 import java.util.*
 
 

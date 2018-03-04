@@ -1,4 +1,4 @@
-package org.mcxa.log28.org.mcxa.log28.groupie
+package com.log28.groupie
 
 import android.text.Editable
 import android.text.TextWatcher
@@ -6,8 +6,8 @@ import android.widget.TextView
 import com.xwray.groupie.kotlinandroidextensions.Item
 import com.xwray.groupie.kotlinandroidextensions.ViewHolder
 import kotlinx.android.synthetic.main.day_view_notes_item.*
-import org.mcxa.log28.DayData
-import org.mcxa.log28.R
+import com.log28.DayData
+import com.log28.R
 
 
 class NotesItem(var daydata: DayData): Item() {

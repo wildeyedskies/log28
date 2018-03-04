@@ -1,13 +1,13 @@
-package org.mcxa.log28
+package com.log28
 
 import android.app.Application
 import android.content.Context
 import io.realm.Realm
 import org.acra.annotation.*
 import org.acra.ACRA
+import org.acra.BuildConfig
 import org.acra.annotation.AcraCore
 import org.acra.sender.HttpSender
-
 
 @AcraCore(buildConfigClass = BuildConfig::class)
 @AcraHttpSender(uri = "http://crash.log28.com:55000/send", httpMethod = HttpSender.Method.POST)
