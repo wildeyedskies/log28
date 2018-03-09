@@ -18,6 +18,7 @@ import com.xwray.groupie.kotlinandroidextensions.*
 import com.log28.groupie.ChildItem
 import com.log28.groupie.ExpandableHeaderItem
 import com.log28.groupie.NotesItem
+import devs.mulham.horizontalcalendar.utils.Utils
 
 /**
  * Handles the day view
@@ -77,6 +78,7 @@ class DayView : Fragment() {
     // setup the recycler view
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        setDayText(currentDay)
 
         day_view_recycler.apply {
             layoutManager = LinearLayoutManager(context)
@@ -93,7 +95,7 @@ class DayView : Fragment() {
 
         val currentdate = Calendar.getInstance()
 
-        val horizontalCalendar = HorizontalCalendar.Builder(rootView, R.id.topCalendar)
+        val horizontalCalendar = HorizontalCalendar.Builder(rootView, R.id.top_calendar)
                 .defaultSelectedDate(currentdate)
                 .range(startDate, endDate)
                 .datesNumberOnScreen(5).build()
@@ -159,9 +161,12 @@ class DayView : Fragment() {
         groupAdapter.add(notesAndSleep)
     }
 
-    fun loadDayData(day: Calendar) {
+    private fun loadDayData(day: Calendar) {
         currentDay = day
         Log.d("DAYVIEW", "Loading data for ${day.formatDate()}")
+
+        // set the day text
+        setDayText(day)
 
         val daydata = getDataByDate(currentDay)
 
@@ -178,6 +183,19 @@ class DayView : Fragment() {
 
         notesItem.daydata = daydata
         notesAndSleep.notifyChanged()
+    }
+
+    private fun setDayText(day: Calendar) {
+        val now = Calendar.getInstance()
+        val yesterday = Calendar.getInstance()
+        yesterday.add(Calendar.DAY_OF_MONTH, -1)
+
+        if (Utils.isSameDate(day, now))
+            day_text.text = context!!.getString(R.string.today)
+        else if (Utils.isSameDate(day, yesterday))
+            day_text.text = context!!.getString(R.string.yesterday)
+        else
+            day_text.text = context!!.getString(R.string.days_ago, Utils.daysBetween(day, now))
     }
 
     companion object {

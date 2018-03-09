@@ -48,11 +48,17 @@ class CycleOverview : Fragment() {
         dayData.removeAllChangeListeners()
     }
 
+    // this should fix the case where the user returns to the activity on a subsequent date
+    override fun onResume() {
+        Log.d("OVERVIEW", "resuming")
+        super.onResume()
+        calculateNextPeriod(findCycleStart(periodDates))
+        setupLoggedToday()
+    }
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
-        calculateNextPeriod(findCycleStart(periodDates))
-
+        Log.d("OVERVIEW", "view created")
         periodDates.addChangeListener {
             results, changeset -> Log.d("OVERVIEW", "period dates changed")
             calculateNextPeriod(findCycleStart(results))
@@ -76,8 +82,6 @@ class CycleOverview : Fragment() {
             adapter = groupAdapter
             this.addItemDecoration(dividerItem)
         }
-
-        setupLoggedToday()
     }
 
     private fun setupLoggedToday() {

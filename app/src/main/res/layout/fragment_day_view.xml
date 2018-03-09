@@ -7,12 +7,21 @@
     android:orientation="vertical">
 
     <devs.mulham.horizontalcalendar.HorizontalCalendarView
-        android:id="@+id/topCalendar"
+        android:id="@+id/top_calendar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@color/colorPrimary"
         app:textColorNormal="#bababa"
         app:textColorSelected="@color/primaryText"/>
+
+    <TextView
+        android:id="@+id/day_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginTop="16dp"
+        android:textSize="18sp"
+        android:layout_marginBottom="6dp"/>
 
     <android.support.v7.widget.RecyclerView android:id="@+id/day_view_recycler"
         android:layout_width="match_parent" android:layout_height="match_parent"
