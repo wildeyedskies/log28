@@ -22,6 +22,9 @@
     <string name="crash_text">Press OK to send a report to the developers.</string>
     <string name="notification_channel">log28</string>
 
+    <string name="settings">Settings</string>
+    <string name="about">About</string>
+
     <string-array name="categories">
         <item>Physical Symptoms</item>
         <item>Mental State</item>
@@ -58,6 +61,9 @@
         <item name="overview">Overview</item>
         <item name="add_info">Add Info</item>
         <item name="calendar">Calendar</item>
-        <item name="settings">Settings</item>
+        <item name="settings">History</item>
     </string-array>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>

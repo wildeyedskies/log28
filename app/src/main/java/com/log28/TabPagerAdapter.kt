@@ -10,7 +10,7 @@ import kotlinx.android.synthetic.main.custom_tab.view.*
 import java.util.*
 
 class TabPagerAdapter(fm: FragmentManager, private val context: Context) : FragmentPagerAdapter(fm) {
-    private val tabIcons = arrayOf(R.drawable.ic_cycle, R.drawable.ic_plus, R.drawable.ic_calendar, R.drawable.ic_settings)
+    private val tabIcons = arrayOf(R.drawable.ic_cycle, R.drawable.ic_plus, R.drawable.ic_calendar, R.drawable.ic_file_chart)
     val tabText = context.resources.getStringArray(R.array.tab_names)
 
     private val PAGE_COUNT = 4
@@ -31,7 +31,7 @@ class TabPagerAdapter(fm: FragmentManager, private val context: Context) : Fragm
                 view
             }
             2 -> CalendarView.newInstance()
-            3 -> SettingsView.newInstance()
+            3 -> CycleHistory.newInstance()
             else -> CycleOverview.newInstance()
         }
     }

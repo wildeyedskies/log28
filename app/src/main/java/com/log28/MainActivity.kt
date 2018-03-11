@@ -4,6 +4,8 @@ import android.content.Intent
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
+import android.view.Menu
+import android.view.MenuItem
 import io.realm.Realm
 import kotlinx.android.synthetic.main.activity_main.*
 import com.log28.intro.AppIntroActivity
@@ -37,6 +39,21 @@ class MainActivity : AppCompatActivity() {
         for (i in pagerAdapter.tabText.indices) {
             sliding_tabs.getTabAt(i)?.customView = pagerAdapter.getTabView(i)
         }
+    }
+
+    // setup the options menu
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menuInflater.inflate(R.menu.option_menu, menu)
+        return true
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem?): Boolean {
+        when (item?.itemId) {
+            R.id.about -> /* TODO launch about */ return true
+            R.id.settings -> /* TODO launch settings */ return true
+        }
+
+        return false
     }
 
     /**
