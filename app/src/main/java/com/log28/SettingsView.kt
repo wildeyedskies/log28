@@ -4,10 +4,12 @@ package com.log28
 import android.content.Context
 import android.os.Bundle
 import android.support.v4.app.Fragment
+import android.support.v7.app.AppCompatActivity
 import android.support.v7.preference.PreferenceDataStore
 import android.util.Log
 import com.takisoft.fix.support.v7.preference.PreferenceFragmentCompat
 import io.realm.Realm
+import kotlinx.android.synthetic.main.activity_main.*
 
 
 /**
@@ -27,6 +29,15 @@ class SettingsView : PreferenceFragmentCompat() {
             fragment.arguments = args
             return fragment
         }
+    }
+}
+
+class SettingsActivity : AppCompatActivity() {
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContentView(R.layout.activity_settings)
+        setSupportActionBar(toolbar)
     }
 }
 

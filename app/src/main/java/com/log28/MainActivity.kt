@@ -50,9 +50,11 @@ class MainActivity : AppCompatActivity() {
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
         when (item?.itemId) {
             R.id.about -> /* TODO launch about */ return true
-            R.id.settings -> /* TODO launch settings */ return true
+            R.id.settings -> {
+                val intent = Intent(this, SettingsActivity::class.java)
+                startActivity(intent)
+            }
         }
-
         return false
     }
 
