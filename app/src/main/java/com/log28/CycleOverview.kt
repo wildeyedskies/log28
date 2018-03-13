@@ -16,10 +16,10 @@ import android.util.AttributeSet
 import android.util.Log
 import com.xwray.groupie.GroupAdapter
 import com.xwray.groupie.kotlinandroidextensions.ViewHolder
-import devs.mulham.horizontalcalendar.utils.Utils
 import io.realm.RealmResults
 import kotlinx.android.synthetic.main.fragment_cycle_overview.*
 import com.log28.groupie.OverviewItem
+import devs.mulham.horizontalcalendar.utils.Utils
 import java.util.*
 
 
@@ -125,7 +125,7 @@ class CycleOverview : Fragment() {
         // updateModel the text views with the correct days until
         val cycleDay = Utils.daysBetween(cycleStart, Calendar.getInstance())
         Log.d("OVERVIEW",
-                "cycle length ${cycleInfo.cycleLength}, periodLength ${cycleInfo.cycleLength} cycle day is $cycleDay")
+                "cycle length ${cycleInfo.cycleLength}, periodLength ${cycleInfo.periodLength} cycle day is $cycleDay")
         // on period
         if (cycleDay < cycleInfo.periodLength) {
             days_until_text.text = getString(R.string.days_left_in_period)

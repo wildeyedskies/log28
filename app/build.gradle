@@ -61,7 +61,7 @@ dependencies {
         exclude group: 'com.android.support'
     }
     // top calendar
-    implementation 'devs.mulham.horizontalcalendar:horizontalcalendar:1.3.4'
+    compile project(':horizontalcalendar')
 
     // app intro
     implementation 'com.github.apl-devs:appintro:v4.2.2'

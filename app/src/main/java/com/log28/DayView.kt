@@ -103,6 +103,7 @@ class DayView : Fragment() {
         navigateToDay = {
             c -> // set the range to be one month before
             //TODO clean this mess up
+            Log.d("DAYVIEW", "navigateToDay called ${c.formatDate()}")
             if (c.before(startDate)) {
                 startDate.set(Calendar.YEAR, c.get(Calendar.YEAR))
                 startDate.set(Calendar.MONTH, c.get(Calendar.MONTH))
