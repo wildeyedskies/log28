@@ -7,6 +7,7 @@ import android.support.v4.app.Fragment
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.preference.PreferenceDataStore
 import android.util.Log
+import android.view.MenuItem
 import com.takisoft.fix.support.v7.preference.PreferenceFragmentCompat
 import io.realm.Realm
 import kotlinx.android.synthetic.main.activity_main.*
@@ -38,7 +39,20 @@ class SettingsActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_settings)
         setSupportActionBar(toolbar)
+        // draw the back button
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        supportActionBar?.setDisplayShowHomeEnabled(true)
     }
+
+    // exit when the back button is pressed
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        // handle arrow click here
+        if (item.itemId == android.R.id.home) {
+            finish() // close this activity and return to preview activity (if there is any)
+        }
+        return super.onOptionsItemSelected(item)
+    }
+
 }
 
 // this class is kind of a hack. It persists preferences in a realm CycleInfo object
