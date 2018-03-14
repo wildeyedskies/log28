@@ -130,7 +130,7 @@ class CycleOverview : Fragment() {
         if (cycleDay < cycleInfo.periodLength) {
             days_until_text.text = getString(R.string.days_left_in_period)
             days_until_number.text = (cycleInfo.periodLength - cycleDay).toString()
-        } else if (cycleDay < cycleInfo.cycleLength) {
+        } else if (cycleDay <= cycleInfo.cycleLength) {
             days_until_text.text = getString(R.string.days_until_period)
             days_until_number.text = (cycleInfo.cycleLength - cycleDay).toString()
         } else {
@@ -140,7 +140,7 @@ class CycleOverview : Fragment() {
 
         // updateModel the progress bar
         cycle_view.setCycleData(cycleInfo.cycleLength, cycleInfo.periodLength, cycleDay)
-        this.view?.invalidate()
+        cycle_view.invalidate()
     }
 
     companion object {
