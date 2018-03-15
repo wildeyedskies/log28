@@ -1,68 +1,84 @@
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:fitsSystemWindows="true"
-    tools:context="com.log28.CycleOverview"
-    android:orientation="vertical">
-    
-    <android.support.v7.widget.CardView
-        xmlns:card_view="http://schemas.android.com/apk/res-auto"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="24dp"
-        android:layout_marginLeft="24dp"
-        android:layout_marginRight="24dp"
-        card_view:cardCornerRadius="5dp"
-        card_view:cardElevation="8dp">
+    tools:context="com.log28.CycleOverview">
 
-        <LinearLayout
+    <!-- this might be a performance problem, lots of nesting going on here -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <android.support.v7.widget.CardView
+            xmlns:card_view="http://schemas.android.com/apk/res-auto"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:clipChildren="true">
+            android:layout_marginTop="24dp"
+            android:layout_marginLeft="24dp"
+            android:layout_marginRight="24dp"
+            card_view:cardCornerRadius="5dp"
+            card_view:cardElevation="8dp">
 
-            <com.log28.CycleView
-                android:id="@+id/cycle_view"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
-
-            <TextView
-                android:id="@+id/days_until_number"
-                android:layout_width="wrap_content"
+            <LinearLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:layout_marginTop="16dp"
-                android:textSize="30sp"
-                />
+                android:orientation="vertical"
+                android:clipChildren="true">
 
-            <TextView
-                android:id="@+id/days_until_text"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:layout_marginBottom="8dp"
-                android:text="@string/days_until_period"/>
+                <com.log28.CycleView
+                    android:id="@+id/cycle_view"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
 
-        </LinearLayout>
-    </android.support.v7.widget.CardView>
+                <TextView
+                    android:id="@+id/days_until_number"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_marginTop="16dp"
+                    android:textSize="30sp"
+                    />
 
-    <TextView
-        android:id="@+id/logged_today"
+                <TextView
+                    android:id="@+id/days_until_text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_marginBottom="8dp"
+                    android:text="@string/days_until_period"/>
+
+            </LinearLayout>
+        </android.support.v7.widget.CardView>
+
+        <TextView
+            android:id="@+id/logged_today"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="48dp"
+            android:text="@string/logged_today"
+            android:textSize="18sp"
+            android:layout_gravity="center"
+            />
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/today_log_list"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp">
+
+        </android.support.v7.widget.RecyclerView>
+
+    </LinearLayout>
+
+    <android.support.design.widget.FloatingActionButton
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="48dp"
-        android:text="@string/logged_today"
-        android:textSize="18sp"
-        android:layout_gravity="center"/>
+        android:layout_gravity="bottom|center"
+        android:layout_margin="24dp"
+        app:rippleColor="@color/colorAccent"
+        app:srcCompat="@drawable/ic_plus_white" />
 
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/today_log_list"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp">
-
-    </android.support.v7.widget.RecyclerView>
-
-</LinearLayout>
+</android.support.design.widget.CoordinatorLayout>
