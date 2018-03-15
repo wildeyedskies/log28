@@ -3,7 +3,6 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:fitsSystemWindows="true"
     tools:context="com.log28.CycleOverview">
 
     <!-- this might be a performance problem, lots of nesting going on here -->
@@ -74,9 +73,10 @@
     </LinearLayout>
 
     <android.support.design.widget.FloatingActionButton
+        android:id="@+id/add_info_today"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="bottom|center"
+        android:layout_gravity="bottom|end"
         android:layout_margin="24dp"
         app:rippleColor="@color/colorAccent"
         app:srcCompat="@drawable/ic_plus_white" />

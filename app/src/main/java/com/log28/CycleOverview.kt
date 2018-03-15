@@ -30,7 +30,7 @@ import java.util.*
  */
 class CycleOverview : Fragment() {
     private val periodDates = getPeriodDaysDecending()
-    private val dayData = getDataByDate(Calendar.getInstance())
+    private var dayData = getDataByDate(Calendar.getInstance())
     private val cycleInfo = getCycleInfo()
     private val groupAdapter = GroupAdapter<ViewHolder>()
 
@@ -58,6 +58,9 @@ class CycleOverview : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        // if day data has been invalidated, refresh it
+        if (!dayData.isValid) dayData = getDataByDate(Calendar.getInstance())
+
         Log.d("OVERVIEW", "view created")
         periodDates.addChangeListener {
             results, changeset -> Log.d("OVERVIEW", "period dates changed")
@@ -81,6 +84,11 @@ class CycleOverview : Fragment() {
             layoutManager = layout
             adapter = groupAdapter
             this.addItemDecoration(dividerItem)
+        }
+
+        // when the FAB is clicked, navigate to the day view for today
+        add_info_today.setOnClickListener {
+            (this.activity as MainActivity).navToDayView(Calendar.getInstance())
         }
     }
 
