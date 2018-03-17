@@ -112,8 +112,11 @@ class CycleOverview : Fragment() {
 
     private fun findCycleStart(periodDates: RealmResults<DayData>): Long {
         periodDates.forEachIndexed { index, dayData ->
+            val previousDate = dayData.date.toCalendar()
+            previousDate.add(Calendar.DAY_OF_MONTH, -1)
+
             //if this is the first day entered, or the previous period date is not the day before the current one, return
-            if (index == periodDates.lastIndex || dayData.date - 1 != periodDates[index+1]?.date) {
+            if (index == periodDates.lastIndex || previousDate.formatDate() != periodDates[index+1]?.date) {
                 Log.d("OVERVIEW", "found cycle start at ${dayData.date}")
                 return dayData.date
             }

@@ -33,15 +33,14 @@
                 android:layout_height="wrap_content"
                 android:text="@string/avg_cycle_length"
                 android:layout_marginRight="32dp"
-                android:layout_gravity="center_horizontal"
-                />
+                android:layout_marginEnd="32dp"
+                android:layout_gravity="center_horizontal" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/avg_period_length"
-                android:layout_gravity="center_horizontal"
-                />
+                android:layout_gravity="center_horizontal" />
 
         </GridLayout>
 
@@ -51,8 +50,10 @@
         android:background="@android:color/darker_gray"/>
 
     <android.support.v7.widget.RecyclerView
+        android:id="@+id/previous_cycles"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:scrollbars="vertical">
 
     </android.support.v7.widget.RecyclerView>
 
