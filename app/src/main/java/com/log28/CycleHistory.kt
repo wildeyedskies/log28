@@ -7,7 +7,9 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import devs.mulham.horizontalcalendar.utils.Utils
 import io.realm.RealmResults
+import kotlinx.android.synthetic.main.fragment_cycle_history.*
 import java.util.*
 import kotlin.math.roundToInt
 
@@ -18,13 +20,16 @@ import kotlin.math.roundToInt
  * create an instance of this fragment.
  */
 class CycleHistory : Fragment() {
-    data class CycleData(val cycleStarts: List<Long>, val periodEnds: List<Long>)
+    data class CycleData(val cycleStarts: List<Calendar>, val periodEnds: List<Calendar>)
 
     private val periodDates = getPeriodDaysDecending()
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         val cycleData = findCycleStartsAndPeriodEnds(periodDates)
+
+        avg_cycle_length.text = findAverageCycleLength(cycleData.cycleStarts).toString()
+        avg_period_length.text = findAveragePeriodLength(cycleData).toString()
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
@@ -33,9 +38,10 @@ class CycleHistory : Fragment() {
         return inflater.inflate(R.layout.fragment_cycle_history, container, false)
     }
 
+    //TODO fix performance (maybe make all the dates calendars)
     private fun findCycleStartsAndPeriodEnds(periodDates: RealmResults<DayData>): CycleData {
-        val cycleStarts = mutableListOf<Long>()
-        val periodEnds = mutableListOf<Long>()
+        val cycleStarts = mutableListOf<Calendar>()
+        val periodEnds = mutableListOf<Calendar>()
 
         periodDates.forEachIndexed { index, dayData ->
             val previousDate = dayData.date.toCalendar()
@@ -44,9 +50,9 @@ class CycleHistory : Fragment() {
             nextDate.add(Calendar.DAY_OF_MONTH, 1)
 
             if (index == periodDates.lastIndex || previousDate.formatDate() != periodDates[index+1]?.date) {
-                cycleStarts.add(dayData.date)
+                cycleStarts.add(dayData.date.toCalendar())
             } else if (index == 0 || nextDate.formatDate() != periodDates[index-1]?.date) {
-                periodEnds.add(dayData.date)
+                periodEnds.add(dayData.date.toCalendar())
             }
         }
         Log.d("HISTORYVIEW", "cyclestarts $cycleStarts\nperiodEnds $periodEnds")
@@ -54,13 +60,32 @@ class CycleHistory : Fragment() {
         return CycleData(cycleStarts, periodEnds)
     }
 
-    private fun findAverageCycleLength(cycleStarts: List<Long>): Int {
+    //TODO check for off-by-ones and other math errors
+    private fun findAverageCycleLength(cycleStarts: List<Calendar>): Int {
         val cycleLengths = mutableListOf<Int>()
         cycleStarts.forEachIndexed {
             index, date ->
+            if (index != 0) {
+                cycleLengths.add(Utils.daysBetween(date, cycleStarts[index-1]))
+            }
         }
 
         return cycleLengths.average().roundToInt()
+    }
+
+    //TODO check for off-by-ones and other math errors
+    private fun findAveragePeriodLength(cycleData: CycleData): Int {
+        val periodLengths = mutableListOf<Int>()
+
+        cycleData.periodEnds.forEachIndexed {
+            index, date ->
+            if (!date.isToday()) {
+                // we need to add 1 because days between doesn't count the last day of the period
+                periodLengths.add(Utils.daysBetween(cycleData.cycleStarts[index], date) + 1)
+            }
+        }
+
+        return periodLengths.average().roundToInt()
     }
 
     companion object {
@@ -79,4 +104,8 @@ class CycleHistory : Fragment() {
         }
     }
 
+}
+
+fun Calendar.isToday(): Boolean {
+    return Utils.isSameDate(this, Calendar.getInstance())
 }

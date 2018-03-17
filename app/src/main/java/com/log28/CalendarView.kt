@@ -6,6 +6,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import devs.mulham.horizontalcalendar.utils.Utils
 import kotlinx.android.synthetic.main.fragment_calendar_view.*
 import pl.rafman.scrollcalendar.contract.MonthScrollListener
 import pl.rafman.scrollcalendar.data.CalendarDay
@@ -68,7 +69,7 @@ class CalendarView : Fragment() {
             // only allow you to go to the day view for dates not in the future
             Log.d("CALVIEW", "day clicked ${cal.formatDate()}")
             //TODO redo this tangled mess with some RX code calendar tap -> event -> dayview updates
-            if (cal.before(Calendar.getInstance()))
+            if (cal.before(Calendar.getInstance()) || cal.isToday())
                 (this.activity as? MainActivity)?.navToDayView(cal)
         })
 
