@@ -3,10 +3,17 @@ package com.log28
 
 import android.os.Bundle
 import android.support.v4.app.Fragment
+import android.support.v7.widget.DividerItemDecoration
+import android.support.v7.widget.GridLayoutManager
+import android.support.v7.widget.LinearLayoutManager
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.TextView
+import com.log28.groupie.HistoryItem
+import com.xwray.groupie.GroupAdapter
+import com.xwray.groupie.ViewHolder
 import devs.mulham.horizontalcalendar.utils.Utils
 import io.realm.RealmResults
 import kotlinx.android.synthetic.main.fragment_cycle_history.*
@@ -30,12 +37,29 @@ class CycleHistory : Fragment() {
 
         avg_cycle_length.text = findAverageCycleLength(cycleData.cycleStarts).toString()
         avg_period_length.text = findAveragePeriodLength(cycleData).toString()
+        setupPreviousCycles(cycleData)
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_cycle_history, container, false)
+    }
+
+    private fun setupPreviousCycles(cycleData: CycleData) {
+        val layout = GridLayoutManager(context, 3)
+        val dividerItem = DividerItemDecoration(context, layout.orientation)
+        val groupAdapter = GroupAdapter<ViewHolder>()
+
+        previous_cycles.apply {
+            layoutManager = layout
+            adapter = groupAdapter
+            this.addItemDecoration(dividerItem)
+        }
+
+        listOf("Cycle Start", "Period Length","Cycle Length", "Feb 8, 2018", "5", "-", "Jan 6, 2018", "6", "29").forEach {
+            groupAdapter.add(HistoryItem(it))
+        }
     }
 
     //TODO fix performance (maybe make all the dates calendars)
