@@ -5,12 +5,10 @@ import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.support.v7.widget.DividerItemDecoration
 import android.support.v7.widget.GridLayoutManager
-import android.support.v7.widget.LinearLayoutManager
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
 import com.log28.groupie.HistoryItem
 import com.xwray.groupie.GroupAdapter
 import com.xwray.groupie.ViewHolder
@@ -35,9 +33,14 @@ class CycleHistory : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         val cycleData = findCycleStartsAndPeriodEnds(periodDates)
 
-        avg_cycle_length.text = findAverageCycleLength(cycleData.cycleStarts).toString()
-        avg_period_length.text = findAveragePeriodLength(cycleData).toString()
-        setupPreviousCycles(cycleData)
+        val cycleLengths = findCycleLengths(cycleData.cycleStarts)
+        val periodLengths = findPeriodLengths(cycleData)
+
+        Log.d("HISTORYVIEW", "cycleLengths: $cycleLengths, periodLengths: $periodLengths")
+
+        avg_cycle_length.text = cycleLengths.average().roundToInt().toString()
+        avg_period_length.text = periodLengths.average().roundToInt().toString()
+        setupPreviousCycles(cycleData.cycleStarts, periodLengths, cycleLengths)
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
@@ -46,7 +49,8 @@ class CycleHistory : Fragment() {
         return inflater.inflate(R.layout.fragment_cycle_history, container, false)
     }
 
-    private fun setupPreviousCycles(cycleData: CycleData) {
+    private fun setupPreviousCycles(cycleStarts: List<Calendar>, periodLengths: List<Int>,
+                                    cycleLengths: List<Int>) {
         val layout = GridLayoutManager(context, 3)
         val dividerItem = DividerItemDecoration(context, layout.orientation)
         val groupAdapter = GroupAdapter<ViewHolder>()
@@ -57,8 +61,24 @@ class CycleHistory : Fragment() {
             this.addItemDecoration(dividerItem)
         }
 
-        listOf("Cycle Start", "Period Length","Cycle Length", "Feb 8, 2018", "5", "-", "Jan 6, 2018", "6", "29").forEach {
+        listOf("Cycle Start", "Period Length", "Cycle Length").forEach {
             groupAdapter.add(HistoryItem(it))
+        }
+
+        val starts = cycleStarts.map { HistoryItem(it.dateString()) }
+        // we need to add one to the cycle because the current cycle isn't complete
+        val cycles = cycleLengths.map { HistoryItem(it.toString()) }
+                .toMutableList()
+        cycles.add(0, HistoryItem("-"))
+        val periods = periodLengths.map { HistoryItem(it.toString()) }.toMutableList()
+        // if the period is still going, we don't have a length for it
+        if (periodLengths.size == cycleLengths.size)
+            periods.add(0, HistoryItem("-"))
+
+        starts.forEachIndexed {
+            index, item -> groupAdapter.add(item)
+            groupAdapter.add(periods[index])
+            groupAdapter.add(cycles[index])
         }
     }
 
@@ -79,13 +99,11 @@ class CycleHistory : Fragment() {
                 periodEnds.add(dayData.date.toCalendar())
             }
         }
-        Log.d("HISTORYVIEW", "cyclestarts $cycleStarts\nperiodEnds $periodEnds")
-
         return CycleData(cycleStarts, periodEnds)
     }
 
     //TODO check for off-by-ones and other math errors
-    private fun findAverageCycleLength(cycleStarts: List<Calendar>): Int {
+    private fun findCycleLengths(cycleStarts: List<Calendar>): List<Int> {
         val cycleLengths = mutableListOf<Int>()
         cycleStarts.forEachIndexed {
             index, date ->
@@ -94,13 +112,12 @@ class CycleHistory : Fragment() {
             }
         }
 
-        return cycleLengths.average().roundToInt()
+        return cycleLengths
     }
 
     //TODO check for off-by-ones and other math errors
-    private fun findAveragePeriodLength(cycleData: CycleData): Int {
+    private fun findPeriodLengths(cycleData: CycleData): List<Int> {
         val periodLengths = mutableListOf<Int>()
-
         cycleData.periodEnds.forEachIndexed {
             index, date ->
             if (!date.isToday()) {
@@ -109,7 +126,7 @@ class CycleHistory : Fragment() {
             }
         }
 
-        return periodLengths.average().roundToInt()
+        return periodLengths
     }
 
     companion object {
@@ -119,7 +136,6 @@ class CycleHistory : Fragment() {
          *
          * @return A new instance of fragment CycleHistory.
          */
-        // TODO: Rename and change types and number of parameters
         fun newInstance(): CycleHistory {
             val fragment = CycleHistory()
             val args = Bundle()
@@ -132,4 +148,10 @@ class CycleHistory : Fragment() {
 
 fun Calendar.isToday(): Boolean {
     return Utils.isSameDate(this, Calendar.getInstance())
+}
+
+fun Calendar.dateString(): String {
+    // kotlin does not seem to like java's string formatting. I guess I'll do it myself
+    val month = listOf("Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec")[this.get(Calendar.MONTH)]
+    return "$month ${this.get(Calendar.DAY_OF_MONTH)}, ${this.get(Calendar.YEAR)}"
 }
