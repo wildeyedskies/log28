@@ -49,10 +49,15 @@ class MainActivity : AppCompatActivity() {
 
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
         when (item?.itemId) {
-            R.id.about -> /* TODO launch about */ return true
+            R.id.about -> {
+                val intent = Intent(this, AboutActivity::class.java)
+                startActivity(intent)
+                return true
+            }
             R.id.settings -> {
                 val intent = Intent(this, SettingsActivity::class.java)
                 startActivity(intent)
+                return true
             }
         }
         return false
@@ -67,6 +72,6 @@ class MainActivity : AppCompatActivity() {
     fun navToDayView(day: Calendar) {
         // go to the index of the day view
         viewPager.currentItem = 1
-        (viewPager.adapter as? TabPagerAdapter)?.setDayViewDay?.invoke(day)
+        (viewPager.adapter as? TabPagerAdapter)?.setDayViewDay(day)
     }
 }

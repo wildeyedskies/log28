@@ -51,6 +51,9 @@ class DayView : Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        // set currentDay if we received it
+        currentDay = savedInstanceState?.getSerializable("day") as? Calendar
+                ?: Calendar.getInstance()
 
         // if a category is enabled or disabled, redraw everything
         categories.addChangeListener {
@@ -88,10 +91,9 @@ class DayView : Fragment() {
 
     private fun setupHorizontalCalendar(rootView: View) {
         // setup the top calendar
-        val startDate = Calendar.getInstance()
+        val startDate = currentDay.clone() as Calendar
         startDate.add(Calendar.MONTH, -1)
         val endDate = Calendar.getInstance()
-        //endDate.add(Calendar.DAY_OF_MONTH, 1)
 
         val currentdate = Calendar.getInstance()
 
@@ -206,9 +208,10 @@ class DayView : Fragment() {
          *
          * @return A new instance of fragment DayView.
          */
-        fun newInstance(): DayView {
+        fun newInstance(day: Calendar): DayView {
             val fragment = DayView()
             val args = Bundle()
+            args.putSerializable("day", day)
             fragment.arguments = args
             return fragment
         }

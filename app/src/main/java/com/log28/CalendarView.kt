@@ -24,13 +24,13 @@ class CalendarView : Fragment() {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
-        // we should have context at this point
-        periodDates = predictFuturePeriods(periodDateObjects.map { d -> d.date }.toMutableList())
         return inflater.inflate(R.layout.fragment_calendar_view, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        // we should have context at this point
+        periodDates = predictFuturePeriods(periodDateObjects.map { d -> d.date }.toMutableList())
 
         periodDateObjects.addChangeListener {
             results, changeSet ->

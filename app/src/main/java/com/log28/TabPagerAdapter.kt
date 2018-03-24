@@ -14,7 +14,8 @@ class TabPagerAdapter(fm: FragmentManager, private val context: Context) : Fragm
     val tabText = context.resources.getStringArray(R.array.tab_names)
 
     private val PAGE_COUNT = 4
-    lateinit var setDayViewDay: (c: Calendar) -> Unit
+    private lateinit var dayView: DayView
+    private var dayViewDay = Calendar.getInstance()
 
     override fun getCount(): Int {
         return PAGE_COUNT
@@ -24,15 +25,24 @@ class TabPagerAdapter(fm: FragmentManager, private val context: Context) : Fragm
         return when (position) {
             0 -> CycleOverview.newInstance()
             1 -> {
-                val view = DayView.newInstance()
-                setDayViewDay = {
-                    c -> view.navigateToDay.invoke(c)
-                }
+                val view = DayView.newInstance(dayViewDay)
+                dayView = view
                 view
             }
             2 -> CalendarView.newInstance()
             3 -> CycleHistory.newInstance()
             else -> CycleOverview.newInstance()
+        }
+    }
+
+    //TODO find a cleaner way to do this
+    // if the day view has been initialized, run navToDay, otherwise store the day
+    // and set it when the day view is created
+    fun setDayViewDay(day: Calendar) {
+        if (this::dayView.isInitialized) {
+            dayView.navigateToDay.invoke(day)
+        } else {
+            dayViewDay = day
         }
     }
 

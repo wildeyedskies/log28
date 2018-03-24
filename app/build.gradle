@@ -60,6 +60,7 @@ dependencies {
         exclude group: 'com.android.support'
     }
     // top calendar
+    implementation 'com.android.support.constraint:constraint-layout:1.0.2'
     compile project(':horizontalcalendar')
 
     // app intro
