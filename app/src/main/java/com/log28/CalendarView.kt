@@ -19,6 +19,7 @@ import java.util.*
  */
 class CalendarView : Fragment() {
     private var periodDateObjects = getPeriodDates()
+    //TODO use a tree for better calendar performance
     private var periodDates = mutableListOf<Long>()
     private val cycleInfo = getCycleInfo()
 
@@ -52,7 +53,7 @@ class CalendarView : Fragment() {
         val today = Calendar.getInstance()
         scrollCalendar.setDateWatcher({
             year, month, day ->
-            if ((year.toLong() * 10000) + (month.toLong() * 100) + day.toLong() in periodDates) { //TODO: figure out if the JVM caches this
+            if ((year.toLong() * 10000) + (month.toLong() * 100) + day.toLong() in periodDates) {
                 CalendarDay.SELECTED
             } else if (year == today.get(Calendar.YEAR) &&
                     month == today.get(Calendar.MONTH) && day == today.get(Calendar.DAY_OF_MONTH)) {
@@ -129,12 +130,7 @@ class CalendarView : Fragment() {
          *
          * @return A new instance of fragment CalendarView.
          */
-        fun newInstance(): CalendarView {
-            val fragment = CalendarView()
-            val args = Bundle()
-            fragment.arguments = args
-            return fragment
-        }
+        fun newInstance() = CalendarView()
     }
 
 }

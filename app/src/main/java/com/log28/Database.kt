@@ -127,7 +127,9 @@ fun setFirstPeriod(firstDay: Calendar, context: Context?) {
 
     realm.executeTransactionAsync { localRealm ->
         //clear data from previous attempts
-        localRealm.where(DayData::class.java).findAll().deleteAllFromRealm()
+        localRealm.where(DayData::class.java).findAll().forEach {
+            it.symptoms.clear()
+        }
 
         // get the bleeding symptom
         //crash if we do not find this

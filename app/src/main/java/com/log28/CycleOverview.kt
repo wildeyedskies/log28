@@ -50,7 +50,6 @@ class CycleOverview : Fragment() {
 
     // this should fix the case where the user returns to the activity on a subsequent date
     override fun onResume() {
-        Log.d("OVERVIEW", "resuming")
         super.onResume()
         calculateNextPeriod(findCycleStart(periodDates))
         setupLoggedToday()
@@ -162,12 +161,7 @@ class CycleOverview : Fragment() {
          *
          * @return A new instance of fragment CycleOverview.
          */
-        fun newInstance(): CycleOverview {
-            val fragment = CycleOverview()
-            val args = Bundle()
-            fragment.arguments = args
-            return fragment
-        }
+        fun newInstance() = CycleOverview()
     }
 
 }

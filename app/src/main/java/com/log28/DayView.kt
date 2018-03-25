@@ -26,8 +26,12 @@ import devs.mulham.horizontalcalendar.utils.Utils
 class DayView : Fragment() {
     // changes both the data displayed and the date at the top.
     lateinit var navigateToDay: (c: Calendar) -> Unit
-
+    // update the day if the day has changed
+    lateinit var updateToday: () -> Unit
+    // the day currently displayed in the view
     private var currentDay = Calendar.getInstance()
+    // the current day when the activity was created
+    private val initalToday = Calendar.getInstance()
 
     private val categories = getCategories()
     private val symptoms = getSymptoms()
@@ -78,6 +82,14 @@ class DayView : Fragment() {
         categories.removeAllChangeListeners()
     }
 
+    // if the day has changed
+    override fun onResume() {
+        super.onResume()
+        if (Utils.daysBetween(initalToday, Calendar.getInstance()) != 0 &&
+                this::updateToday.isInitialized)
+            updateToday.invoke()
+    }
+
     // setup the recycler view
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -101,6 +113,11 @@ class DayView : Fragment() {
                 .defaultSelectedDate(currentdate)
                 .range(startDate, endDate)
                 .datesNumberOnScreen(5).build()
+
+        updateToday = {
+            Log.d("DAYVIEW", "day pass detected, updating day view")
+            horizontalCalendar.setRange(startDate, Calendar.getInstance())
+        }
 
         navigateToDay = {
             c -> // set the range to be one month before
