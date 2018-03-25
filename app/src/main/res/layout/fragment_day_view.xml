@@ -10,7 +10,7 @@
         android:id="@+id/top_calendar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/colorPrimary"
+        android:background="@color/white"
         app:textColorNormal="#bababa"
         app:textColorSelected="@color/primaryText"/>
 

@@ -26,7 +26,6 @@
     <string name="avg_period_length">Average Period Length</string>
 
     <string name="settings">Settings</string>
-    <string name="about">About</string>
 
     <string-array name="categories">
         <item>Physical Symptoms</item>
@@ -66,7 +65,4 @@
         <item name="calendar">Calendar</item>
         <item name="settings">History</item>
     </string-array>
-
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>
