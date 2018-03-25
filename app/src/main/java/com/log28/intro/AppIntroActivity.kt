@@ -1,7 +1,9 @@
 package com.log28.intro
 
 import android.graphics.Color
+import android.os.AsyncTask
 import android.os.Bundle
+import android.preference.PreferenceManager
 import android.support.v4.app.Fragment
 import com.github.paolorotolo.appintro.AppIntro2
 import com.github.paolorotolo.appintro.AppIntro2Fragment
@@ -28,6 +30,12 @@ class AppIntroActivity: AppIntro2() {
     override fun onDonePressed(currentFragment: Fragment?) {
         super.onDonePressed(currentFragment)
 
-        if (setupComplete) finish()
+        if (setupComplete)  {
+            AsyncTask.execute {
+                val prefs = PreferenceManager.getDefaultSharedPreferences(this)
+                prefs.edit().putBoolean("first_start", false).apply()
+            }
+            finish()
+        }
     }
 }

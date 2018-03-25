@@ -3,6 +3,7 @@ package com.log28
 import android.content.Intent
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
+import android.preference.PreferenceManager
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
@@ -15,7 +16,7 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        val firstStart = Realm.getDefaultInstance().where(CycleInfo::class.java).count() == 0L
+        val firstStart = PreferenceManager.getDefaultSharedPreferences(this).getBoolean("first_start", true)
 
         if (firstStart) {
             val intent = Intent(this, AppIntroActivity::class.java)
