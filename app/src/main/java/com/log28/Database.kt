@@ -7,6 +7,7 @@ import io.realm.*
 import io.realm.annotations.PrimaryKey
 import java.util.Calendar
 import com.log28.R
+import io.realm.kotlin.createObject
 
 // format a date as yyyymmdd
 fun Calendar.formatDate(): Long {
@@ -138,8 +139,12 @@ fun setFirstPeriod(firstDay: Calendar, context: Context?) {
         // for each day in the period create a DayData object with physical  bleeding
         // set to true, and save it in the database
         for (i in 0 until periodLength) {
-            val day = DayData(firstDay.formatDate(), RealmList(bleeding))
-            localRealm.copyToRealm(day)
+            val day = localRealm.where(DayData::class.java).equalTo("date", firstDay.formatDate()).findFirst() ?:
+                    localRealm.createObject(DayData::class.java, firstDay.formatDate())
+            day.symptoms = RealmList(bleeding)
+
+            // do not set days in the future
+            if (firstDay.isToday()) break
             firstDay.add(Calendar.DAY_OF_MONTH, 1)
         }
     }

@@ -43,8 +43,10 @@ class CycleHistory : Fragment() {
         else // if we don't have any data yet, just show what's been entered
             avg_cycle_length.text = getCycleInfo().cycleLength.toString()
 
-        // we should always have at least one period entered
-        avg_period_length.text = periodLengths.average().roundToInt().toString()
+        if (periodLengths.isNotEmpty())
+            avg_period_length.text = periodLengths.average().roundToInt().toString()
+        else
+            avg_period_length.text = getCycleInfo().periodLength.toString()
 
         setupPreviousCycles(cycleData.cycleStarts, periodLengths, cycleLengths)
     }
