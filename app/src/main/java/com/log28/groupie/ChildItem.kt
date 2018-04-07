@@ -14,6 +14,7 @@ class ChildItem(val symptom: Symptom, var state: Boolean, var onClick: () -> Uni
 
         viewHolder.list_item.setOnClickListener {
             viewHolder.item_checkbox.toggle()
+            state = !state
             onClick.invoke()
         }
     }

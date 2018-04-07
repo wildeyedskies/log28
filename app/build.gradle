@@ -14,8 +14,8 @@ android {
         applicationId "com.log28"
         minSdkVersion 15
         targetSdkVersion 27
-        versionCode 5
-        versionName "0.4"
+        versionCode 6
+        versionName "0.4.1"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         vectorDrawables.useSupportLibrary = true
     }
@@ -36,7 +36,7 @@ androidExtensions {
     experimental = true
 }
 
-def support_version = "27.1.0"
+def support_version = "27.1.1"
 def acraVersion = '5.1.1'
 
 dependencies {
