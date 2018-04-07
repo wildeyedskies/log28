@@ -52,6 +52,11 @@ class CycleOverview : Fragment() {
     override fun onResume() {
         super.onResume()
         calculateNextPeriod(findCycleStart(periodDates))
+
+        //refresh the data if the day has changed
+        if (dayData.date != Calendar.getInstance().formatDate())
+            dayData = getDataByDate(Calendar.getInstance())
+
         setupLoggedToday()
     }
 
