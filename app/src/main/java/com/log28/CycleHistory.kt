@@ -103,10 +103,12 @@ class CycleHistory : Fragment() {
 
             if (index == periodDates.lastIndex || previousDate.formatDate() != periodDates[index+1]?.date) {
                 cycleStarts.add(dayData.date.toCalendar())
-            } else if (index == 0 || nextDate.formatDate() != periodDates[index-1]?.date) {
+            }
+            if (index == 0 || nextDate.formatDate() != periodDates[index-1]?.date) {
                 periodEnds.add(dayData.date.toCalendar())
             }
         }
+
         return CycleData(cycleStarts, periodEnds)
     }
 
