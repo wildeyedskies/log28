@@ -20,7 +20,7 @@ class MainActivity : AppCompatActivity() {
 
         if (firstStart) {
             val intent = Intent(this, AppIntroActivity::class.java)
-            Log.d("MAIN", "starting app intro")
+            Log.d(TAG, "starting app intro")
             // set up realm
             initializeRealm(this)
             startActivity(intent)
@@ -69,5 +69,9 @@ class MainActivity : AppCompatActivity() {
         // go to the index of the day view
         viewPager.currentItem = 1
         (viewPager.adapter as? TabPagerAdapter)?.setDayViewDay(day)
+    }
+
+    companion object {
+        const val TAG = "MAIN"
     }
 }

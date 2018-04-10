@@ -64,7 +64,7 @@ class DayView : Fragment() {
         categories.addChangeListener {
             _, changeSet ->
             if (changeSet != null) {
-                Log.d("DAYVIEW", "categories updated $changeSet")
+                Log.d(TAG, "categories updated $changeSet")
 
                 groupAdapter.clear()
                 categoryGroup.clear()
@@ -116,7 +116,7 @@ class DayView : Fragment() {
                 .datesNumberOnScreen(5).build()
 
         updateToday = {
-            Log.d("DAYVIEW", "day pass detected, updating day view")
+            Log.d(TAG, "day pass detected, updating day view")
             horizontalCalendar.setRange(startDate, Calendar.getInstance())
             navigateToDay.invoke(Calendar.getInstance())
         }
@@ -124,13 +124,13 @@ class DayView : Fragment() {
         navigateToDay = {
             c -> // set the range to be one month before
             //TODO clean this mess up
-            Log.d("DAYVIEW", "navigateToDay called ${c.formatDate()}")
             if (c.before(startDate)) {
                 startDate.set(Calendar.YEAR, c.get(Calendar.YEAR))
                 startDate.set(Calendar.MONTH, c.get(Calendar.MONTH))
                 startDate.set(Calendar.DAY_OF_MONTH, c.get(Calendar.DAY_OF_MONTH))
                 startDate.add(Calendar.MONTH, -1)
-                Log.d("DAYVIEW", "navtoday seting startdate to ${startDate.formatDate()}")
+
+                Log.d(TAG, "navtoday seting startdate to ${startDate.formatDate()}")
                 horizontalCalendar.setRange(startDate, endDate)
                 horizontalCalendar.refresh()
             }
@@ -139,13 +139,13 @@ class DayView : Fragment() {
 
         horizontalCalendar.calendarListener = object : HorizontalCalendarListener() {
             override fun onDateSelected(date: Calendar, position: Int) {
-                Log.d("DAYVIEW", "horizontal calendar date set to ${date.formatDate()}")
+                Log.d(TAG, "horizontal calendar date set to ${date.formatDate()}")
                 loadDayData(date)
                 // this little bit of code extends the range of the dates
                 val cDate = date.clone() as Calendar
                 cDate.add(Calendar.DAY_OF_YEAR, -5)
                 if (startDate.after(cDate)) {
-                    Log.d("DAYVIEW", "setting range")
+                    Log.d(TAG, "setting range")
                     startDate.add(Calendar.MONTH, -1)
 
                     horizontalCalendar.setRange(startDate, endDate)
@@ -185,7 +185,7 @@ class DayView : Fragment() {
 
     private fun loadDayData(day: Calendar) {
         currentDay = day
-        Log.d("DAYVIEW", "Loading data for ${day.formatDate()}")
+        Log.d(TAG, "Loading data for ${day.formatDate()}")
 
         // set the day text
         setDayText(day)
@@ -221,6 +221,7 @@ class DayView : Fragment() {
     }
 
     companion object {
+        const val TAG = "DAYVIEW"
         /**
          * Use this factory method to create a new instance of
          * this fragment using the provided parameters.

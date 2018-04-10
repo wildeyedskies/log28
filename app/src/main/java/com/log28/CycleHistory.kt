@@ -36,7 +36,7 @@ class CycleHistory : Fragment() {
         val cycleLengths = findCycleLengths(cycleData.cycleStarts)
         val periodLengths = findPeriodLengths(cycleData)
 
-        Log.d("HISTORYVIEW", "cycleLengths: $cycleLengths, periodLengths: $periodLengths")
+        Log.d(TAG, "cycleLengths: $cycleLengths, periodLengths: $periodLengths")
 
         if (cycleLengths.isNotEmpty())
             avg_cycle_length.text = cycleLengths.average().roundToInt().toString()
@@ -140,6 +140,7 @@ class CycleHistory : Fragment() {
     }
 
     companion object {
+        const val TAG = "HISTORYVIEW"
         /**
          * Use this factory method to create a new instance of
          * this fragment using the provided parameters.

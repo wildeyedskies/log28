@@ -19,7 +19,7 @@ import java.util.*
  */
 class CalendarView : Fragment() {
     private var periodDateObjects = getPeriodDates()
-    //TODO use a tree for better calendar performance
+    //TODO use a tree for better calendar performance?
     private var periodDates = mutableListOf<Long>()
     private val cycleInfo = getCycleInfo()
 
@@ -48,7 +48,11 @@ class CalendarView : Fragment() {
                 scrollCalendar.adapter.notifyDataSetChanged()
             }
         }
+        setupScrollCalendar()
+    }
 
+    // setup the calendar
+    private fun setupScrollCalendar() {
         // show periods on the calendar as it renders
         val today = Calendar.getInstance()
         scrollCalendar.setDateWatcher({
@@ -68,7 +72,7 @@ class CalendarView : Fragment() {
             cal.set(Calendar.MONTH, month)
             cal.set(Calendar.DAY_OF_MONTH, day)
             // only allow you to go to the day view for dates not in the future
-            Log.d("CALVIEW", "day clicked ${cal.formatDate()}")
+            Log.d(TAG, "day clicked ${cal.formatDate()}")
             //TODO redo this tangled mess with some RX code calendar tap -> event -> dayview updates
             if (cal.before(Calendar.getInstance()) || cal.isToday())
                 (this.activity as? MainActivity)?.navToDayView(cal)
@@ -123,7 +127,7 @@ class CalendarView : Fragment() {
     }
 
     companion object {
-
+        const val TAG = "CALVIEW"
         /**
          * Use this factory method to create a new instance of
          * this fragment using the provided parameters.

@@ -65,9 +65,9 @@ class CycleOverview : Fragment() {
         // if day data has been invalidated, refresh it
         if (!dayData.isValid) dayData = getDataByDate(Calendar.getInstance())
 
-        Log.d("OVERVIEW", "view created")
+        Log.d(TAG, "view created")
         periodDates.addChangeListener {
-            results, changeset -> Log.d("OVERVIEW", "period dates changed")
+            results, changeset -> Log.d(TAG, "period dates changed")
             calculateNextPeriod(findCycleStart(results))
         }
 
@@ -121,7 +121,7 @@ class CycleOverview : Fragment() {
 
             //if this is the first day entered, or the previous period date is not the day before the current one, return
             if (index == periodDates.lastIndex || previousDate.formatDate() != periodDates[index+1]?.date) {
-                Log.d("OVERVIEW", "found cycle start at ${dayData.date}")
+                Log.d(TAG, "found cycle start at ${dayData.date}")
                 return dayData.date
             }
         }
@@ -130,17 +130,16 @@ class CycleOverview : Fragment() {
     }
 
     private fun calculateNextPeriod(cycleStartDate: Long) {
-        Log.d("OVERVIEW", "calculate next period called")
+        Log.d(TAG, "calculate next period called")
 
         if (cycleStartDate == 0L) return
         val cycleStart = cycleStartDate.toCalendar()
 
-        Log.d("OVERVIEW", "calculating next period")
+        Log.d(TAG, "calculating next period")
 
         // updateModel the text views with the correct days until
         val cycleDay = Utils.daysBetween(cycleStart, Calendar.getInstance())
-        Log.d("OVERVIEW",
-                "cycle length ${cycleInfo.cycleLength}, periodLength ${cycleInfo.periodLength} cycle day is $cycleDay")
+        Log.d(TAG, "cycle length ${cycleInfo.cycleLength}, periodLength ${cycleInfo.periodLength} cycle day is $cycleDay")
         // on period
         if (cycleDay < cycleInfo.periodLength) {
             days_until_text.text = getString(R.string.days_left_in_period)
@@ -159,7 +158,7 @@ class CycleOverview : Fragment() {
     }
 
     companion object {
-
+        const val TAG = "OVERVIEW"
         /**
          * Use this factory method to create a new instance of
          * this fragment using the provided parameters.

@@ -19,8 +19,9 @@ class AppIntroActivity: AppIntro2() {
         // know cycle and period lengths for the app to function
         showSkipButton(false)
 
-        addSlide(AppIntro2Fragment.newInstance("Welcome to log28",
-                "log28 will help you keep track of your period", R.drawable.ic_notebook, Color.parseColor("#1976D2")))
+        addSlide(AppIntro2Fragment.newInstance(this.resources.getString(R.string.welcome),
+                this.resources.getString(R.string.welcome_description),
+                R.drawable.ic_notebook, Color.parseColor("#1976D2")))
         addSlide(CycleIntroFragment.newInstance())
         addSlide(LastPeriodFragment.newInstance())
 

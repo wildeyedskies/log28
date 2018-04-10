@@ -18,6 +18,9 @@
     <string name="yesterday">Yesterday</string>
     <string name="days_ago">%1$d days ago</string>
 
+    <string name="welcome">Welcome to log28</string>
+    <string name="welcome_description">log28 will help you keep track of your period</string>
+
     <string name="crash_title">log28 has crashed</string>
     <string name="crash_text">Press OK to send a report to the developers.</string>
     <string name="notification_channel">log28</string>

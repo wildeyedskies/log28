@@ -78,7 +78,7 @@ class RealmPreferenceDataStore(private val context: Context?): PreferenceDataSto
     }
 
     override fun putBoolean(key: String?, value: Boolean) {
-        Log.d("SETTINGS", "put boolean called for $key")
+        Log.d(TAG, "put boolean called for $key")
         when(key) {
             "mental_tracking" -> setCategoryState(mentalSymptoms, value)
             "physical_tracking" -> setCategoryState(physicalActivity, value)
@@ -88,7 +88,7 @@ class RealmPreferenceDataStore(private val context: Context?): PreferenceDataSto
     }
 
     override fun getString(key: String?, defValue: String?): String? {
-        Log.d("SETTINGS", "get string called for $key")
+        Log.d(TAG, "get string called for $key")
         return when(key) {
             "period_length" -> getCycleInfo().periodLength.toString()
             "cycle_length" -> getCycleInfo().cycleLength.toString()
@@ -106,5 +106,9 @@ class RealmPreferenceDataStore(private val context: Context?): PreferenceDataSto
             }
             else -> super.putString(key, value)
         }
+    }
+
+    companion object {
+        const val TAG = "SETTINGS"
     }
 }
