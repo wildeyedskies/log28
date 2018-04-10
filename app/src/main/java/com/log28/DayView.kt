@@ -2,6 +2,7 @@ package com.log28
 
 import android.os.Bundle
 import android.support.v4.app.Fragment
+import android.support.v7.widget.DividerItemDecoration
 import android.support.v7.widget.LinearLayoutManager
 import android.util.Log
 import android.view.LayoutInflater
@@ -117,6 +118,7 @@ class DayView : Fragment() {
         updateToday = {
             Log.d("DAYVIEW", "day pass detected, updating day view")
             horizontalCalendar.setRange(startDate, Calendar.getInstance())
+            navigateToDay.invoke(Calendar.getInstance())
         }
 
         navigateToDay = {
