@@ -97,7 +97,8 @@ class CalendarView : Fragment() {
 
     // TODO there might be an off by 1 error somewhere in here
     private fun predictFuturePeriods(periodDates: MutableList<Long>): MutableList<Long> {
-        var cycleStart = periodDates.filter { item -> item -1 !in periodDates }.max()!!.toCalendar()
+        var cycleStart = periodDates.filter { item -> item -1 !in periodDates }.max()?.toCalendar()
+                ?: return periodDates
 
         //the earliest day we can predict the next period for is tomorrow
         val tomorrow = Calendar.getInstance()
