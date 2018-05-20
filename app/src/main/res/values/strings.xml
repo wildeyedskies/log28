@@ -27,6 +27,8 @@
 
     <string name="avg_cycle_length">Average Cycle Length</string>
     <string name="avg_period_length">Average Period Length</string>
+    <string name="customize_tracking">Customize Tracking</string>
+    <string name="customize_tracking_desc">Turn on and off individual options</string>
 
     <string name="settings">Settings</string>
 

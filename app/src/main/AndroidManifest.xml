@@ -18,14 +18,20 @@
             android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
         <activity
             android:name=".SettingsActivity"
             android:screenOrientation="portrait" />
-        <activity android:name=".AboutActivity"></activity>
+
+        <activity android:name=".OptionsActivity"
+            android:screenOrientation="portrait">
+            <intent-filter>
+                <action android:name="com.log28.OptionsActivity"/>
+                <category android:name="android.intent.category.DEFAULT"/>
+            </intent-filter>
+        </activity>
     </application>
 
 </manifest>

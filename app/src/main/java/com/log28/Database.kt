@@ -43,6 +43,12 @@ open class Symptom(@PrimaryKey var name: String = "", var category: Category? = 
         else return (this.name == other.name && this.category == other.category)
     }
 
+    fun toggleActive() {
+        realm.executeTransaction {
+            this.active = !this.active
+        }
+    }
+
     override fun hashCode(): Int {
         return super.hashCode()
     }
@@ -174,8 +180,16 @@ fun getPeriodDaysDecending(): RealmResults<DayData> {
             .equalTo("symptoms.name", "Bleeding").sort("date", Sort.DESCENDING).findAll()
 }
 
-fun getCategories(): RealmResults<Category> {
+fun getActiveCategories(): RealmResults<Category> {
     return Realm.getDefaultInstance().where(Category::class.java).equalTo("active", true).findAll()
+}
+
+fun getActiveSymptoms(): RealmResults<Symptom> {
+    return Realm.getDefaultInstance().where(Symptom::class.java).equalTo("active", true).findAll()
+}
+
+fun getCategories(): RealmResults<Category> {
+    return Realm.getDefaultInstance().where(Category::class.java).findAll()
 }
 
 fun getSymptoms(): RealmResults<Symptom> {

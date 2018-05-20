@@ -2,7 +2,6 @@ package com.log28
 
 import android.os.Bundle
 import android.support.v4.app.Fragment
-import android.support.v7.widget.DividerItemDecoration
 import android.support.v7.widget.LinearLayoutManager
 import android.util.Log
 import android.view.LayoutInflater
@@ -20,6 +19,7 @@ import com.log28.groupie.ChildItem
 import com.log28.groupie.ExpandableHeaderItem
 import com.log28.groupie.NotesItem
 import devs.mulham.horizontalcalendar.utils.Utils
+import io.realm.OrderedCollectionChangeSet
 
 /**
  * Handles the day view
@@ -34,8 +34,8 @@ class DayView : Fragment() {
     // the current day when the activity was created
     private val initalToday = Calendar.getInstance()
 
-    private val categories = getCategories()
-    private val symptoms = getSymptoms()
+    private val categories = getActiveCategories()
+    private val symptoms = getActiveSymptoms()
 
     private val groupAdapter = GroupAdapter<ViewHolder>()
 
@@ -61,18 +61,11 @@ class DayView : Fragment() {
                 ?: Calendar.getInstance()
 
         // if a category is enabled or disabled, redraw everything
-        categories.addChangeListener {
-            _, changeSet ->
-            if (changeSet != null) {
-                Log.d(TAG, "categories updated $changeSet")
-
-                groupAdapter.clear()
-                categoryGroup.clear()
-                symptomList.clear()
-                notesAndSleep = Section()
-
-                setupRecyclerView()
-            }
+        categories.addChangeListener{
+            _, changeSet -> redrawRecyclerView(changeSet)
+        }
+        symptoms.addChangeListener{
+            _, changeSet -> redrawRecyclerView(changeSet)
         }
 
         setupRecyclerView()
@@ -81,6 +74,7 @@ class DayView : Fragment() {
     override fun onDestroy() {
         super.onDestroy()
         categories.removeAllChangeListeners()
+        symptoms.removeAllChangeListeners()
     }
 
     // if the day has changed
@@ -152,6 +146,21 @@ class DayView : Fragment() {
                     horizontalCalendar.refresh()
                 }
             }
+        }
+    }
+
+
+    // this gets called when a symptom or category is changed
+    private fun redrawRecyclerView(changeSet: OrderedCollectionChangeSet?) {
+        if (changeSet != null) {
+            Log.d(TAG, "categories updated $changeSet")
+
+            groupAdapter.clear()
+            categoryGroup.clear()
+            symptomList.clear()
+            notesAndSleep = Section()
+
+            setupRecyclerView()
         }
     }
 

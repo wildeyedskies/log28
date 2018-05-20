@@ -38,5 +38,11 @@
             android:title="Physical Activity"
             android:summary="Track your exercise"/>
 
+        <Preference
+            android:title="@string/customize_tracking"
+            android:summary="@string/customize_tracking_desc">
+            <intent android:action="com.log28.OptionsActivity"/>
+        </Preference>
+
     </PreferenceCategory>
 </PreferenceScreen>
