@@ -15,11 +15,25 @@
         android:layout_height="wrap_content"
         android:background="@color/colorPrimary"/>
 
-    <android.support.v7.widget.RecyclerView android:id="@+id/options_recycler"
-        android:layout_width="match_parent" android:layout_height="match_parent"
-        android:clipChildren="false"
-        android:scrollbars="vertical">
+    <android.support.design.widget.CoordinatorLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
 
-    </android.support.v7.widget.RecyclerView>
+        <android.support.v7.widget.RecyclerView android:id="@+id/options_recycler"
+            android:layout_width="match_parent" android:layout_height="match_parent"
+            android:clipChildren="false"
+            android:scrollbars="vertical">
+        </android.support.v7.widget.RecyclerView>
 
+        <!-- This FAB will be used to add custom symptoms -->
+        <!--<android.support.design.widget.FloatingActionButton
+            android:id="@+id/add_symptom"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom|center"
+            android:layout_margin="24dp"
+            app:rippleColor="@color/colorAccent"
+            app:srcCompat="@drawable/ic_plus_white" />-->
+
+    </android.support.design.widget.CoordinatorLayout>
 </LinearLayout>

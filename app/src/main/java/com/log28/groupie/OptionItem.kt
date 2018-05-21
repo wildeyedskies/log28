@@ -9,6 +9,8 @@ import kotlinx.android.synthetic.main.options_activity_item.*
 class OptionItem(val symptom: Symptom): Item() {
     override fun bind(viewHolder: ViewHolder, position: Int) {
         viewHolder.option_item_name.text = symptom.name
+
+
         viewHolder.option_switch.isChecked = symptom.active
 
         viewHolder.option_item.setOnClickListener {

@@ -3,6 +3,7 @@ package com.log28
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.support.v7.widget.LinearLayoutManager
+import android.support.v7.widget.RecyclerView
 import android.view.MenuItem
 import com.log28.groupie.OptionHeader
 import com.log28.groupie.OptionItem
@@ -26,6 +27,19 @@ class OptionsActivity : AppCompatActivity() {
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         supportActionBar?.setDisplayShowHomeEnabled(true)
         setupRecyclerView()
+
+        /*add_symptom.setOnClickListener {
+
+        }
+
+        options_recycler.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                if (dy < 0 && !add_symptom.isShown)
+                    add_symptom.show()
+                else if (dy > 0 && add_symptom.isShown)
+                    add_symptom.hide()
+            }
+        })*/
     }
 
     // exit when the back button is pressed

@@ -25,6 +25,21 @@ fun Long.toCalendar(): Calendar {
     return cal
 }
 
+// this code will be used when custom symptoms are added
+/*val config = RealmConfiguration.Builder()
+        .schemaVersion(2)
+        .migration(Migration())
+        .build()
+
+class Migration: RealmMigration {
+    override fun migrate(realm: DynamicRealm?, oldVersion: Long, newVersion: Long) {
+        if (oldVersion < 2) {
+            realm?.schema?.get("Symptom")
+                    ?.addField("canDelete", Boolean::class.java)
+        }
+    }
+}*/
+
 // represents a category physical, mental, etc
 open class Category(@PrimaryKey var name: String = "", var active: Boolean = true): RealmObject()
 
@@ -37,7 +52,9 @@ fun setCategoryState(name: String, active: Boolean) {
 }
 
 // represents an individual symptom bleeding, headaches, etc
-open class Symptom(@PrimaryKey var name: String = "", var category: Category? = null, var active: Boolean = true): RealmObject() {
+open class Symptom(@PrimaryKey var name: String = "",
+                   var category: Category? = null,
+                   var active: Boolean = true): RealmObject() {
     override fun equals(other: Any?): Boolean {
         if (other !is Symptom) return false
         else return (this.name == other.name && this.category == other.category)
