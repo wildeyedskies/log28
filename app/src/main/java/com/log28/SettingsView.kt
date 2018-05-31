@@ -1,25 +1,72 @@
 package com.log28
 
 
+import android.Manifest
+import android.annotation.TargetApi
+import android.app.Activity
 import android.content.Context
+import android.content.pm.PackageManager
+import android.os.Build
 import android.os.Bundle
+import android.os.Environment
+import android.support.v4.app.ActivityCompat
 import android.support.v4.app.Fragment
+import android.support.v4.content.ContextCompat
 import android.support.v7.app.AppCompatActivity
+import android.support.v7.preference.Preference
 import android.support.v7.preference.PreferenceDataStore
 import android.util.Log
+import android.util.SparseArray
 import android.view.MenuItem
+import android.widget.Toast
 import com.takisoft.fix.support.v7.preference.PreferenceFragmentCompat
 import io.realm.Realm
 import kotlinx.android.synthetic.main.activity_main.*
 
+// we need to access this in both SettingsView and SettingsActivity
+private val callBackArray = SparseArray<()->Unit>()
 
 /**
  * A simple [Fragment] subclass.
  */
 class SettingsView : PreferenceFragmentCompat() {
+    private val BACKUP_REQUEST = 1
+    private val RESTORE_REQUEST = 2
+
     override fun onCreatePreferencesFix(savedInstanceState: Bundle?, rootKey: String?) {
         preferenceManager.preferenceDataStore = RealmPreferenceDataStore(context)
         setPreferencesFromResource(R.xml.preferences, rootKey);
+
+        callBackArray.put(BACKUP_REQUEST, backupDatabase)
+
+        findPreference("backup_data")?.onPreferenceClickListener = Preference.OnPreferenceClickListener {
+            checkPermissionAndExecute(BACKUP_REQUEST)
+            true
+        }
+    }
+
+    private val backupDatabase = {
+        Log.d("SETTINGS", "backing up realm")
+        val path = exportDBToLocation(Environment.getExternalStorageDirectory())
+        Toast.makeText(context, "Database exported to $path", Toast.LENGTH_LONG).show()
+    }
+
+    private fun checkPermissionAndExecute(callbackValue: Int) {
+        // on pre-marshmellow just call the function and return
+        // we don't need to handle runtime permissions
+        if (Build.VERSION.SDK_INT < 23) {
+            callBackArray[callbackValue].invoke()
+            return
+        }
+
+        val permission = ActivityCompat.checkSelfPermission(context!!, Manifest.permission.WRITE_EXTERNAL_STORAGE)
+        if (permission != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(
+                    this.activity as Activity,
+                    arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE),
+                    callbackValue
+            )
+        } else callBackArray[callbackValue].invoke()
     }
 
     companion object {
@@ -52,6 +99,16 @@ class SettingsActivity : AppCompatActivity() {
         }
         return super.onOptionsItemSelected(item)
     }
+
+    // This doesn't work from the SettingsView fragment, works here though
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
+        if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+            callBackArray[requestCode]?.invoke()
+        } else {
+            Toast.makeText(this, "Error Permission not Granted!", Toast.LENGTH_LONG).show()
+        }
+    }
+
 
 }
 

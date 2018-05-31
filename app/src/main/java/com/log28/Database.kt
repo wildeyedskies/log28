@@ -6,8 +6,9 @@ import android.util.Log
 import io.realm.*
 import io.realm.annotations.PrimaryKey
 import java.util.Calendar
-import com.log28.R
-import io.realm.kotlin.createObject
+import java.io.File
+
+private val REALM_FILE_NAME = "default.realm" // change if using custom DB name
 
 // format a date as yyyymmdd
 fun Calendar.formatDate(): Long {
@@ -211,4 +212,16 @@ fun getCategories(): RealmResults<Category> {
 
 fun getSymptoms(): RealmResults<Symptom> {
     return Realm.getDefaultInstance().where(Symptom::class.java).findAll()
+}
+
+fun exportDBToLocation(location: File): String {
+    val outputFile = File(location, "log28-backup-${Calendar.getInstance().formatDate()}")
+    Realm.getDefaultInstance().writeCopyTo(outputFile)
+    return outputFile.absolutePath
+}
+
+private fun importDBFromLocation(inputFile: File, context: Context): String {
+    val outputFile = File(context.applicationContext.filesDir, REALM_FILE_NAME)
+    inputFile.copyTo(outputFile, overwrite = true)
+    return outputFile.absolutePath
 }
