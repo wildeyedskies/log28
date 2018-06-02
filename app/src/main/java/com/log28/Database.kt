@@ -1,6 +1,7 @@
 package com.log28
 
 import android.content.Context
+import android.net.Uri
 import android.support.v7.preference.PreferenceManager
 import android.util.Log
 import io.realm.*
@@ -10,6 +11,8 @@ import java.io.File
 
 private val REALM_FILE_NAME = "default.realm" // change if using custom DB name
 private val TMP_REALM_FILE_NAME = "tmp.realm" // first we copy the file to a tmp name to see if it can be opened
+
+private val TAG = "DATABASE"
 
 // format a date as yyyymmdd
 fun Calendar.formatDate(): Long {
@@ -129,12 +132,12 @@ fun initializeRealm(context: Context) {
 
         var i = 0
         categoryStrings.forEach {
-            Log.d("DATABASE", "inserting category $it")
+            Log.d(TAG, "inserting category $it")
             var category = Category(it, true)
             category = localRelam.copyToRealm(category)
 
             symptomStrings[i].forEach {
-                Log.d("DATABASE", "inserting symptom $it")
+                Log.d(TAG, "inserting symptom $it")
                 val symptom = Symptom(it, category, true)
                 localRelam.copyToRealm(symptom)
             }
@@ -221,10 +224,26 @@ fun exportDBToLocation(location: File): String {
     return outputFile.absolutePath
 }
 
-fun importDBFromLocation(inputFile: File, context: Context): Boolean {
+fun importDBFromUri(input: Uri?, context: Context): Boolean {
+    if (input == null) return false
+
+    val stream = context.contentResolver.openInputStream(input)
+    val tmpFile = File(context.applicationContext.filesDir, TMP_REALM_FILE_NAME)
+    stream.copyTo(tmpFile.outputStream())
+    return checkAndImportDB(tmpFile, context)
+}
+
+fun importDBFromFile(inputFile: File, context: Context): Boolean {
+    Log.d(TAG, "Importing database file from ${inputFile.absolutePath}")
+
+    if (!inputFile.exists()) return false
+
     val tmpFile = File(context.applicationContext.filesDir, TMP_REALM_FILE_NAME)
     inputFile.copyTo(tmpFile, overwrite = true)
+    return checkAndImportDB(tmpFile, context)
+}
 
+private fun checkAndImportDB(tmpFile: File, context: Context): Boolean {
     val config = RealmConfiguration.Builder()
             .name(TMP_REALM_FILE_NAME)
             .build()
@@ -235,16 +254,16 @@ fun importDBFromLocation(inputFile: File, context: Context): Boolean {
                 .where(Symptom::class.java).equalTo("name", "Bleeding").count() == 1L
 
         if (!valid) return false
+        // copy to the real realm file
+        val realmFile = File(context.applicationContext.filesDir, REALM_FILE_NAME)
+        tmpFile.copyTo(realmFile, overwrite = true)
 
     } catch (e: Exception) {
-        Log.d("DATABASE", "Could not import realm")
+        Log.d(TAG, "Could not import realm")
         e.printStackTrace()
         return false
+    } finally {
+        tmpFile.delete()
     }
-
-    // copy over the file
-    val realmFile = File(context.applicationContext.filesDir, REALM_FILE_NAME)
-    tmpFile.copyTo(realmFile, overwrite = true)
-    //TODO refresh all data in memory. Restart app?
     return true
 }

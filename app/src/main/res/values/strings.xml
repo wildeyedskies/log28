@@ -29,6 +29,16 @@
     <string name="avg_period_length">Average Period Length</string>
     <string name="customize_tracking">Customize Tracking</string>
     <string name="customize_tracking_desc">Turn on and off individual options</string>
+    <string name="backup_restore">Backup and Restore</string>
+    <string name="backup_title">Backup Data</string>
+    <string name="backup_desc">Export log28 data to a file</string>
+    <string name="restore_title">Restore Data</string>
+    <string name="restore_desc">Import a log28 backup</string>
+    <string name="db_exported">Database exported to %1$s</string>
+    <string name="select_restore">Select Restore File</string>
+    <string name="restore_success">Database Restore Successful</string>
+    <string name="restore_failed">Database Restore Failed!</string>
+    <string name="permission_error">Error, permission not granted</string>
 
     <string name="settings">Settings</string>
 

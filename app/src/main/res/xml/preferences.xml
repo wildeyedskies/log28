@@ -47,16 +47,16 @@
     </PreferenceCategory>
 
     <PreferenceCategory
-        android:title="Backup and Restore">
+        android:title="@string/backup_restore">
 
         <Preference
             android:key="backup_data"
-            android:title="Backup Data"
-            android:summary="Export log28 data to a file" />
+            android:title="@string/backup_title"
+            android:summary="@string/backup_desc" />
 
         <Preference
             android:key="restore_data"
-            android:title="Restore Data"
-            android:summary="Import a log28 backup" />
+            android:title="@string/restore_title"
+            android:summary="@string/restore_desc" />
     </PreferenceCategory>
 </PreferenceScreen>

@@ -7,7 +7,6 @@ import android.preference.PreferenceManager
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
-import io.realm.Realm
 import kotlinx.android.synthetic.main.activity_main.*
 import com.log28.intro.AppIntroActivity
 import java.util.*
@@ -40,6 +39,10 @@ class MainActivity : AppCompatActivity() {
         for (i in pagerAdapter.tabText.indices) {
             sliding_tabs.getTabAt(i)?.customView = pagerAdapter.getTabView(i)
         }
+    }
+
+    fun refreshViewPager() {
+        viewPager.adapter?.notifyDataSetChanged()
     }
 
     // setup the options menu

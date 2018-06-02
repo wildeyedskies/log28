@@ -4,6 +4,7 @@ package com.log28
 import android.Manifest
 import android.app.Activity
 import android.content.Context
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
@@ -25,6 +26,7 @@ import java.io.File
 
 // we need to access this in both SettingsView and SettingsActivity
 private val callBackArray = SparseArray<()->Unit>()
+// used SDK < 19 (file picker dialogue)
 private val SELECT_RESTORE_FILE_TAG = "selectRestore"
 
 /**
@@ -33,6 +35,9 @@ private val SELECT_RESTORE_FILE_TAG = "selectRestore"
 class SettingsView : PreferenceFragmentCompat() {
     private val BACKUP_REQUEST = 1
     private val RESTORE_REQUEST = 2
+
+    // used for SDK => 19 (storage access framework)
+    private val SELECT_RESTORE_FILE_CODE = 0
 
     override fun onCreatePreferencesFix(savedInstanceState: Bundle?, rootKey: String?) {
         preferenceManager.preferenceDataStore = RealmPreferenceDataStore(context)
@@ -54,14 +59,33 @@ class SettingsView : PreferenceFragmentCompat() {
     private val backupDatabase = {
         Log.d("SETTINGS", "backing up realm")
         val path = exportDBToLocation(Environment.getExternalStorageDirectory())
-        Toast.makeText(context, "Database exported to $path", Toast.LENGTH_LONG).show()
+        Toast.makeText(context, resources.getString(R.string.db_exported, path), Toast.LENGTH_LONG).show()
     }
 
     private val restoreDatabase = {
-        SimpleFilePickerDialog.build(Environment.getExternalStorageDirectory().absolutePath,
-                SimpleFilePickerDialog.CompositeMode.FILE_ONLY_SINGLE_CHOICE)
-                .title("Select Restore File")
-                .show(this, SELECT_RESTORE_FILE_TAG)
+        // SDK < 19 we cannot use storage access framework
+        if (Build.VERSION.SDK_INT < 19) {
+            SimpleFilePickerDialog.build(Environment.getExternalStorageDirectory().absolutePath,
+                    SimpleFilePickerDialog.CompositeMode.FILE_ONLY_SINGLE_CHOICE)
+                    .title(resources.getString(R.string.select_restore))
+                    .show(this, SELECT_RESTORE_FILE_TAG)
+        } else {
+            val intent = Intent(Intent.ACTION_OPEN_DOCUMENT)
+            intent.addCategory(Intent.CATEGORY_OPENABLE)
+            intent.type = "*/*"
+            startActivityForResult(intent, SELECT_RESTORE_FILE_CODE)
+        }
+
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        if (requestCode == SELECT_RESTORE_FILE_CODE && resultCode == Activity.RESULT_OK) {
+            val uri = data?.data
+
+            val success = importDBFromUri(uri, context!!)
+            if (success) Toast.makeText(context!!, resources.getString(R.string.restore_success), Toast.LENGTH_LONG).show()
+            else Toast.makeText(context!!, resources.getString(R.string.restore_failed), Toast.LENGTH_LONG).show()
+        }
     }
 
     private fun checkPermissionAndExecute(callbackValue: Int) {
@@ -116,20 +140,20 @@ class SettingsActivity : AppCompatActivity(), SimpleFilePickerDialog.Interaction
         if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
             callBackArray[requestCode]?.invoke()
         } else {
-            Toast.makeText(this, "Error Permission not Granted!", Toast.LENGTH_LONG).show()
+            Toast.makeText(this, resources.getString(R.string.permission_error), Toast.LENGTH_LONG).show()
         }
     }
 
     // dialogue result
     override fun onResult(dialogTag: String, which: Int, extras: Bundle): Boolean {
         when (dialogTag) {
+            // this only happens SDK < 19
             SELECT_RESTORE_FILE_TAG -> {
                 val path = extras.getString(SimpleFilePickerDialog.SELECTED_SINGLE_PATH)
 
-
-                val success = importDBFromLocation(File(path), this)
-                if (success) Toast.makeText(this, "Database restore successful", Toast.LENGTH_LONG).show()
-                else Toast.makeText(this, "Database restore failed!", Toast.LENGTH_LONG).show()
+                val success = importDBFromFile(File(path), this)
+                if (success) Toast.makeText(this, resources.getString(R.string.restore_success), Toast.LENGTH_LONG).show()
+                else Toast.makeText(this, resources.getString(R.string.restore_failed), Toast.LENGTH_LONG).show()
             }
         }
         return false
