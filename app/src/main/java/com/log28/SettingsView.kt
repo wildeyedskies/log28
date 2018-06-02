@@ -2,7 +2,6 @@ package com.log28
 
 
 import android.Manifest
-import android.annotation.TargetApi
 import android.app.Activity
 import android.content.Context
 import android.content.pm.PackageManager
@@ -11,7 +10,6 @@ import android.os.Bundle
 import android.os.Environment
 import android.support.v4.app.ActivityCompat
 import android.support.v4.app.Fragment
-import android.support.v4.content.ContextCompat
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.preference.Preference
 import android.support.v7.preference.PreferenceDataStore
@@ -19,12 +17,15 @@ import android.util.Log
 import android.util.SparseArray
 import android.view.MenuItem
 import android.widget.Toast
+import com.github.isabsent.filepicker.SimpleFilePickerDialog
 import com.takisoft.fix.support.v7.preference.PreferenceFragmentCompat
 import io.realm.Realm
 import kotlinx.android.synthetic.main.activity_main.*
+import java.io.File
 
 // we need to access this in both SettingsView and SettingsActivity
 private val callBackArray = SparseArray<()->Unit>()
+private val SELECT_RESTORE_FILE_TAG = "selectRestore"
 
 /**
  * A simple [Fragment] subclass.
@@ -38,9 +39,14 @@ class SettingsView : PreferenceFragmentCompat() {
         setPreferencesFromResource(R.xml.preferences, rootKey);
 
         callBackArray.put(BACKUP_REQUEST, backupDatabase)
+        callBackArray.put(RESTORE_REQUEST, restoreDatabase)
 
         findPreference("backup_data")?.onPreferenceClickListener = Preference.OnPreferenceClickListener {
             checkPermissionAndExecute(BACKUP_REQUEST)
+            true
+        }
+        findPreference("restore_data")?.onPreferenceClickListener = Preference.OnPreferenceClickListener {
+            checkPermissionAndExecute(RESTORE_REQUEST)
             true
         }
     }
@@ -49,6 +55,13 @@ class SettingsView : PreferenceFragmentCompat() {
         Log.d("SETTINGS", "backing up realm")
         val path = exportDBToLocation(Environment.getExternalStorageDirectory())
         Toast.makeText(context, "Database exported to $path", Toast.LENGTH_LONG).show()
+    }
+
+    private val restoreDatabase = {
+        SimpleFilePickerDialog.build(Environment.getExternalStorageDirectory().absolutePath,
+                SimpleFilePickerDialog.CompositeMode.FILE_ONLY_SINGLE_CHOICE)
+                .title("Select Restore File")
+                .show(this, SELECT_RESTORE_FILE_TAG)
     }
 
     private fun checkPermissionAndExecute(callbackValue: Int) {
@@ -68,7 +81,6 @@ class SettingsView : PreferenceFragmentCompat() {
             )
         } else callBackArray[callbackValue].invoke()
     }
-
     companion object {
 
         fun newInstance(): SettingsView {
@@ -80,8 +92,7 @@ class SettingsView : PreferenceFragmentCompat() {
     }
 }
 
-class SettingsActivity : AppCompatActivity() {
-
+class SettingsActivity : AppCompatActivity(), SimpleFilePickerDialog.InteractionListenerString {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_settings)
@@ -109,7 +120,26 @@ class SettingsActivity : AppCompatActivity() {
         }
     }
 
+    // dialogue result
+    override fun onResult(dialogTag: String, which: Int, extras: Bundle): Boolean {
+        when (dialogTag) {
+            SELECT_RESTORE_FILE_TAG -> {
+                val path = extras.getString(SimpleFilePickerDialog.SELECTED_SINGLE_PATH)
 
+
+                val success = importDBFromLocation(File(path), this)
+                if (success) Toast.makeText(this, "Database restore successful", Toast.LENGTH_LONG).show()
+                else Toast.makeText(this, "Database restore failed!", Toast.LENGTH_LONG).show()
+            }
+        }
+        return false
+    }
+
+    override fun showListItemDialog(title: String?, folderPath: String?, mode: SimpleFilePickerDialog.CompositeMode?, dialogTag: String?) {
+        SimpleFilePickerDialog.build(folderPath, mode)
+                .title(title)
+                .show(this, dialogTag)
+    }
 }
 
 // this class is kind of a hack. It persists preferences in a realm CycleInfo object

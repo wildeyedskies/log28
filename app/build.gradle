@@ -70,6 +70,9 @@ dependencies {
     implementation "ch.acra:acra-http:$acraVersion"
     implementation "ch.acra:acra-notification:$acraVersion"
 
+    // file picker
+    implementation 'com.github.isabsent:filepicker:1.1.01'
+
     implementation 'com.android.support:support-v4:27.1.1'
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'com.android.support.test:runner:1.0.2'

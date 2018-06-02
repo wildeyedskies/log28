@@ -9,6 +9,7 @@ import java.util.Calendar
 import java.io.File
 
 private val REALM_FILE_NAME = "default.realm" // change if using custom DB name
+private val TMP_REALM_FILE_NAME = "tmp.realm" // first we copy the file to a tmp name to see if it can be opened
 
 // format a date as yyyymmdd
 fun Calendar.formatDate(): Long {
@@ -220,8 +221,30 @@ fun exportDBToLocation(location: File): String {
     return outputFile.absolutePath
 }
 
-private fun importDBFromLocation(inputFile: File, context: Context): String {
-    val outputFile = File(context.applicationContext.filesDir, REALM_FILE_NAME)
-    inputFile.copyTo(outputFile, overwrite = true)
-    return outputFile.absolutePath
+fun importDBFromLocation(inputFile: File, context: Context): Boolean {
+    val tmpFile = File(context.applicationContext.filesDir, TMP_REALM_FILE_NAME)
+    inputFile.copyTo(tmpFile, overwrite = true)
+
+    val config = RealmConfiguration.Builder()
+            .name(TMP_REALM_FILE_NAME)
+            .build()
+
+    // ensure the realm database contains the bleeding symptom and is openable
+    try {
+        val valid = Realm.getInstance(config)
+                .where(Symptom::class.java).equalTo("name", "Bleeding").count() == 1L
+
+        if (!valid) return false
+
+    } catch (e: Exception) {
+        Log.d("DATABASE", "Could not import realm")
+        e.printStackTrace()
+        return false
+    }
+
+    // copy over the file
+    val realmFile = File(context.applicationContext.filesDir, REALM_FILE_NAME)
+    tmpFile.copyTo(realmFile, overwrite = true)
+    //TODO refresh all data in memory. Restart app?
+    return true
 }
