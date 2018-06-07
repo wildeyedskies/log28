@@ -20,6 +20,7 @@ import io.realm.RealmResults
 import kotlinx.android.synthetic.main.fragment_cycle_overview.*
 import com.log28.groupie.OverviewItem
 import devs.mulham.horizontalcalendar.utils.Utils
+import io.realm.Realm
 import java.util.*
 
 
@@ -29,9 +30,10 @@ import java.util.*
  * create an instance of this fragment.
  */
 class CycleOverview : Fragment() {
-    private val periodDates = getPeriodDaysDecending()
-    private var dayData = getDataByDate(Calendar.getInstance())
-    private val cycleInfo = getCycleInfo()
+    private val realm = Realm.getDefaultInstance()
+    private var periodDates = realm.getPeriodDaysDecending()
+    private var dayData = realm.getDataByDate(Calendar.getInstance())
+    private var cycleInfo = realm.getCycleInfo()
     private val groupAdapter = GroupAdapter<ViewHolder>()
 
 
@@ -46,6 +48,12 @@ class CycleOverview : Fragment() {
         cycleInfo.removeAllChangeListeners()
         periodDates.removeAllChangeListeners()
         dayData.removeAllChangeListeners()
+        unsubscribeFromDBImport(onDBImport)
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        realm.close()
     }
 
     // this should fix the case where the user returns to the activity on a subsequent date
@@ -55,15 +63,24 @@ class CycleOverview : Fragment() {
 
         //refresh the data if the day has changed
         if (dayData.date != Calendar.getInstance().formatDate())
-            dayData = getDataByDate(Calendar.getInstance())
+            dayData = realm.getDataByDate(Calendar.getInstance())
 
+        setupLoggedToday()
+    }
+
+    private val onDBImport = {
+        periodDates = realm.getPeriodDaysDecending()
+        dayData = realm.getDataByDate(Calendar.getInstance())
+        cycleInfo = realm.getCycleInfo()
+
+        calculateNextPeriod(findCycleStart(periodDates))
         setupLoggedToday()
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         // if day data has been invalidated, refresh it
-        if (!dayData.isValid) dayData = getDataByDate(Calendar.getInstance())
+        if (!dayData.isValid) dayData = realm.getDataByDate(Calendar.getInstance())
 
         Log.d(TAG, "view created")
         periodDates.addChangeListener {
@@ -80,6 +97,8 @@ class CycleOverview : Fragment() {
             _, changeSet ->
             if (changeSet != null) setupLoggedToday()
         }
+
+        subscribeToDBImport(onDBImport)
 
         val layout = LinearLayoutManager(context)
         val dividerItem = DividerItemDecoration(context, layout.orientation)

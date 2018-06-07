@@ -41,10 +41,6 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    fun refreshViewPager() {
-        viewPager.adapter?.notifyDataSetChanged()
-    }
-
     // setup the options menu
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.option_menu, menu)

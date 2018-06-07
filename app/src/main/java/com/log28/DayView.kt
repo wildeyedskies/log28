@@ -20,6 +20,7 @@ import com.log28.groupie.ExpandableHeaderItem
 import com.log28.groupie.NotesItem
 import devs.mulham.horizontalcalendar.utils.Utils
 import io.realm.OrderedCollectionChangeSet
+import io.realm.Realm
 
 /**
  * Handles the day view
@@ -34,8 +35,10 @@ class DayView : Fragment() {
     // the current day when the activity was created
     private val initalToday = Calendar.getInstance()
 
-    private val categories = getActiveCategories()
-    private val symptoms = getActiveSymptoms()
+    private val realm = Realm.getDefaultInstance()
+
+    private val categories = realm.getActiveCategories()
+    private val symptoms = realm.getActiveSymptoms()
 
     private val groupAdapter = GroupAdapter<ViewHolder>()
 
@@ -75,6 +78,7 @@ class DayView : Fragment() {
         super.onDestroy()
         categories.removeAllChangeListeners()
         symptoms.removeAllChangeListeners()
+        realm.close()
     }
 
     // if the day has changed
@@ -165,7 +169,7 @@ class DayView : Fragment() {
     }
 
     private fun setupRecyclerView() {
-        val daydata = getDataByDate(currentDay)
+        val daydata = realm.getDataByDate(currentDay)
 
         // add each category as a header
         // add each symptom under a category, set the state based on what's in the DayData object
@@ -199,7 +203,7 @@ class DayView : Fragment() {
         // set the day text
         setDayText(day)
 
-        val daydata = getDataByDate(currentDay)
+        val daydata = realm.getDataByDate(currentDay)
 
         symptomList.forEach {
             it.forEach {

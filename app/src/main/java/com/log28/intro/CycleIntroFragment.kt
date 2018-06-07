@@ -21,9 +21,15 @@ import com.log28.R
  * create an instance of this fragment.
  */
 class CycleIntroFragment : Fragment() {
+    private val realm = Realm.getDefaultInstance()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        realm.close()
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
@@ -44,7 +50,7 @@ class CycleIntroFragment : Fragment() {
             }
 
             override fun afterTextChanged(p0: Editable?) {
-                Realm.getDefaultInstance().executeTransactionAsync {
+                realm.executeTransactionAsync {
                     val cycleInfo = it.where(CycleInfo::class.java).findFirst() ?: it.createObject(CycleInfo::class.java)
                     cycleInfo.cycleLength = p0.toString().toIntOrNull() ?: 28
                 }
@@ -61,7 +67,7 @@ class CycleIntroFragment : Fragment() {
             }
 
             override fun afterTextChanged(p0: Editable?) {
-                Realm.getDefaultInstance().executeTransactionAsync {
+                realm.executeTransactionAsync {
                     val cycleInfo = it.where(CycleInfo::class.java).findFirst() ?: it.createObject(CycleInfo::class.java)
                     cycleInfo.periodLength = p0.toString().toIntOrNull() ?: 5
                 }

@@ -13,6 +13,7 @@ import com.log28.groupie.HistoryItem
 import com.xwray.groupie.GroupAdapter
 import com.xwray.groupie.ViewHolder
 import devs.mulham.horizontalcalendar.utils.Utils
+import io.realm.Realm
 import io.realm.RealmResults
 import kotlinx.android.synthetic.main.fragment_cycle_history.*
 import java.util.*
@@ -26,8 +27,8 @@ import kotlin.math.roundToInt
  */
 class CycleHistory : Fragment() {
     data class CycleData(val cycleStarts: List<Calendar>, val periodEnds: List<Calendar>)
-
-    private val periodDates = getPeriodDaysDecending()
+    private val realm = Realm.getDefaultInstance()
+    private val periodDates = realm.getPeriodDaysDecending()
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -41,14 +42,19 @@ class CycleHistory : Fragment() {
         if (cycleLengths.isNotEmpty())
             avg_cycle_length.text = cycleLengths.average().roundToInt().toString()
         else // if we don't have any data yet, just show what's been entered
-            avg_cycle_length.text = getCycleInfo().cycleLength.toString()
+            avg_cycle_length.text = realm.getCycleInfo().cycleLength.toString()
 
         if (periodLengths.isNotEmpty())
             avg_period_length.text = periodLengths.average().roundToInt().toString()
         else
-            avg_period_length.text = getCycleInfo().periodLength.toString()
+            avg_period_length.text = realm.getCycleInfo().periodLength.toString()
 
         setupPreviousCycles(cycleData.cycleStarts, periodLengths, cycleLengths)
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        realm.close()
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,

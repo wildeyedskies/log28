@@ -2,12 +2,11 @@ package com.log28
 
 import android.content.Context
 import android.net.Uri
-import android.support.v7.preference.PreferenceManager
 import android.util.Log
 import io.realm.*
 import io.realm.annotations.PrimaryKey
-import java.util.Calendar
 import java.io.File
+import java.util.*
 
 private val REALM_FILE_NAME = "default.realm" // change if using custom DB name
 private val TMP_REALM_FILE_NAME = "tmp.realm" // first we copy the file to a tmp name to see if it can be opened
@@ -48,8 +47,8 @@ class Migration: RealmMigration {
 // represents a category physical, mental, etc
 open class Category(@PrimaryKey var name: String = "", var active: Boolean = true): RealmObject()
 
-fun setCategoryState(name: String, active: Boolean) {
-    Realm.getDefaultInstance().executeTransactionAsync {
+fun Realm.setCategoryState(name: String, active: Boolean) {
+    this.executeTransactionAsync {
         val mental = it.where(Category::class.java).equalTo("name",
                 name).findFirst()
         mental?.active = active
@@ -78,8 +77,8 @@ open class Symptom(@PrimaryKey var name: String = "",
 
 open class CycleInfo(var cycleLength: Int = 28, var periodLength: Int = 5): RealmObject()
 
-fun getCycleInfo(): CycleInfo {
-    val realm = Realm.getDefaultInstance()
+fun Realm.getCycleInfo(): CycleInfo {
+    val realm = this
 
     realm.beginTransaction()
     val cycleInfo =  realm.where(CycleInfo::class.java).findFirst() ?:
@@ -109,7 +108,7 @@ open class DayData(@PrimaryKey var date: Long = Calendar.getInstance().formatDat
     }
 
     fun updateNotes(notes: String) {
-        Realm.getDefaultInstance().executeTransaction {
+        realm.executeTransaction {
             this.notes = notes
         }
     }
@@ -144,87 +143,19 @@ fun initializeRealm(context: Context) {
             i++
         }
     }
-}
-
-fun setFirstPeriod(firstDay: Calendar, context: Context?) {
-    val realm = Realm.getDefaultInstance()
-
-    // get the period length
-    val periodLength = PreferenceManager.getDefaultSharedPreferences(context)
-            .getString("period_length", "5").toIntOrNull() ?: 5
-
-
-    realm.executeTransactionAsync { localRealm ->
-        //clear data from previous attempts
-        localRealm.where(DayData::class.java).findAll().forEach {
-            it.symptoms.clear()
-        }
-
-        // get the bleeding symptom
-        //crash if we do not find this
-        val bleeding = localRealm.where(Symptom::class.java).equalTo("name", "Bleeding").findFirst()!!
-
-        // for each day in the period create a DayData object with physical  bleeding
-        // set to true, and save it in the database
-        for (i in 0 until periodLength) {
-            val day = localRealm.where(DayData::class.java).equalTo("date", firstDay.formatDate()).findFirst() ?:
-                    localRealm.createObject(DayData::class.java, firstDay.formatDate())
-            day.symptoms = RealmList(bleeding)
-
-            // do not set days in the future
-            if (firstDay.isToday()) break
-            firstDay.add(Calendar.DAY_OF_MONTH, 1)
-        }
-    }
-}
-
-fun getPeriodDates(): RealmResults<DayData> {
-    val realm = Realm.getDefaultInstance()
-    return realm.where(DayData::class.java)
-            .equalTo("symptoms.name", "Bleeding").findAllAsync()
-}
-
-fun getDataByDate(queryDate: Calendar): DayData {
-    val realm = Realm.getDefaultInstance()
-
-    realm.beginTransaction()
-    val daydata = realm.where(DayData::class.java)
-            .equalTo("date", queryDate.formatDate()).findFirst() ?:
-            realm.createObject(DayData::class.java, queryDate.formatDate())
-    realm.commitTransaction()
-
-    return daydata
-}
-
-fun getPeriodDaysDecending(): RealmResults<DayData> {
-    val realm = Realm.getDefaultInstance()
-    return Realm.getDefaultInstance().where(DayData::class.java)
-            .equalTo("symptoms.name", "Bleeding").sort("date", Sort.DESCENDING).findAll()
-}
-
-fun getActiveCategories(): RealmResults<Category> {
-    return Realm.getDefaultInstance().where(Category::class.java).equalTo("active", true).findAll()
-}
-
-fun getActiveSymptoms(): RealmResults<Symptom> {
-    return Realm.getDefaultInstance().where(Symptom::class.java).equalTo("active", true).findAll()
-}
-
-fun getCategories(): RealmResults<Category> {
-    return Realm.getDefaultInstance().where(Category::class.java).findAll()
-}
-
-fun getSymptoms(): RealmResults<Symptom> {
-    return Realm.getDefaultInstance().where(Symptom::class.java).findAll()
+    realm.close()
 }
 
 fun exportDBToLocation(location: File): String {
     val outputFile = File(location, "log28-backup-${Calendar.getInstance().formatDate()}")
-    Realm.getDefaultInstance().writeCopyTo(outputFile)
+    val realm = Realm.getDefaultInstance()
+    realm.writeCopyTo(outputFile)
+    realm.close()
     return outputFile.absolutePath
 }
 
 fun importDBFromUri(input: Uri?, context: Context): Boolean {
+    Log.d(TAG, "Importing database from uri $input")
     if (input == null) return false
 
     val stream = context.contentResolver.openInputStream(input)
@@ -249,9 +180,11 @@ private fun checkAndImportDB(tmpFile: File, context: Context): Boolean {
             .build()
 
     // ensure the realm database contains the bleeding symptom and is openable
+    var realm: Realm? = null
     try {
-        val valid = Realm.getInstance(config)
-                .where(Symptom::class.java).equalTo("name", "Bleeding").count() == 1L
+        realm = Realm.getInstance(config)
+        val valid = realm
+                ?.where(Symptom::class.java)?.equalTo("name", "Bleeding")?.count() == 1L
 
         if (!valid) return false
         // copy to the real realm file
@@ -263,7 +196,19 @@ private fun checkAndImportDB(tmpFile: File, context: Context): Boolean {
         e.printStackTrace()
         return false
     } finally {
+        realm?.close()
         tmpFile.delete()
     }
+    dbImportSubscribers.forEach { it.invoke() }
     return true
+}
+
+private val dbImportSubscribers = LinkedList<()->Unit>()
+
+fun subscribeToDBImport(callback: ()->Unit) {
+    dbImportSubscribers.add(callback)
+}
+
+fun unsubscribeFromDBImport(callback: ()->Unit) {
+    dbImportSubscribers.remove(callback)
 }

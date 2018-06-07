@@ -10,12 +10,20 @@ import kotlinx.android.synthetic.main.fragment_last_period.*
 import com.log28.R
 import com.log28.formatDate
 import com.log28.setFirstPeriod
+import io.realm.Realm
 import pl.rafman.scrollcalendar.contract.MonthScrollListener
 import pl.rafman.scrollcalendar.data.CalendarDay
 import java.util.*
 
 class LastPeriodFragment: Fragment() {
+    private val realm = Realm.getDefaultInstance()
+
     var dateSelected: Calendar? = null
+
+    override fun onDestroy() {
+        super.onDestroy()
+        realm.close()
+    }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
@@ -63,7 +71,7 @@ class LastPeriodFragment: Fragment() {
             if (firstDay.before(Calendar.getInstance())) {
                 dateSelected = firstDay
                 (this.activity as AppIntroActivity).setupComplete = true
-                setFirstPeriod(firstDay.clone() as Calendar, this.context)
+                realm.setFirstPeriod(firstDay.clone() as Calendar, this.context)
             }
         })
     }

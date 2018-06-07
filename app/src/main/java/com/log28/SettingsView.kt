@@ -21,7 +21,7 @@ import android.widget.Toast
 import com.github.isabsent.filepicker.SimpleFilePickerDialog
 import com.takisoft.fix.support.v7.preference.PreferenceFragmentCompat
 import io.realm.Realm
-import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.android.synthetic.main.activity_settings.*
 import java.io.File
 
 // we need to access this in both SettingsView and SettingsActivity
@@ -39,8 +39,11 @@ class SettingsView : PreferenceFragmentCompat() {
     // used for SDK => 19 (storage access framework)
     private val SELECT_RESTORE_FILE_CODE = 0
 
+    private val realm = Realm.getDefaultInstance()
+
     override fun onCreatePreferencesFix(savedInstanceState: Bundle?, rootKey: String?) {
-        preferenceManager.preferenceDataStore = RealmPreferenceDataStore(context)
+
+        preferenceManager.preferenceDataStore = RealmPreferenceDataStore(context, realm)
         setPreferencesFromResource(R.xml.preferences, rootKey);
 
         callBackArray.put(BACKUP_REQUEST, backupDatabase)
@@ -54,6 +57,11 @@ class SettingsView : PreferenceFragmentCompat() {
             checkPermissionAndExecute(RESTORE_REQUEST)
             true
         }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        realm.close()
     }
 
     private val backupDatabase = {
@@ -130,7 +138,7 @@ class SettingsActivity : AppCompatActivity(), SimpleFilePickerDialog.Interaction
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         // handle arrow click here
         if (item.itemId == android.R.id.home) {
-            finish() // close this activity and return to preview activity (if there is any)
+            finish()
         }
         return super.onOptionsItemSelected(item)
     }
@@ -167,7 +175,7 @@ class SettingsActivity : AppCompatActivity(), SimpleFilePickerDialog.Interaction
 }
 
 // this class is kind of a hack. It persists preferences in a realm CycleInfo object
-class RealmPreferenceDataStore(private val context: Context?): PreferenceDataStore() {
+class RealmPreferenceDataStore(context: Context?, private val realm: Realm): PreferenceDataStore() {
     private val mentalSymptoms = context?.resources!!.getStringArray(R.array.categories)[1]
     private val physicalActivity = context?.resources!!.getStringArray(R.array.categories)[2]
     private val sexualActivity = context?.resources!!.getStringArray(R.array.categories)[3]
@@ -176,13 +184,13 @@ class RealmPreferenceDataStore(private val context: Context?): PreferenceDataSto
     override fun getBoolean(key: String?, defValue: Boolean): Boolean {
         return when(key) {
             "mental_tracking" ->
-                Realm.getDefaultInstance().where(Category::class.java)
+                realm.where(Category::class.java)
                         .equalTo("name", mentalSymptoms).findFirst()?.active ?: defValue
             "physical_tracking" ->
-                Realm.getDefaultInstance().where(Category::class.java)
+                realm.where(Category::class.java)
                     .equalTo("name", physicalActivity).findFirst()?.active ?: defValue
             "sexual_tracking" ->
-                Realm.getDefaultInstance().where(Category::class.java)
+                realm.where(Category::class.java)
                         .equalTo("name", sexualActivity).findFirst()?.active ?: defValue
             else -> super.getBoolean(key, defValue)
         }
@@ -191,9 +199,9 @@ class RealmPreferenceDataStore(private val context: Context?): PreferenceDataSto
     override fun putBoolean(key: String?, value: Boolean) {
         Log.d(TAG, "put boolean called for $key")
         when(key) {
-            "mental_tracking" -> setCategoryState(mentalSymptoms, value)
-            "physical_tracking" -> setCategoryState(physicalActivity, value)
-            "sexual_tracking" -> setCategoryState(sexualActivity, value)
+            "mental_tracking" -> realm.setCategoryState(mentalSymptoms, value)
+            "physical_tracking" -> realm.setCategoryState(physicalActivity, value)
+            "sexual_tracking" -> realm.setCategoryState(sexualActivity, value)
             else -> super.putBoolean(key, value)
         }
     }
@@ -201,18 +209,18 @@ class RealmPreferenceDataStore(private val context: Context?): PreferenceDataSto
     override fun getString(key: String?, defValue: String?): String? {
         Log.d(TAG, "get string called for $key")
         return when(key) {
-            "period_length" -> getCycleInfo().periodLength.toString()
-            "cycle_length" -> getCycleInfo().cycleLength.toString()
+            "period_length" -> realm.getCycleInfo().periodLength.toString()
+            "cycle_length" -> realm.getCycleInfo().cycleLength.toString()
             else -> super.getString(key, defValue)
         }
     }
 
     override fun putString(key: String?, value: String?) {
         when(key) {
-            "period_length" -> Realm.getDefaultInstance().executeTransactionAsync {
+            "period_length" -> realm.executeTransactionAsync {
                 it.where(CycleInfo::class.java).findFirst()?.periodLength = value!!.toInt()
             }
-            "cycle_length" -> Realm.getDefaultInstance().executeTransactionAsync {
+            "cycle_length" -> realm.executeTransactionAsync {
                 it.where(CycleInfo::class.java).findFirst()?.cycleLength = value!!.toInt()
             }
             else -> super.putString(key, value)

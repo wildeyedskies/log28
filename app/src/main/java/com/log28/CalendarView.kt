@@ -7,6 +7,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import devs.mulham.horizontalcalendar.utils.Utils
+import io.realm.Realm
 import kotlinx.android.synthetic.main.fragment_calendar_view.*
 import pl.rafman.scrollcalendar.contract.MonthScrollListener
 import pl.rafman.scrollcalendar.data.CalendarDay
@@ -18,14 +19,20 @@ import java.util.*
  * create an instance of this fragment.
  */
 class CalendarView : Fragment() {
-    private var periodDateObjects = getPeriodDates()
+    private val realm = Realm.getDefaultInstance()
+    private var periodDateObjects = realm.getPeriodDates()
     //TODO use a tree for better calendar performance?
     private var periodDates = mutableListOf<Long>()
-    private val cycleInfo = getCycleInfo()
+    private val cycleInfo = realm.getCycleInfo()
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.fragment_calendar_view, container, false)
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        realm.close()
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {

@@ -10,12 +10,14 @@ import com.log28.groupie.OptionItem
 import com.xwray.groupie.GroupAdapter
 import com.xwray.groupie.Section
 import com.xwray.groupie.kotlinandroidextensions.ViewHolder
+import io.realm.Realm
 import kotlinx.android.synthetic.main.activity_options.*
 
 // enable and disable the individual tracking options
 class OptionsActivity : AppCompatActivity() {
-    private val symptoms = getSymptoms()
-    private val categories = getCategories()
+    private val realm = Realm.getDefaultInstance()
+    private val symptoms = realm.getSymptoms()
+    private val categories = realm.getCategories()
 
     private val groupAdapter = GroupAdapter<ViewHolder>()
 
@@ -40,6 +42,11 @@ class OptionsActivity : AppCompatActivity() {
                     add_symptom.hide()
             }
         })*/
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        realm.close()
     }
 
     // exit when the back button is pressed
