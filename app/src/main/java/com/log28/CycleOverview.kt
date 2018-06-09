@@ -30,7 +30,7 @@ import java.util.*
  * create an instance of this fragment.
  */
 class CycleOverview : Fragment() {
-    private val realm = Realm.getDefaultInstance()
+    private var realm = Realm.getDefaultInstance()
     private var periodDates = realm.getPeriodDaysDecending()
     private var dayData = realm.getDataByDate(Calendar.getInstance())
     private var cycleInfo = realm.getCycleInfo()
@@ -48,7 +48,6 @@ class CycleOverview : Fragment() {
         cycleInfo.removeAllChangeListeners()
         periodDates.removeAllChangeListeners()
         dayData.removeAllChangeListeners()
-        unsubscribeFromDBImport(onDBImport)
     }
 
     override fun onDestroy() {
@@ -65,15 +64,6 @@ class CycleOverview : Fragment() {
         if (dayData.date != Calendar.getInstance().formatDate())
             dayData = realm.getDataByDate(Calendar.getInstance())
 
-        setupLoggedToday()
-    }
-
-    private val onDBImport = {
-        periodDates = realm.getPeriodDaysDecending()
-        dayData = realm.getDataByDate(Calendar.getInstance())
-        cycleInfo = realm.getCycleInfo()
-
-        calculateNextPeriod(findCycleStart(periodDates))
         setupLoggedToday()
     }
 
@@ -97,8 +87,6 @@ class CycleOverview : Fragment() {
             _, changeSet ->
             if (changeSet != null) setupLoggedToday()
         }
-
-        subscribeToDBImport(onDBImport)
 
         val layout = LinearLayoutManager(context)
         val dividerItem = DividerItemDecoration(context, layout.orientation)

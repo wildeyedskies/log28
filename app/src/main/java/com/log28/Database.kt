@@ -148,6 +148,8 @@ fun initializeRealm(context: Context) {
 
 fun exportDBToLocation(location: File): String {
     val outputFile = File(location, "log28-backup-${Calendar.getInstance().formatDate()}")
+    if (outputFile.exists()) outputFile.delete()
+
     val realm = Realm.getDefaultInstance()
     realm.writeCopyTo(outputFile)
     realm.close()
@@ -199,16 +201,6 @@ private fun checkAndImportDB(tmpFile: File, context: Context): Boolean {
         realm?.close()
         tmpFile.delete()
     }
-    dbImportSubscribers.forEach { it.invoke() }
+    Log.d(TAG, "Database imported")
     return true
-}
-
-private val dbImportSubscribers = LinkedList<()->Unit>()
-
-fun subscribeToDBImport(callback: ()->Unit) {
-    dbImportSubscribers.add(callback)
-}
-
-fun unsubscribeFromDBImport(callback: ()->Unit) {
-    dbImportSubscribers.remove(callback)
 }
