@@ -23,6 +23,10 @@ import com.takisoft.fix.support.v7.preference.PreferenceFragmentCompat
 import io.realm.Realm
 import kotlinx.android.synthetic.main.activity_settings.*
 import java.io.File
+import android.app.AlarmManager
+import android.app.PendingIntent
+
+
 
 // we need to access this in both SettingsView and SettingsActivity
 private val callBackArray = SparseArray<()->Unit>()
@@ -91,7 +95,10 @@ class SettingsView : PreferenceFragmentCompat() {
             val uri = data?.data
 
             val success = importDBFromUri(uri, context!!)
-            if (success) Toast.makeText(context!!, resources.getString(R.string.restore_success), Toast.LENGTH_LONG).show()
+            if (success) {
+                Toast.makeText(context!!, resources.getString(R.string.restore_success), Toast.LENGTH_LONG).show()
+                (activity as? SettingsActivity)?.restartApp()
+            }
             else Toast.makeText(context!!, resources.getString(R.string.restore_failed), Toast.LENGTH_LONG).show()
         }
     }
@@ -160,7 +167,10 @@ class SettingsActivity : AppCompatActivity(), SimpleFilePickerDialog.Interaction
                 val path = extras.getString(SimpleFilePickerDialog.SELECTED_SINGLE_PATH)
 
                 val success = importDBFromFile(File(path), this)
-                if (success) Toast.makeText(this, resources.getString(R.string.restore_success), Toast.LENGTH_LONG).show()
+                if (success) {
+                    Toast.makeText(this, resources.getString(R.string.restore_success), Toast.LENGTH_LONG).show()
+                    restartApp()
+                }
                 else Toast.makeText(this, resources.getString(R.string.restore_failed), Toast.LENGTH_LONG).show()
             }
         }
@@ -171,6 +181,20 @@ class SettingsActivity : AppCompatActivity(), SimpleFilePickerDialog.Interaction
         SimpleFilePickerDialog.build(folderPath, mode)
                 .title(title)
                 .show(this, dialogTag)
+    }
+
+    fun restartApp() {
+        val mStartActivity = Intent(this, MainActivity::class.java)
+        val mPendingIntentId = 123456
+        val mPendingIntent = PendingIntent.getActivity(this.applicationContext,
+                mPendingIntentId, mStartActivity, PendingIntent.FLAG_CANCEL_CURRENT)
+        val mgr = this.getSystemService(Context.ALARM_SERVICE) as AlarmManager
+        mgr.set(AlarmManager.RTC, System.currentTimeMillis() + 10, mPendingIntent)
+
+        val returnIntent = Intent()
+        returnIntent.putExtra("exitMain", true)
+        setResult(Activity.RESULT_OK, returnIntent)
+        finish()
     }
 }
 

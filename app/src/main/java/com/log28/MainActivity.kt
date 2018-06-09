@@ -1,5 +1,6 @@
 package com.log28
 
+import android.app.Activity
 import android.content.Intent
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
@@ -12,6 +13,8 @@ import com.log28.intro.AppIntroActivity
 import java.util.*
 
 class MainActivity : AppCompatActivity() {
+    private val SETTINGS_CODE = 3392
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -51,11 +54,18 @@ class MainActivity : AppCompatActivity() {
         when (item?.itemId) {
             R.id.settings -> {
                 val intent = Intent(this, SettingsActivity::class.java)
-                startActivity(intent)
+                startActivityForResult(intent, SETTINGS_CODE)
                 return true
             }
         }
         return false
+    }
+
+    // code to close app if database is imported so we can restart
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        if (resultCode == Activity.RESULT_OK && requestCode == SETTINGS_CODE) {
+            if (data?.getBooleanExtra("exitMain", false) == true) finish()
+        }
     }
 
     /**
