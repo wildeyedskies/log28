@@ -14,8 +14,8 @@ android {
         applicationId "com.log28"
         minSdkVersion 15
         targetSdkVersion 27
-        versionCode 9
-        versionName "0.5.0"
+        versionCode 10
+        versionName "0.6.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         vectorDrawables.useSupportLibrary = true
     }
@@ -72,7 +72,6 @@ dependencies {
 
     // file picker
     implementation 'com.github.isabsent:filepicker:1.1.01'
-    implementation 'com.github.eltos:simpledialogfragment:2.3'
 
     implementation 'com.android.support:support-v4:27.1.1'
     testImplementation 'junit:junit:4.12'

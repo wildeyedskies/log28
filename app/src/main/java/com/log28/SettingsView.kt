@@ -27,7 +27,6 @@ import android.app.AlarmManager
 import android.app.PendingIntent
 
 
-
 // we need to access this in both SettingsView and SettingsActivity
 private val callBackArray = SparseArray<()->Unit>()
 // used SDK < 19 (file picker dialogue)
