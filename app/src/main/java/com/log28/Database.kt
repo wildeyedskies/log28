@@ -152,19 +152,20 @@ fun initializeRealm(context: Context) {
 fun insertAppetite(context: Context) {
     Log.d(TAG, "Insert appetite called")
     val realm = Realm.getDefaultInstance()
-    val appetite = context.resources.getStringArray(R.array.categories).get(4)
+    val appetite = context.resources.getStringArray(R.array.categories)[4]
     val appetiteSymptoms = context.resources.getStringArray(R.array.appetite)
 
     realm.executeTransactionAsync {
         localRealm ->
-        val appetiteCategory = Category(appetite, true)
-        localRealm.copyToRealm(appetiteCategory)
+        var appetiteCategory = Category(appetite, true)
+        appetiteCategory = localRealm.copyToRealm(appetiteCategory)
 
         appetiteSymptoms.forEach {
             val symptom = Symptom(it, appetiteCategory, true)
             localRealm.copyToRealm(symptom)
         }
     }
+    realm.close()
 }
 
 fun exportDBToLocation(location: File): String {
