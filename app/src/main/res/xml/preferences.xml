@@ -38,6 +38,11 @@
             android:title="Physical Activity"
             android:summary="Track your exercise"/>
 
+        <SwitchPreference
+            android:key="appetite_tracking"
+            android:title="Appetite"
+            android:summary="Track your appetite"/>
+
         <Preference
             android:title="@string/customize_tracking"
             android:summary="@string/customize_tracking_desc">

@@ -38,8 +38,9 @@ fun Long.toCalendar(): Calendar {
 class Migration: RealmMigration {
     override fun migrate(realm: DynamicRealm?, oldVersion: Long, newVersion: Long) {
         if (oldVersion < 2) {
-            realm?.schema?.get("Symptom")
-                    ?.addField("canDelete", Boolean::class.java)
+            val category = Category("Appetite")
+            realm?.executeTransaction {
+            }
         }
     }
 }*/
@@ -121,29 +122,49 @@ fun initializeRealm(context: Context) {
             context.resources.getStringArray(R.array.physical_symptoms),
             context.resources.getStringArray(R.array.mental_symptoms),
             context.resources.getStringArray(R.array.physical_activity),
-            context.resources.getStringArray(R.array.sexual_activity)
+            context.resources.getStringArray(R.array.sexual_activity),
+            context.resources.getStringArray(R.array.appetite)
     )
     realm.executeTransactionAsync {
-        localRelam ->
+        localRealm ->
         // clear any extraneous data
-        localRelam.where(Category::class.java).findAll().deleteAllFromRealm()
-        localRelam.where(Symptom::class.java).findAll().deleteAllFromRealm()
+        localRealm.where(Category::class.java).findAll().deleteAllFromRealm()
+        localRealm.where(Symptom::class.java).findAll().deleteAllFromRealm()
 
         var i = 0
         categoryStrings.forEach {
-            Log.d(TAG, "inserting category $it")
-            var category = Category(it, true)
-            category = localRelam.copyToRealm(category)
+            categoryString ->
+            Log.d(TAG, "inserting category $categoryString")
+            var category = Category(categoryString, true)
+            category = localRealm.copyToRealm(category)
 
             symptomStrings[i].forEach {
                 Log.d(TAG, "inserting symptom $it")
                 val symptom = Symptom(it, category, true)
-                localRelam.copyToRealm(symptom)
+                localRealm.copyToRealm(symptom)
             }
             i++
         }
     }
     realm.close()
+}
+
+fun insertAppetite(context: Context) {
+    Log.d(TAG, "Insert appetite called")
+    val realm = Realm.getDefaultInstance()
+    val appetite = context.resources.getStringArray(R.array.categories).get(4)
+    val appetiteSymptoms = context.resources.getStringArray(R.array.appetite)
+
+    realm.executeTransactionAsync {
+        localRealm ->
+        val appetiteCategory = Category(appetite, true)
+        localRealm.copyToRealm(appetiteCategory)
+
+        appetiteSymptoms.forEach {
+            val symptom = Symptom(it, appetiteCategory, true)
+            localRealm.copyToRealm(symptom)
+        }
+    }
 }
 
 fun exportDBToLocation(location: File): String {

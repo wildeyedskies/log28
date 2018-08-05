@@ -202,6 +202,7 @@ class RealmPreferenceDataStore(context: Context?, private val realm: Realm): Pre
     private val mentalSymptoms = context?.resources!!.getStringArray(R.array.categories)[1]
     private val physicalActivity = context?.resources!!.getStringArray(R.array.categories)[2]
     private val sexualActivity = context?.resources!!.getStringArray(R.array.categories)[3]
+    private val appetite = context?.resources!!.getStringArray(R.array.categories)[4]
 
     //TODO clean this up once we're sure it works
     override fun getBoolean(key: String?, defValue: Boolean): Boolean {
@@ -215,6 +216,9 @@ class RealmPreferenceDataStore(context: Context?, private val realm: Realm): Pre
             "sexual_tracking" ->
                 realm.where(Category::class.java)
                         .equalTo("name", sexualActivity).findFirst()?.active ?: defValue
+            "appetite_tracking" ->
+                realm.where(Category::class.java)
+                        .equalTo("name", appetite).findFirst()?.active ?: defValue
             else -> super.getBoolean(key, defValue)
         }
     }
@@ -225,6 +229,7 @@ class RealmPreferenceDataStore(context: Context?, private val realm: Realm): Pre
             "mental_tracking" -> realm.setCategoryState(mentalSymptoms, value)
             "physical_tracking" -> realm.setCategoryState(physicalActivity, value)
             "sexual_tracking" -> realm.setCategoryState(sexualActivity, value)
+            "appetite_tracking" -> realm.setCategoryState(appetite, value)
             else -> super.putBoolean(key, value)
         }
     }

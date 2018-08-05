@@ -47,6 +47,7 @@
         <item>Mental State</item>
         <item>Physical Activity</item>
         <item>Sexual Activity</item>
+        <item>Appetite</item>
     </string-array>
 
     <string-array name="physical_symptoms">
@@ -72,6 +73,11 @@
     <string-array name="sexual_activity">
         <item>Protected Sex</item>
         <item>Unprotected Sex</item>
+    </string-array>
+    <string-array name="appetite">
+        <item>High Appetite</item>
+        <item>Low Appetite</item>
+        <item>Difficulty Eating</item>
     </string-array>
 
     <string-array name="tab_names">

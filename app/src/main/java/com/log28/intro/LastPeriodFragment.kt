@@ -47,7 +47,7 @@ class LastPeriodFragment: Fragment() {
 
         // highlight today
         val today = Calendar.getInstance()
-        last_period_calendar.setDateWatcher({
+        last_period_calendar.setDateWatcher {
             year, month, day ->
             if (year == today.get(Calendar.YEAR) &&
                     month == today.get(Calendar.MONTH) && day == today.get(Calendar.DAY_OF_MONTH)) {
@@ -57,11 +57,11 @@ class LastPeriodFragment: Fragment() {
                 Log.d("LASTPERIOD", "highlighting $year, $month, $day. dateSelected is ${dateSelected?.formatDate()}")
                 CalendarDay.SELECTED
             } else CalendarDay.DEFAULT
-        })
+        }
 
 
         // set the first period in the database
-        last_period_calendar.setOnDateClickListener({
+        last_period_calendar.setOnDateClickListener {
             year, month, day -> val firstDay = Calendar.getInstance()
             firstDay.set(Calendar.YEAR, year)
             firstDay.set(Calendar.MONTH, month)
@@ -73,7 +73,7 @@ class LastPeriodFragment: Fragment() {
                 (this.activity as AppIntroActivity).setupComplete = true
                 realm.setFirstPeriod(firstDay.clone() as Calendar, this.context)
             }
-        })
+        }
     }
 
     companion object {

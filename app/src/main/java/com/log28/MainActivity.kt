@@ -18,14 +18,22 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        val firstStart = PreferenceManager.getDefaultSharedPreferences(this).getBoolean("first_start", true)
+        val preferences = PreferenceManager.getDefaultSharedPreferences(this)
+        val firstStart = preferences.getBoolean("first_start", true)
+        // we added appetite in a later version, this code checks if the current system has been updated
+        val appetitePresent = preferences.getBoolean("appetite_present", false)
 
         if (firstStart) {
             val intent = Intent(this, AppIntroActivity::class.java)
             Log.d(TAG, "starting app intro")
             // set up realm
             initializeRealm(this)
+            // if this is the first start, the initialize will insert appetite
+            preferences.edit().putBoolean("appetite_present", true).apply()
             startActivity(intent)
+        } else if (!appetitePresent) {
+            insertAppetite(this)
+            preferences.edit().putBoolean("appetite_present", true).apply()
         }
 
         setContentView(R.layout.activity_main)
