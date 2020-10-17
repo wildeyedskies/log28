@@ -1,0 +1,89 @@
+<resources>
+    <string name="app_name">log28</string>
+
+    <string name="cycle_data">Introduce la información de tu ciclo</string>
+    <string name="cycle_length">Duración del ciclo</string>
+    <string name="period_length">Duración de la menstruación</string>
+    <string name="cycle_data_desc">log28 utiliza esta información para predecir tus menstruaciones. Puedes cambiarlo después.</string>
+    <string name="last_period">Introduce el primer día de tu última menstruación</string>
+    <string name="days_until_period">días hasta la próxima menstruación</string>
+    <string name="days_left_in_period">días restantes de menstruación</string>
+    <string name="days_late">días tarde</string>
+    <string name="logged_today">Registros de hoy</string>
+    <string name="nothing_logged">No has registrado nada hoy</string>
+    <string name="notes">Notas</string>
+    <string name="notes_prefix">Notas: %1$s</string>
+
+    <string name="today">Hoy</string>
+    <string name="yesterday">Ayer</string>
+    <string name="days_ago">Hace %1$d días</string>
+
+    <string name="welcome">Bienvenida a log28</string>
+    <string name="welcome_description">log28 te ayudará a hacer un seguimiento de tu menstruación</string>
+
+    <string name="crash_title">log28 se ha detenido</string>
+    <string name="crash_text">Pulsa OK para enviar un informe de error a las desarrolladoras.</string>
+    <string name="notification_channel">log28</string>
+
+    <string name="avg_cycle_length">Duración media del ciclo</string>
+    <string name="avg_period_length">Duración media de la menstruación</string>
+    <string name="customize_tracking">Personalizar seguimiento</string>
+    <string name="customize_tracking_desc">Activa y desactiva las opciones individualmente</string>
+    <string name="backup_restore">Copia de seguridad y restauración</string>
+    <string name="backup_title">Copia de seguridad de los datos</string>
+    <string name="backup_desc">Exportar los datos de log28 a un archivo</string>
+    <string name="restore_title">Restaurar datos</string>
+    <string name="restore_desc">Importar una copia de seguridad de log28</string>
+    <string name="db_exported">La base de datos se ha exportado a %1$s</string>
+    <string name="select_restore">Selecciona la copia de seguridad</string>
+    <string name="restore_success">La base de datos se ha restaurado correctamente, reiniciando la aplicación</string>
+    <string name="restore_failed">La restauración de la base de datos ha fallado!</string>
+    <string name="permission_error">Error, no se han concedido los permisos</string>
+
+    <string name="settings">Ajustes</string>
+
+    <string-array name="categories">
+        <item>Síntomas físicos</item>
+        <item>Estado mental</item>
+        <item>Actividad física</item>
+        <item>Actividad sexual</item>
+        <item>Apetito</item>
+    </string-array>
+
+    <string-array name="physical_symptoms">
+        <item>Sangrado</item>
+        <item>Manchado</item>
+        <item>Calambres</item>
+        <item>Senos sensibles</item>
+        <item>Dolor de cabeza</item>
+    </string-array>
+    <string-array name="mental_symptoms">
+        <item>Altibajos en el estado anímico</item>
+        <item>Ansiosa</item>
+        <item>Feliz</item>
+        <item>Triste</item>
+        <item>Cansada</item>
+    </string-array>
+    <string-array name="physical_activity">
+        <item>Cardio</item>
+        <item>Flexibilidad</item>
+        <item>Fortalecimiento</item>
+        <item>Resistencia</item>
+    </string-array>
+    <string-array name="sexual_activity">
+        <item>Sexo con protección</item>
+        <item>Sexo sin protección</item>
+    </string-array>
+    <string-array name="appetite">
+        <item>Gran apetito</item>
+        <item>Apetito bajo</item>
+        <item>Dificultad para comer</item>
+    </string-array>
+
+    <string-array name="tab_names">
+        <item name="overview">Resumen</item>
+        <item name="add_info">Añadir</item>
+        <item name="calendar">Calendario</item>
+        <item name="settings">Historia</item>
+    </string-array>
+</resources>
