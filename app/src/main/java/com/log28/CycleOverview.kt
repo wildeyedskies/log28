@@ -2,7 +2,7 @@ package com.log28
 
 
 import android.os.Bundle
-import android.support.v4.app.Fragment
+import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -10,12 +10,12 @@ import android.content.Context
 import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Paint
-import android.support.v7.widget.DividerItemDecoration
-import android.support.v7.widget.LinearLayoutManager
+import androidx.recyclerview.widget.DividerItemDecoration
+import androidx.recyclerview.widget.LinearLayoutManager
 import android.util.AttributeSet
 import android.util.Log
 import com.xwray.groupie.GroupAdapter
-import com.xwray.groupie.kotlinandroidextensions.ViewHolder
+import com.xwray.groupie.kotlinandroidextensions.GroupieViewHolder
 import io.realm.RealmResults
 import kotlinx.android.synthetic.main.fragment_cycle_overview.*
 import com.log28.groupie.OverviewItem
@@ -34,7 +34,7 @@ class CycleOverview : Fragment() {
     private var periodDates = realm.getPeriodDaysDecending()
     private var dayData = realm.getDataByDate(Calendar.getInstance())
     private var cycleInfo = realm.getCycleInfo()
-    private val groupAdapter = GroupAdapter<ViewHolder>()
+    private val groupAdapter = GroupAdapter<GroupieViewHolder>()
 
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,

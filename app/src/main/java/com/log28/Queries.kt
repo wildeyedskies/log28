@@ -1,7 +1,7 @@
 package com.log28
 
 import android.content.Context
-import android.support.v7.preference.PreferenceManager
+import android.preference.PreferenceManager
 import io.realm.Realm
 import io.realm.RealmList
 import io.realm.RealmResults
@@ -14,8 +14,7 @@ import java.util.*
 fun Realm.setFirstPeriod(firstDay: Calendar, context: Context?) {
     // get the period length
     val periodLength = PreferenceManager.getDefaultSharedPreferences(context)
-            .getString("period_length", "5").toIntOrNull() ?: 5
-
+            .getString("period_length", "5")?.toInt() ?: 5
 
     this.executeTransactionAsync { localRealm ->
         //clear data from previous attempts

@@ -1,15 +1,14 @@
 package com.log28
 
-import android.support.v7.app.AppCompatActivity
+import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.support.v7.widget.LinearLayoutManager
-import android.support.v7.widget.RecyclerView
+import androidx.recyclerview.widget.LinearLayoutManager
 import android.view.MenuItem
 import com.log28.groupie.OptionHeader
 import com.log28.groupie.OptionItem
 import com.xwray.groupie.GroupAdapter
+import com.xwray.groupie.GroupieViewHolder
 import com.xwray.groupie.Section
-import com.xwray.groupie.kotlinandroidextensions.ViewHolder
 import io.realm.Realm
 import kotlinx.android.synthetic.main.activity_options.*
 
@@ -19,7 +18,7 @@ class OptionsActivity : AppCompatActivity() {
     private val symptoms = realm.getSymptoms()
     private val categories = realm.getCategories()
 
-    private val groupAdapter = GroupAdapter<ViewHolder>()
+    private val groupAdapter = GroupAdapter<GroupieViewHolder>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

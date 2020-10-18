@@ -1,14 +1,14 @@
 package com.log28.groupie
 
 import com.xwray.groupie.kotlinandroidextensions.Item
-import com.xwray.groupie.kotlinandroidextensions.ViewHolder
 import kotlinx.android.synthetic.main.day_view_list_item.*
 import com.log28.Symptom
 import com.log28.R
+import com.xwray.groupie.kotlinandroidextensions.GroupieViewHolder
 
 
 class ChildItem(val symptom: Symptom, var state: Boolean, var onClick: () -> Unit): Item() {
-    override fun bind(viewHolder: ViewHolder, position: Int) {
+    override fun bind(viewHolder: GroupieViewHolder, position: Int) {
         viewHolder.day_item.text = symptom.name
         viewHolder.item_checkbox.isChecked = state
 

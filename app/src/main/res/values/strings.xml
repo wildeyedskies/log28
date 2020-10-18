@@ -34,7 +34,8 @@
     <string name="backup_desc">Export log28 data to a file</string>
     <string name="restore_title">Restore Data</string>
     <string name="restore_desc">Import a log28 backup</string>
-    <string name="db_exported">Database exported to %1$s</string>
+    <string name="db_export_success">Database Export Successful</string>
+    <string name="db_export_fail">Database Export Failed!</string>
     <string name="select_restore">Select Restore File</string>
     <string name="restore_success">Database Restore Successful, Restarting App</string>
     <string name="restore_failed">Database Restore Failed!</string>

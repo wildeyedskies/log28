@@ -1,8 +1,8 @@
 package com.log28
 
 import android.os.Bundle
-import android.support.v4.app.Fragment
-import android.support.v7.widget.LinearLayoutManager
+import androidx.fragment.app.Fragment
+import androidx.recyclerview.widget.LinearLayoutManager
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -40,7 +40,7 @@ class DayView : Fragment() {
     private val categories = realm.getActiveCategories()
     private val symptoms = realm.getActiveSymptoms()
 
-    private val groupAdapter = GroupAdapter<ViewHolder>()
+    private val groupAdapter = GroupAdapter<GroupieViewHolder>()
 
     // we store our categories and symptom groups here so we can update them
     private val categoryGroup = mutableListOf<ExpandableGroup>()

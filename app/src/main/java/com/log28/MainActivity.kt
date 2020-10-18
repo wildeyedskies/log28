@@ -2,7 +2,7 @@ package com.log28
 
 import android.app.Activity
 import android.content.Intent
-import android.support.v7.app.AppCompatActivity
+import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.preference.PreferenceManager
 import android.util.Log
@@ -58,8 +58,8 @@ class MainActivity : AppCompatActivity() {
         return true
     }
 
-    override fun onOptionsItemSelected(item: MenuItem?): Boolean {
-        when (item?.itemId) {
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when (item.itemId) {
             R.id.settings -> {
                 val intent = Intent(this, SettingsActivity::class.java)
                 startActivityForResult(intent, SETTINGS_CODE)
@@ -74,6 +74,7 @@ class MainActivity : AppCompatActivity() {
         if (resultCode == Activity.RESULT_OK && requestCode == SETTINGS_CODE) {
             if (data?.getBooleanExtra("exitMain", false) == true) finish()
         }
+        super.onActivityResult(requestCode, resultCode, data)
     }
 
     /**

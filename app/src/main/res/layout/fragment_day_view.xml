@@ -23,11 +23,11 @@
         android:textSize="18sp"
         android:layout_marginBottom="6dp"/>
 
-    <android.support.v7.widget.RecyclerView android:id="@+id/day_view_recycler"
+    <androidx.recyclerview.widget.RecyclerView android:id="@+id/day_view_recycler"
         android:layout_width="match_parent" android:layout_height="match_parent"
         android:clipChildren="false"
         android:scrollbars="vertical">
 
-    </android.support.v7.widget.RecyclerView>
+    </androidx.recyclerview.widget.RecyclerView>
 
 </LinearLayout>

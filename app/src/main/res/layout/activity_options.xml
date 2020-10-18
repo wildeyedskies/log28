@@ -7,23 +7,22 @@
     tools:context=".OptionsActivity"
     android:orientation="vertical">
 
-    <android.support.v7.widget.Toolbar
-        xmlns:android="http://schemas.android.com/apk/res/android"
+    <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolbar"
         app:titleTextColor="@color/primaryText"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@color/colorPrimary"/>
 
-    <android.support.design.widget.CoordinatorLayout
+    <androidx.coordinatorlayout.widget.CoordinatorLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content">
 
-        <android.support.v7.widget.RecyclerView android:id="@+id/options_recycler"
+        <androidx.recyclerview.widget.RecyclerView android:id="@+id/options_recycler"
             android:layout_width="match_parent" android:layout_height="match_parent"
             android:clipChildren="false"
             android:scrollbars="vertical">
-        </android.support.v7.widget.RecyclerView>
+        </androidx.recyclerview.widget.RecyclerView>
 
         <!-- This FAB will be used to add custom symptoms -->
         <!--<android.support.design.widget.FloatingActionButton
@@ -35,5 +34,5 @@
             app:rippleColor="@color/colorAccent"
             app:srcCompat="@drawable/ic_plus_white" />-->
 
-    </android.support.design.widget.CoordinatorLayout>
+    </androidx.coordinatorlayout.widget.CoordinatorLayout>
 </LinearLayout>

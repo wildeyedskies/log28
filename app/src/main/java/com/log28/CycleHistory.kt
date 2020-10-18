@@ -2,16 +2,17 @@ package com.log28
 
 
 import android.os.Bundle
-import android.support.v4.app.Fragment
-import android.support.v7.widget.DividerItemDecoration
-import android.support.v7.widget.GridLayoutManager
+import androidx.fragment.app.Fragment
+import androidx.recyclerview.widget.DividerItemDecoration
+import androidx.recyclerview.widget.GridLayoutManager
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.recyclerview.widget.RecyclerView
 import com.log28.groupie.HistoryItem
 import com.xwray.groupie.GroupAdapter
-import com.xwray.groupie.ViewHolder
+import com.xwray.groupie.GroupieViewHolder
 import devs.mulham.horizontalcalendar.utils.Utils
 import io.realm.Realm
 import io.realm.RealmResults
@@ -67,7 +68,7 @@ class CycleHistory : Fragment() {
                                     cycleLengths: List<Int>) {
         val layout = GridLayoutManager(context, 3)
         val dividerItem = DividerItemDecoration(context, layout.orientation)
-        val groupAdapter = GroupAdapter<ViewHolder>()
+        val groupAdapter = GroupAdapter<GroupieViewHolder>()
 
         previous_cycles.apply {
             layoutManager = layout

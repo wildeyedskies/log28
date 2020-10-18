@@ -1,45 +1,33 @@
 package com.log28
 
 
-import android.Manifest
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
-import android.os.Build
 import android.os.Bundle
 import android.os.Environment
-import android.support.v4.app.ActivityCompat
-import android.support.v4.app.Fragment
-import android.support.v7.app.AppCompatActivity
-import android.support.v7.preference.Preference
-import android.support.v7.preference.PreferenceDataStore
+import androidx.fragment.app.Fragment
+import androidx.appcompat.app.AppCompatActivity
 import android.util.Log
 import android.util.SparseArray
 import android.view.MenuItem
 import android.widget.Toast
-import com.github.isabsent.filepicker.SimpleFilePickerDialog
-import com.takisoft.fix.support.v7.preference.PreferenceFragmentCompat
 import io.realm.Realm
 import kotlinx.android.synthetic.main.activity_settings.*
-import java.io.File
 import android.app.AlarmManager
 import android.app.PendingIntent
+import androidx.preference.Preference
+import androidx.preference.PreferenceDataStore
+import com.takisoft.preferencex.PreferenceFragmentCompat
+import java.util.*
 
-
-// we need to access this in both SettingsView and SettingsActivity
-private val callBackArray = SparseArray<()->Unit>()
-// used SDK < 19 (file picker dialogue)
-private val SELECT_RESTORE_FILE_TAG = "selectRestore"
 
 /**
  * A simple [Fragment] subclass.
  */
 class SettingsView : PreferenceFragmentCompat() {
-    private val BACKUP_REQUEST = 1
-    private val RESTORE_REQUEST = 2
-
-    // used for SDK => 19 (storage access framework)
+    private val CREATE_BACKUP_FILE_CODE = 1
     private val SELECT_RESTORE_FILE_CODE = 0
 
     private val realm = Realm.getDefaultInstance()
@@ -49,15 +37,12 @@ class SettingsView : PreferenceFragmentCompat() {
         preferenceManager.preferenceDataStore = RealmPreferenceDataStore(context, realm)
         setPreferencesFromResource(R.xml.preferences, rootKey);
 
-        callBackArray.put(BACKUP_REQUEST, backupDatabase)
-        callBackArray.put(RESTORE_REQUEST, restoreDatabase)
-
-        findPreference("backup_data")?.onPreferenceClickListener = Preference.OnPreferenceClickListener {
-            checkPermissionAndExecute(BACKUP_REQUEST)
+        findPreference<Preference>("backup_data")?.onPreferenceClickListener = Preference.OnPreferenceClickListener {
+            backupDatabase()
             true
         }
-        findPreference("restore_data")?.onPreferenceClickListener = Preference.OnPreferenceClickListener {
-            checkPermissionAndExecute(RESTORE_REQUEST)
+        findPreference<Preference>("restore_data")?.onPreferenceClickListener = Preference.OnPreferenceClickListener {
+            restoreDatabase()
             true
         }
     }
@@ -67,26 +52,23 @@ class SettingsView : PreferenceFragmentCompat() {
         realm.close()
     }
 
-    private val backupDatabase = {
-        Log.d("SETTINGS", "backing up realm")
-        val path = exportDBToLocation(Environment.getExternalStorageDirectory())
-        Toast.makeText(context, resources.getString(R.string.db_exported, path), Toast.LENGTH_LONG).show()
-    }
-
-    private val restoreDatabase = {
-        // SDK < 19 we cannot use storage access framework
-        if (Build.VERSION.SDK_INT < 19) {
-            SimpleFilePickerDialog.build(Environment.getExternalStorageDirectory().absolutePath,
-                    SimpleFilePickerDialog.CompositeMode.FILE_ONLY_SINGLE_CHOICE)
-                    .title(resources.getString(R.string.select_restore))
-                    .show(this, SELECT_RESTORE_FILE_TAG)
-        } else {
-            val intent = Intent(Intent.ACTION_OPEN_DOCUMENT)
-            intent.addCategory(Intent.CATEGORY_OPENABLE)
-            intent.type = "*/*"
-            startActivityForResult(intent, SELECT_RESTORE_FILE_CODE)
+    private fun backupDatabase() {
+        val intent = Intent(Intent.ACTION_CREATE_DOCUMENT).apply {
+            addCategory(Intent.CATEGORY_OPENABLE)
+            type = "application/octet-stream"
+            putExtra(Intent.EXTRA_TITLE, "log28-backup-${Calendar.getInstance().formatDate()}")
         }
 
+        startActivityForResult(intent, CREATE_BACKUP_FILE_CODE)
+    }
+
+    private fun restoreDatabase() {
+        val intent = Intent(Intent.ACTION_OPEN_DOCUMENT).apply {
+            addCategory(Intent.CATEGORY_OPENABLE)
+            type = "*/*"
+        }
+
+        startActivityForResult(intent, SELECT_RESTORE_FILE_CODE)
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -99,26 +81,17 @@ class SettingsView : PreferenceFragmentCompat() {
                 (activity as? SettingsActivity)?.restartApp()
             }
             else Toast.makeText(context!!, resources.getString(R.string.restore_failed), Toast.LENGTH_LONG).show()
+        } else if (requestCode == CREATE_BACKUP_FILE_CODE && resultCode == Activity.RESULT_OK) {
+            val uri = data?.data
+
+            val success = exportDBToURI(uri, context!!)
+            if (success) {
+                Toast.makeText(context!!, resources.getString(R.string.db_export_success), Toast.LENGTH_LONG).show()
+            }
+            else Toast.makeText(context!!, resources.getString(R.string.db_export_fail), Toast.LENGTH_LONG).show()
         }
     }
 
-    private fun checkPermissionAndExecute(callbackValue: Int) {
-        // on pre-marshmellow just call the function and return
-        // we don't need to handle runtime permissions
-        if (Build.VERSION.SDK_INT < 23) {
-            callBackArray[callbackValue].invoke()
-            return
-        }
-
-        val permission = ActivityCompat.checkSelfPermission(context!!, Manifest.permission.WRITE_EXTERNAL_STORAGE)
-        if (permission != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(
-                    this.activity as Activity,
-                    arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE),
-                    callbackValue
-            )
-        } else callBackArray[callbackValue].invoke()
-    }
     companion object {
 
         fun newInstance(): SettingsView {
@@ -130,7 +103,7 @@ class SettingsView : PreferenceFragmentCompat() {
     }
 }
 
-class SettingsActivity : AppCompatActivity(), SimpleFilePickerDialog.InteractionListenerString {
+class SettingsActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_settings)
@@ -147,39 +120,6 @@ class SettingsActivity : AppCompatActivity(), SimpleFilePickerDialog.Interaction
             finish()
         }
         return super.onOptionsItemSelected(item)
-    }
-
-    // This doesn't work from the SettingsView fragment, works here though
-    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
-        if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-            callBackArray[requestCode]?.invoke()
-        } else {
-            Toast.makeText(this, resources.getString(R.string.permission_error), Toast.LENGTH_LONG).show()
-        }
-    }
-
-    // dialogue result
-    override fun onResult(dialogTag: String, which: Int, extras: Bundle): Boolean {
-        when (dialogTag) {
-            // this only happens SDK < 19
-            SELECT_RESTORE_FILE_TAG -> {
-                val path = extras.getString(SimpleFilePickerDialog.SELECTED_SINGLE_PATH)
-
-                val success = importDBFromFile(File(path), this)
-                if (success) {
-                    Toast.makeText(this, resources.getString(R.string.restore_success), Toast.LENGTH_LONG).show()
-                    restartApp()
-                }
-                else Toast.makeText(this, resources.getString(R.string.restore_failed), Toast.LENGTH_LONG).show()
-            }
-        }
-        return false
-    }
-
-    override fun showListItemDialog(title: String?, folderPath: String?, mode: SimpleFilePickerDialog.CompositeMode?, dialogTag: String?) {
-        SimpleFilePickerDialog.build(folderPath, mode)
-                .title(title)
-                .show(this, dialogTag)
     }
 
     fun restartApp() {

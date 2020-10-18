@@ -61,8 +61,8 @@ open class Symptom(@PrimaryKey var name: String = "",
                    var category: Category? = null,
                    var active: Boolean = true): RealmObject() {
     override fun equals(other: Any?): Boolean {
-        if (other !is Symptom) return false
-        else return (this.name == other.name && this.category == other.category)
+        return if (other !is Symptom) false
+        else (this.name == other.name && this.category == other.category)
     }
 
     fun toggleActive() {
@@ -168,14 +168,21 @@ fun insertAppetite(context: Context) {
     realm.close()
 }
 
-fun exportDBToLocation(location: File): String {
-    val outputFile = File(location, "log28-backup-${Calendar.getInstance().formatDate()}")
-    if (outputFile.exists()) outputFile.delete()
+fun exportDBToURI(uri: Uri?, context: Context): Boolean {
+    if (uri == null) return false
+    val outputStream = context.contentResolver.openOutputStream(uri, "w") ?: return false
+    val tmpFile = File(context.applicationContext.filesDir, TMP_REALM_FILE_NAME)
+
+    if (tmpFile.exists()) {
+        tmpFile.delete()
+    }
 
     val realm = Realm.getDefaultInstance()
-    realm.writeCopyTo(outputFile)
+    realm.writeCopyTo(tmpFile)
     realm.close()
-    return outputFile.absolutePath
+
+    tmpFile.inputStream().copyTo(outputStream)
+    return true
 }
 
 fun importDBFromUri(input: Uri?, context: Context): Boolean {
@@ -184,17 +191,7 @@ fun importDBFromUri(input: Uri?, context: Context): Boolean {
 
     val stream = context.contentResolver.openInputStream(input)
     val tmpFile = File(context.applicationContext.filesDir, TMP_REALM_FILE_NAME)
-    stream.copyTo(tmpFile.outputStream())
-    return checkAndImportDB(tmpFile, context)
-}
-
-fun importDBFromFile(inputFile: File, context: Context): Boolean {
-    Log.d(TAG, "Importing database file from ${inputFile.absolutePath}")
-
-    if (!inputFile.exists()) return false
-
-    val tmpFile = File(context.applicationContext.filesDir, TMP_REALM_FILE_NAME)
-    inputFile.copyTo(tmpFile, overwrite = true)
+    stream?.copyTo(tmpFile.outputStream())
     return checkAndImportDB(tmpFile, context)
 }
 

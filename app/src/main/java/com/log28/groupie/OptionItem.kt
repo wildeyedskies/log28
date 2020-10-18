@@ -3,11 +3,11 @@ package com.log28.groupie
 import com.log28.R
 import com.log28.Symptom
 import com.xwray.groupie.kotlinandroidextensions.Item
-import com.xwray.groupie.kotlinandroidextensions.ViewHolder
+import com.xwray.groupie.kotlinandroidextensions.GroupieViewHolder
 import kotlinx.android.synthetic.main.options_activity_item.*
 
 class OptionItem(val symptom: Symptom): Item() {
-    override fun bind(viewHolder: ViewHolder, position: Int) {
+    override fun bind(viewHolder: GroupieViewHolder, position: Int) {
         viewHolder.option_item_name.text = symptom.name
 
 

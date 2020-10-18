@@ -34,7 +34,6 @@
     <string name="backup_desc">Exportar los datos de log28 a un archivo</string>
     <string name="restore_title">Restaurar datos</string>
     <string name="restore_desc">Importar una copia de seguridad de log28</string>
-    <string name="db_exported">La base de datos se ha exportado a %1$s</string>
     <string name="select_restore">Selecciona la copia de seguridad</string>
     <string name="restore_success">La base de datos se ha restaurado correctamente, reiniciando la aplicación</string>
     <string name="restore_failed">La restauración de la base de datos ha fallado!</string>
