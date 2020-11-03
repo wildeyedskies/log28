@@ -1,0 +1,90 @@
+<resources>
+    <string name="app_name">log28</string>
+
+    <string name="cycle_data">Adicione a sua informação de ciclo</string>
+    <string name="cycle_length">Duração do Ciclo</string>
+    <string name="period_length">Duração do Período</string>
+    <string name="cycle_data_desc">log28 usa essa informação para prever seus períodos. Você sempre pode mudar isso depois.</string>
+    <string name="last_period">Qual foi o primeiro dia do seu último período?</string>
+    <string name="days_until_period">dias até o próximo período</string>
+    <string name="days_left_in_period">dias restante no período</string>
+    <string name="days_late">dias atrasados</string>
+    <string name="logged_today">Informado hoje</string>
+    <string name="nothing_logged">Nada informado hoje</string>
+    <string name="notes">Anotações</string>
+    <string name="notes_prefix">Anotações: %1$s</string>
+
+    <string name="today">Hoje</string>
+    <string name="yesterday">Ontem</string>
+    <string name="days_ago">%1$d dias atrás</string>
+
+    <string name="welcome">Bem vindo ao log28</string>
+    <string name="welcome_description">log28 vai auxiliar a acompanhar o seu período</string>
+
+    <string name="crash_title">log28 teve um erro inesperado</string>
+    <string name="crash_text">Pressione OK para enviar um relatório para os desenvolvedores.</string>
+    <string name="notification_channel">log28</string>
+
+    <string name="avg_cycle_length">Média de duração do ciclo</string>
+    <string name="avg_period_length">Média de duração do período</string>
+    <string name="customize_tracking">Customizar Rastreamento</string>
+    <string name="customize_tracking_desc">Habilitar e desabilitar opções individuais</string>
+    <string name="backup_restore">Cópia de Segurança e Restauro</string>
+    <string name="backup_title">Dados da Cópia de Segurança</string>
+    <string name="backup_desc">Exportar dados do log28 para um arquivo</string>
+    <string name="restore_title">Restaurar dados</string>
+    <string name="restore_desc">Importar uma cópia de segurança do log28</string>
+    <string name="db_export_success">Banco exportado com sucesso</string>
+    <string name="db_export_fail">Falha ao exportar o banco de dados!</string>
+    <string name="select_restore">Selecione um arquivo para restauração</string>
+    <string name="restore_success">Restauração do Banco de Dados bem sucedido, reinicie o aplicativo</string>
+    <string name="restore_failed">Falha ao restaurar o banco de dados!</string>
+    <string name="permission_error">Houve um erro, permissão não concedida</string>
+
+    <string name="settings">Configurações</string>
+
+    <string-array name="categories">
+        <item>Sintomas físicos</item>
+        <item>Estado Mental</item>
+        <item>Atividade Física</item>
+        <item>Atividade Sexual</item>
+        <item>Apetite</item>
+    </string-array>
+
+    <string-array name="physical_symptoms">
+        <item>Sangramento</item>
+        <item>Manchamento</item>
+        <item>Cólicas</item>
+        <item>Seios sensíveis</item>
+        <item>Dor de cabeça</item>
+    </string-array>
+    <string-array name="mental_symptoms">
+        <item>Oscilações de humor</item>
+        <item>Ansiedade</item>
+        <item>Felicidade</item>
+        <item>Tristeza</item>
+        <item>Cansaço</item>
+    </string-array>
+    <string-array name="physical_activity">
+        <item>Cardio</item>
+        <item>Flexibilidade</item>
+        <item>Força</item>
+        <item>Resistência</item>
+    </string-array>
+    <string-array name="sexual_activity">
+        <item>Sexo com proteção</item>
+        <item>Sexo sem proteção</item>
+    </string-array>
+    <string-array name="appetite">
+        <item>Alto apetite</item>
+        <item>Baixo apetite</item>
+        <item>Dificuldade em comer</item>
+    </string-array>
+
+    <string-array name="tab_names">
+        <item name="overview">Visão Geral</item>
+        <item name="add_info">Adicionar Informação</item>
+        <item name="calendar">Calendário</item>
+        <item name="settings">Histórico</item>
+    </string-array>
+</resources>
