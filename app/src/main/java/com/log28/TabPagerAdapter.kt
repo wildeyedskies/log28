@@ -6,7 +6,8 @@ import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentPagerAdapter
 import android.view.LayoutInflater
 import android.view.View
-import kotlinx.android.synthetic.main.custom_tab.view.*
+import com.log28.databinding.ActivityMainBinding
+import com.log28.databinding.CustomTabBinding
 import java.util.*
 
 class TabPagerAdapter(fm: FragmentManager, private val context: Context) : FragmentPagerAdapter(fm) {
@@ -47,11 +48,11 @@ class TabPagerAdapter(fm: FragmentManager, private val context: Context) : Fragm
     }
 
     fun getTabView(position: Int): View {
-        val view = LayoutInflater.from(context).inflate(R.layout.custom_tab, null)
-        view.tab_text.text = tabText[position]
-        view.tab_icon.setImageResource(tabIcons[position])
+        val binding = CustomTabBinding.inflate(LayoutInflater.from(context))
+        binding.tabText.text = tabText[position]
+        binding.tabIcon.setImageResource(tabIcons[position])
 
-        return view
+        return binding.root
     }
 
 }
