@@ -8,15 +8,18 @@ import android.preference.PreferenceManager
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
-import kotlinx.android.synthetic.main.activity_main.*
+import com.log28.databinding.ActivityMainBinding
 import com.log28.intro.AppIntroActivity
 import java.util.*
 
 class MainActivity : AppCompatActivity() {
     private val SETTINGS_CODE = 3392
+    private lateinit var binding: ActivityMainBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        binding = ActivityMainBinding.inflate(layoutInflater)
+        val view = binding.root
 
         val preferences = PreferenceManager.getDefaultSharedPreferences(this)
         val firstStart = preferences.getBoolean("first_start", true)
@@ -36,19 +39,19 @@ class MainActivity : AppCompatActivity() {
             preferences.edit().putBoolean("appetite_present", true).apply()
         }
 
-        setContentView(R.layout.activity_main)
-        setSupportActionBar(toolbar)
+        setContentView(view)
+        setSupportActionBar(binding.toolbar)
 
         // Get the ViewPager and set it's PagerAdapter so that it can display items
         val pagerAdapter = TabPagerAdapter(supportFragmentManager,
                 this@MainActivity)
-        viewPager.adapter = pagerAdapter
+        binding.viewPager.adapter = pagerAdapter
 
         // Give the TabLayout the ViewPager
-        sliding_tabs.setupWithViewPager(viewPager)
+        binding.slidingTabs.setupWithViewPager(binding.viewPager)
 
         for (i in pagerAdapter.tabText.indices) {
-            sliding_tabs.getTabAt(i)?.customView = pagerAdapter.getTabView(i)
+            binding.slidingTabs.getTabAt(i)?.customView = pagerAdapter.getTabView(i)
         }
     }
 
@@ -85,8 +88,8 @@ class MainActivity : AppCompatActivity() {
      */
     fun navToDayView(day: Calendar) {
         // go to the index of the day view
-        viewPager.currentItem = 1
-        (viewPager.adapter as? TabPagerAdapter)?.setDayViewDay(day)
+        binding.viewPager.currentItem = 1
+        (binding.viewPager.adapter as? TabPagerAdapter)?.setDayViewDay(day)
     }
 
     companion object {
