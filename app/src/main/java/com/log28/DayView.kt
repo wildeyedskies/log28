@@ -7,11 +7,11 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import com.log28.databinding.FragmentDayViewBinding
 import com.xwray.groupie.ExpandableGroup
 import devs.mulham.horizontalcalendar.HorizontalCalendar
 import java.util.*
 import devs.mulham.horizontalcalendar.utils.HorizontalCalendarListener
-import kotlinx.android.synthetic.main.fragment_day_view.*
 import com.xwray.groupie.GroupAdapter
 import com.xwray.groupie.Section
 import com.xwray.groupie.kotlinandroidextensions.*
@@ -48,11 +48,14 @@ class DayView : Fragment() {
     // reference to the notes and sleep amount
     private var notesAndSleep = Section()
     private lateinit var notesItem: NotesItem
+    private var _binding: FragmentDayViewBinding? = null
+    private val binding get() = _binding!!
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
         // Inflate the layout for this fragment
-        val rootView = inflater.inflate(R.layout.fragment_day_view, container, false)
+        _binding = FragmentDayViewBinding.inflate(inflater, container, false)
+        val rootView = binding.root
         setupHorizontalCalendar(rootView)
         return rootView
     }
@@ -94,7 +97,7 @@ class DayView : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         setDayText(currentDay)
 
-        day_view_recycler.apply {
+        binding.dayViewRecycler.apply {
             layoutManager = LinearLayoutManager(context)
             adapter = groupAdapter
         }
@@ -226,11 +229,11 @@ class DayView : Fragment() {
         yesterday.add(Calendar.DAY_OF_MONTH, -1)
 
         if (Utils.isSameDate(day, now))
-            day_text.text = context!!.getString(R.string.today)
+            binding.dayText.text = context!!.getString(R.string.today)
         else if (Utils.isSameDate(day, yesterday))
-            day_text.text = context!!.getString(R.string.yesterday)
+            binding.dayText.text = context!!.getString(R.string.yesterday)
         else
-            day_text.text = context!!.getString(R.string.days_ago, Utils.daysBetween(day, now))
+            binding.dayText.text = context!!.getString(R.string.days_ago, Utils.daysBetween(day, now))
     }
 
     companion object {
