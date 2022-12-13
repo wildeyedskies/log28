@@ -6,7 +6,6 @@ import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentPagerAdapter
 import android.view.LayoutInflater
 import android.view.View
-import com.log28.databinding.ActivityMainBinding
 import com.log28.databinding.CustomTabBinding
 import java.util.*
 
