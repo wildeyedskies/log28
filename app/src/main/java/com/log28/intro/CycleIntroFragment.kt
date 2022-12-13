@@ -9,10 +9,10 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import io.realm.Realm
-import kotlinx.android.synthetic.main.fragment_cycle_intro.*
 import com.log28.CycleInfo
 
 import com.log28.R
+import com.log28.databinding.FragmentCycleIntroBinding
 
 
 /**
@@ -22,6 +22,8 @@ import com.log28.R
  */
 class CycleIntroFragment : Fragment() {
     private val realm = Realm.getDefaultInstance()
+    private var _binding: FragmentCycleIntroBinding? = null
+    private val binding get() = _binding!!
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -30,17 +32,19 @@ class CycleIntroFragment : Fragment() {
     override fun onDestroy() {
         super.onDestroy()
         realm.close()
+        _binding = null
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_cycle_intro, container, false)
+        _binding = FragmentCycleIntroBinding.inflate(layoutInflater, null, false)
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        cycle_length_input.addTextChangedListener(object :TextWatcher {
+        binding.cycleLengthInput.addTextChangedListener(object :TextWatcher {
             override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
                 // we don't care
             }
@@ -57,7 +61,7 @@ class CycleIntroFragment : Fragment() {
             }
         })
 
-        period_length_input.addTextChangedListener(object :TextWatcher {
+        binding.periodLengthInput.addTextChangedListener(object :TextWatcher {
             override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
                 // we don't care
             }

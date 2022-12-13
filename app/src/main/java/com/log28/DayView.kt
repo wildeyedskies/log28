@@ -82,6 +82,7 @@ class DayView : Fragment() {
         categories.removeAllChangeListeners()
         symptoms.removeAllChangeListeners()
         realm.close()
+        _binding = null
     }
 
     // if the day has changed
