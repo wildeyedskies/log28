@@ -16,6 +16,7 @@ package com.log28;
         import android.util.AttributeSet;
         import android.widget.LinearLayout;
 
+        import pl.rafman.scrollcalendar.adapter.FixScrollCalendarAdapter;
         import pl.rafman.scrollcalendar.adapter.LegendItem;
         import pl.rafman.scrollcalendar.adapter.ResProvider;
         import pl.rafman.scrollcalendar.adapter.ScrollCalendarAdapter;
@@ -138,7 +139,7 @@ public class UpdatableScrollCalendar extends LinearLayoutCompat implements ResPr
         refreshLegend();
         // RecyclerView
         RecyclerView recyclerView = findViewById(R.id.recyclerView);
-        recyclerView.setLayoutManager(new LinearLayoutManager(getContext(), VERTICAL, false));
+        recyclerView.setLayoutManager(new LinearLayoutManager(getContext(), RecyclerView.VERTICAL, false));
         recyclerView.setAdapter(getAdapter());
     }
 
@@ -151,7 +152,7 @@ public class UpdatableScrollCalendar extends LinearLayoutCompat implements ResPr
     @NonNull
     public ScrollCalendarAdapter getAdapter() {
         if (adapter == null) {
-            adapter = new ScrollCalendarAdapter(this);
+            adapter = new FixScrollCalendarAdapter(this);
         }
         return adapter;
     }
@@ -252,6 +253,5 @@ public class UpdatableScrollCalendar extends LinearLayoutCompat implements ResPr
             return null;
         }
     }
-
 
 }
