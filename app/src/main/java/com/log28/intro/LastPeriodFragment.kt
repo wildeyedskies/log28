@@ -49,14 +49,16 @@ class LastPeriodFragment: Fragment() {
         val today = Calendar.getInstance()
         last_period_calendar.setDateWatcher {
             year, month, day ->
-            if (year == today.get(Calendar.YEAR) &&
-                    month == today.get(Calendar.MONTH) && day == today.get(Calendar.DAY_OF_MONTH)) {
-                CalendarDay.TODAY
-            } else if (year == dateSelected?.get(Calendar.YEAR) &&
+            if (year == dateSelected?.get(Calendar.YEAR) &&
                     month == dateSelected?.get(Calendar.MONTH) && day == dateSelected?.get(Calendar.DAY_OF_MONTH)) {
                 Log.d("LASTPERIOD", "highlighting $year, $month, $day. dateSelected is ${dateSelected?.formatDate()}")
                 CalendarDay.SELECTED
-            } else CalendarDay.DEFAULT
+            } else if (year == today.get(Calendar.YEAR) &&
+                    month == today.get(Calendar.MONTH) && day == today.get(Calendar.DAY_OF_MONTH)) {
+                CalendarDay.TODAY
+            } else {
+                CalendarDay.DEFAULT
+            }
         }
 
 
@@ -68,7 +70,7 @@ class LastPeriodFragment: Fragment() {
             firstDay.set(Calendar.DAY_OF_MONTH, day)
             Log.d("LASTPERIOD", "click on day ${firstDay.formatDate()}")
 
-            if (firstDay.before(Calendar.getInstance())) {
+            if (!firstDay.after(Calendar.getInstance())) {
                 dateSelected = firstDay
                 (this.activity as AppIntroActivity).setupComplete = true
                 realm.setFirstPeriod(firstDay.clone() as Calendar, this.context)
