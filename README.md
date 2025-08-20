@@ -1,3 +1,7 @@
+# Moved
+
+Repository now available at https://codeberg.org/boxedtoast/log28
+
 # log28 - a simple no-frills period tracker for Android
 
 <a href="https://play.google.com/store/apps/details?id=com.log28"><img src="https://play.google.com/intl/en_us/badges/images/generic/en_badge_web_generic.png" height="75"></a>
