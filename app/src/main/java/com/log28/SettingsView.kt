@@ -14,11 +14,11 @@ import android.util.SparseArray
 import android.view.MenuItem
 import android.widget.Toast
 import io.realm.Realm
-import kotlinx.android.synthetic.main.activity_settings.*
 import android.app.AlarmManager
 import android.app.PendingIntent
 import androidx.preference.Preference
 import androidx.preference.PreferenceDataStore
+import com.log28.databinding.ActivitySettingsBinding
 import com.takisoft.preferencex.PreferenceFragmentCompat
 import java.util.*
 
@@ -104,10 +104,12 @@ class SettingsView : PreferenceFragmentCompat() {
 }
 
 class SettingsActivity : AppCompatActivity() {
+    private lateinit var binding: ActivitySettingsBinding
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_settings)
-        setSupportActionBar(toolbar)
+        binding = ActivitySettingsBinding.inflate(layoutInflater)
+        setContentView(binding.root)
+        setSupportActionBar(binding.toolbar)
         // draw the back button
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         supportActionBar?.setDisplayShowHomeEnabled(true)

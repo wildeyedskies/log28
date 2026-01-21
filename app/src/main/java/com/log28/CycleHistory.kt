@@ -9,14 +9,13 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.recyclerview.widget.RecyclerView
+import com.log28.databinding.FragmentCycleHistoryBinding
 import com.log28.groupie.HistoryItem
 import com.xwray.groupie.GroupAdapter
 import com.xwray.groupie.GroupieViewHolder
 import devs.mulham.horizontalcalendar.utils.Utils
 import io.realm.Realm
 import io.realm.RealmResults
-import kotlinx.android.synthetic.main.fragment_cycle_history.*
 import java.util.*
 import kotlin.math.roundToInt
 
@@ -30,6 +29,8 @@ class CycleHistory : Fragment() {
     data class CycleData(val cycleStarts: List<Calendar>, val periodEnds: List<Calendar>)
     private val realm = Realm.getDefaultInstance()
     private val periodDates = realm.getPeriodDaysDecending()
+    private var _binding: FragmentCycleHistoryBinding? = null
+    private val binding get() = _binding!!
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -41,14 +42,14 @@ class CycleHistory : Fragment() {
         Log.d(TAG, "cycleLengths: $cycleLengths, periodLengths: $periodLengths")
 
         if (cycleLengths.isNotEmpty())
-            avg_cycle_length.text = cycleLengths.average().roundToInt().toString()
+            binding.avgCycleLength.text = cycleLengths.average().roundToInt().toString()
         else // if we don't have any data yet, just show what's been entered
-            avg_cycle_length.text = realm.getCycleInfo().cycleLength.toString()
+            binding.avgCycleLength.text = realm.getCycleInfo().cycleLength.toString()
 
         if (periodLengths.isNotEmpty())
-            avg_period_length.text = periodLengths.average().roundToInt().toString()
+            binding.avgPeriodLength.text = periodLengths.average().roundToInt().toString()
         else
-            avg_period_length.text = realm.getCycleInfo().periodLength.toString()
+            binding.avgPeriodLength.text = realm.getCycleInfo().periodLength.toString()
 
         setupPreviousCycles(cycleData.cycleStarts, periodLengths, cycleLengths)
     }
@@ -56,12 +57,14 @@ class CycleHistory : Fragment() {
     override fun onDestroy() {
         super.onDestroy()
         realm.close()
+        _binding = null
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_cycle_history, container, false)
+        _binding = FragmentCycleHistoryBinding.inflate(inflater, container, false)
+        return binding.root
     }
 
     private fun setupPreviousCycles(cycleStarts: List<Calendar>, periodLengths: List<Int>,
@@ -70,7 +73,7 @@ class CycleHistory : Fragment() {
         val dividerItem = DividerItemDecoration(context, layout.orientation)
         val groupAdapter = GroupAdapter<GroupieViewHolder>()
 
-        previous_cycles.apply {
+        binding.previousCycles.apply {
             layoutManager = layout
             adapter = groupAdapter
             this.addItemDecoration(dividerItem)

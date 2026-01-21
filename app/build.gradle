@@ -6,6 +6,9 @@ apply plugin: 'realm-android'
 
 android {
     compileSdkVersion 30
+    buildFeatures {
+        viewBinding true
+    }
     defaultConfig {
         applicationId "com.log28"
         minSdkVersion 19

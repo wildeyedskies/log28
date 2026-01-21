@@ -6,9 +6,8 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import devs.mulham.horizontalcalendar.utils.Utils
+import com.log28.databinding.FragmentCalendarViewBinding
 import io.realm.Realm
-import kotlinx.android.synthetic.main.fragment_calendar_view.*
 import pl.rafman.scrollcalendar.contract.MonthScrollListener
 import pl.rafman.scrollcalendar.data.CalendarDay
 import java.util.*
@@ -24,14 +23,18 @@ class CalendarView : Fragment() {
     //TODO use a tree for better calendar performance?
     private var periodDates = mutableListOf<Long>()
     private val cycleInfo = realm.getCycleInfo()
+    private var _binding: FragmentCalendarViewBinding? = null
+    private val binding get() = _binding!!
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
-        return inflater.inflate(R.layout.fragment_calendar_view, container, false)
+        _binding = FragmentCalendarViewBinding.inflate(inflater, container, false)
+        return binding.root
     }
 
     override fun onDestroy() {
         super.onDestroy()
+        _binding = null
         realm.close()
     }
 
@@ -44,7 +47,7 @@ class CalendarView : Fragment() {
             results, changeSet ->
             if (changeSet != null) {
                 periodDates = predictFuturePeriods(periodDateObjects.map { d -> d.date }.toMutableList())
-                scrollCalendar.adapter.notifyDataSetChanged()
+                binding.scrollCalendar.adapter.notifyDataSetChanged()
             }
         }
 
@@ -52,7 +55,7 @@ class CalendarView : Fragment() {
             _, changeSet ->
             if (changeSet != null) {
                 periodDates = predictFuturePeriods(periodDateObjects.map { d -> d.date }.toMutableList())
-                scrollCalendar.adapter.notifyDataSetChanged()
+                binding.scrollCalendar.adapter.notifyDataSetChanged()
             }
         }
         setupScrollCalendar()
@@ -62,19 +65,19 @@ class CalendarView : Fragment() {
     private fun setupScrollCalendar() {
         // show periods on the calendar as it renders
         val today = Calendar.getInstance()
-        scrollCalendar.setDateWatcher({
-            year, month, day ->
+        binding.scrollCalendar.setDateWatcher { year, month, day ->
             if ((year.toLong() * 10000) + (month.toLong() * 100) + day.toLong() in periodDates) {
                 CalendarDay.SELECTED
             } else if (year == today.get(Calendar.YEAR) &&
-                    month == today.get(Calendar.MONTH) && day == today.get(Calendar.DAY_OF_MONTH)) {
+                month == today.get(Calendar.MONTH) && day == today.get(Calendar.DAY_OF_MONTH)
+            ) {
                 CalendarDay.TODAY
             } else CalendarDay.DEFAULT
-        })
+        }
 
         // we call the underlying activity and tell it to navigate to the day view and set the day
-        scrollCalendar.setOnDateClickListener({
-            year, month, day ->  val cal = Calendar.getInstance()
+        binding.scrollCalendar.setOnDateClickListener { year, month, day ->
+            val cal = Calendar.getInstance()
             cal.set(Calendar.YEAR, year)
             cal.set(Calendar.MONTH, month)
             cal.set(Calendar.DAY_OF_MONTH, day)
@@ -83,9 +86,9 @@ class CalendarView : Fragment() {
             //TODO redo this tangled mess with some RX code calendar tap -> event -> dayview updates
             if (cal.before(Calendar.getInstance()) || cal.isToday())
                 (this.activity as? MainActivity)?.navToDayView(cal)
-        })
+        }
 
-        scrollCalendar.setMonthScrollListener(object : MonthScrollListener {
+        binding.scrollCalendar.setMonthScrollListener(object : MonthScrollListener {
             override fun shouldAddNextMonth(lastDisplayedYear: Int, lastDisplayedMonth: Int): Boolean {
                 // don't let the user scroll more than 4 months into the future
                 val fourMonths = Calendar.getInstance()
